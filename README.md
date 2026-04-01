@@ -1,222 +1,215 @@
-# Interactive Surface — Interactive Motion Primitive
+# Interactive Surface
 
-## `interactive-surface.css`
+`interactive-surface.css` is a reusable, framework-agnostic interaction primitive for clickable UI surfaces.
 
-`interactive-surface.css` provides a **design-system–grade interaction primitive** for clickable UI surfaces such as buttons, icon buttons, and glassmorphic tiles.
+It is designed to be:
 
-It implements a **physically consistent elevation model** with hover lift, active selection, and tactile press feedback—without JavaScript and without layout shifts.
-
-### Design goals
-
-- Smooth, reversible hover animations
-- Clear elevation hierarchy (hover > active > base)
-- Tactile press feedback (bounce impulse)
-- Glassmorphism-safe (no opacity hacks)
-- Accessible (reduced motion support)
-- Framework-agnostic (React, RSuite, plain HTML)
+- Drop-in with zero required configuration
+- Accessible by default
+- Easy to theme with CSS custom properties
+- Safe to reuse across projects as a small importable library
 
 ---
 
-## Interaction Model
+## What it provides
 
-| State                 | Behavior                                  |
-| --------------------- | ----------------------------------------- |
-| **Base**              | Resting position, no elevation            |
-| **Hover / Focus**     | Lifts upward, shadow grows proportionally |
-| **Active (selected)** | Medium elevation below hover              |
-| **Press (mousedown)** | Brief drop to base with shadow removal    |
-| **Disabled**          | No motion, muted appearance               |
+State model:
 
-All transitions are GPU-accelerated using `transform` and `box-shadow` only.
+- Base
+- Hover
+- Focus-visible
+- Active/toggled (`.is-active` or `[aria-pressed="true"]`)
+- Press (`:active`)
+- Disabled (`.is-disabled`, `:disabled`, `[aria-disabled="true"]`)
+
+Core behavior:
+
+- Elevation and shadow hierarchy (hover > active > base)
+- Tactile press feedback
+- Keyboard-visible focus ring
+- Reduced-motion support
+- High-contrast and forced-colors support
+- Touch-friendly defaults (`touch-action: manipulation`, 44x44 icon target)
 
 ---
 
-## Base Usage
+## Quick start
 
-Apply the base class to any clickable surface:
-
-```jsx
-<Button className="interactive-surface">
-  Submit
-</Button>
+```html
+<button class="interactive-surface">Save</button>
 ```
 
 ```html
-<div class="interactive-surface">
-  Clickable Tile
-</div>
+<button class="interactive-surface size-lg variant-primary">
+  Continue
+</button>
 ```
-
-### Guardrail Rule
-
-If an element has `interactive-surface`, do not add other `transform`, `scale`, `translate`, or `rotate` rules on that same element in component CSS.
-
-`interactive-surface` is the single motion source for clickable controls so interaction behavior and accessibility stay consistent across the app.
-
----
-
-## Size Variants
-
-Control motion scale using size modifiers:
 
 ```html
-<button class="interactive-surface size-sm">Small</button>
-<button class="interactive-surface size-md">Medium</button>
-<button class="interactive-surface size-lg">Large</button>
-```
-
-| Size      | Intended Use               |
-| --------- | -------------------------- |
-| `size-sm` | Dense UI, utility buttons  |
-| `size-md` | Default buttons, cards     |
-| `size-lg` | Primary CTAs, hero actions |
-
----
-
-## Icon-Only Buttons
-
-Use the `icon-only` variant for toolbar icons and compact actions:
-
-```jsx
-<div
-  className="interactive-surface icon-only"
-  aria-label="Settings"
->
-  <SettingsIcon />
-</div>
-```
-
-This variant uses reduced lift distance and faster motion timing to avoid floatiness in dense layouts.
-
----
-
-## Active / Selected State
-
-Use `.is-active` to indicate a selected or toggled state:
-
-```jsx
-<Button className="interactive-surface is-active">
-  Selected
-</Button>
-```
-
-The active state maintains elevation but remains visually subordinate to hover.
-
----
-
-## Disabled State
-
-Disable interaction using either `.is-disabled` or the native `disabled` attribute:
-
-```jsx
-<Button
-  className="interactive-surface"
-  disabled
->
-  Disabled
-</Button>
-```
-
-Disabled surfaces:
-
-- Do not animate
-- Ignore pointer events
-- Appear visually muted
-
----
-
-## Visual Variants
-
-Visual variants adjust **color modulation only**.
-They do **not** change motion or elevation behavior.
-
-```html
-<button class="interactive-surface variant-primary">Primary</button>
-<button class="interactive-surface variant-secondary">Secondary</button>
-<button class="interactive-surface variant-accent">Accent</button>
-<button class="interactive-surface variant-subtle">Subtle</button>
-<button class="interactive-surface variant-warning">Warning</button>
-<button class="interactive-surface variant-danger">Danger</button>
+<button class="interactive-surface icon-only" aria-label="Settings">
+  <svg aria-hidden="true" viewBox="0 0 24 24">...</svg>
+</button>
 ```
 
 ---
 
-## Variant → UI Token Mapping
-
-These variants are designed to map cleanly onto a **token-based UI system** such as Midnight Gold / Frosted UI.
-
-Below is the **recommended semantic mapping**.
-
-### Background tokens
-
-| Variant             | Suggested Background Token |
-| ------------------- | -------------------------- |
-| `variant-primary`   | `--bg-primary`             |
-| `variant-secondary` | `--bg-secondary`           |
-| `variant-accent`    | `--bg-accent-gold`         |
-| `variant-subtle`    | `--bg-surface-muted`       |
-| `variant-warning`   | `--bg-warning`             |
-| `variant-danger`    | `--bg-danger`              |
-
-### Text / icon tokens
-
-| Variant             | Suggested Text Token  |
-| ------------------- | --------------------- |
-| `variant-primary`   | `--text-on-primary`   |
-| `variant-secondary` | `--text-on-secondary` |
-| `variant-accent`    | `--text-on-accent`    |
-| `variant-subtle`    | `--text-primary`      |
-| `variant-warning`   | `--text-on-warning`   |
-| `variant-danger`    | `--text-on-danger`    |
-
-### Example integration
+## Import
 
 ```css
-.variant-primary {
-  background: var(--bg-primary);
-  color: var(--text-on-primary);
-}
+@import "./interactive-surface.css";
+```
 
-.variant-accent {
-  background: var(--bg-accent-gold);
-  color: var(--text-on-accent);
+Or with JS bundlers:
+
+```js
+import "./interactive-surface.css";
+```
+
+---
+
+## Class API
+
+Base:
+
+- `.interactive-surface`
+
+Size variants:
+
+- `.size-sm`
+- `.size-lg`
+- `.size-md` is implicit default (no class needed)
+
+State helpers:
+
+- `.is-active`
+- `.is-disabled`
+
+Visual variants (brightness tuning only):
+
+- `.variant-primary`
+- `.variant-secondary`
+- `.variant-accent`
+- `.variant-subtle`
+- `.variant-warning`
+- `.variant-danger`
+
+Icon micro pattern:
+
+- `.icon-only`
+
+---
+
+## Token contract
+
+Preferred tokens:
+
+- `--interactive-surface-lift-base`
+- `--interactive-surface-lift-hover`
+- `--interactive-surface-lift-active`
+- `--interactive-surface-shadow-base`
+- `--interactive-surface-shadow-hover`
+- `--interactive-surface-shadow-active`
+- `--interactive-surface-darken-hover`
+- `--interactive-surface-darken-active`
+- `--interactive-surface-motion-default`
+- `--interactive-surface-motion-press`
+- `--interactive-surface-ease-standard`
+- `--interactive-surface-ease-press`
+- `--interactive-surface-bg`
+- `--interactive-surface-fg`
+- `--interactive-surface-border-color`
+- `--interactive-surface-border-width`
+- `--interactive-surface-radius`
+- `--interactive-surface-focus-ring-color`
+- `--interactive-surface-focus-ring-width`
+- `--interactive-surface-focus-ring-offset`
+- `--interactive-surface-disabled-opacity`
+
+Legacy fallback tokens (still supported):
+
+- `--lift-base`, `--lift-hover`, `--lift-active`
+- `--shadow-base`, `--shadow-hover`, `--shadow-active`
+- `--surface-darken-hover`, `--surface-darken-active`
+- `--motion-default`, `--motion-press`
+- `--ease-standard`, `--ease-press`
+
+Also recognized as semantic color fallbacks:
+
+- `--surface-bg`, `--bg-surface`
+- `--surface-fg`, `--text-primary`
+- `--surface-border`, `--border-color`
+- `--focus-ring`
+
+Important:
+
+- The file does not define global `:root` token defaults.
+- Defaults are resolved inline with fallback chains, so it can work standalone while still being easy to override.
+
+---
+
+## Theming examples
+
+Global theme values:
+
+```css
+:root {
+  --interactive-surface-bg: #0f172a;
+  --interactive-surface-fg: #e2e8f0;
+  --interactive-surface-border-color: #334155;
+  --interactive-surface-focus-ring-color: #38bdf8;
+  --interactive-surface-radius: 12px;
 }
 ```
 
-> `click-animate.css` intentionally **does not define colors directly**.
-> It only modulates brightness using tokens, ensuring compatibility with:
->
-> - Glassmorphism
-> - Dark mode
-> - Theme switching
-> - Brand reskins
+Per-component override:
+
+```css
+.product-card .interactive-surface {
+  --interactive-surface-lift-hover: -6px;
+  --interactive-surface-shadow-hover: 0 14px 30px rgb(0 0 0 / 32%);
+}
+```
 
 ---
 
-## Accessibility
+## Accessibility behavior
 
-- Honors `prefers-reduced-motion`
-- Focus-visible supported
-- No reliance on opacity for state changes
-- Motion removed cleanly without breaking layout
+- Uses `:focus-visible` with `:focus` fallback for browsers without `:focus-visible`
+- Honors `prefers-reduced-motion: reduce`
+- Supports `prefers-contrast: more`
+- Supports `forced-colors: active` with system colors
+- Supports semantic state attributes:
+  - `[aria-pressed="true"]` -> active style
+  - `[aria-disabled="true"]` -> disabled style
+- `icon-only` enforces a minimum 44px target size
 
----
+Note for semantics:
 
-## Why this belongs in the template
-
-- Single, reusable primitive
-- Token-driven customization
-- Zero JS dependency
-- Works across frontend stacks
-- Easy to document and enforce
-
-This file is intended to be **foundational**, not decorative.
+- Prefer native interactive elements (`<button>`, `<a>`) whenever possible.
+- If using non-semantic elements (`<div>`), provide proper roles and keyboard handling in your component code.
 
 ---
 
-### Next logical hardening steps (optional)
+## Browser confidence
 
-- Add TypeScript enums for `Size` and `Variant`
-- Add Stylelint rules enforcing transform-only motion
-- Add snapshot tests for interaction states
-- Document this in your design system site
+Validated via Playwright cross-browser spec:
+
+- Chromium
+- Firefox
+- WebKit
+
+Validation includes hover/focus/active/disabled states and reduced-motion behavior.
+
+Spec file:
+
+- `playwright/interactive-surface.cross-browser.spec.ts`
+
+---
+
+## Guardrail
+
+`interactive-surface` should be the single source of motion on that element.
+
+Avoid applying additional `transform`, `translate`, `scale`, or `rotate` rules directly to the same node.
+
+If additional motion is needed, apply it to a child element instead to prevent conflicts with the built-in press feedback.

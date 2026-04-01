@@ -15,84 +15,138 @@
    - Active (selected, medium elevation)
    - Press impulse (momentary bounce-down)
    - Disabled (no interaction)
-
-   Author: Design-system ready
    ====================================================================== */
 
 /* ======================================================================
-   1. Global Motion, Elevation & Color Tokens
+   1. Token Contract
+   ----------------------------------------------------------------------
+   Public tokens (preferred):
+   - --interactive-surface-*
+
+   Legacy fallback tokens (still supported):
+   - --lift-*, --shadow-*, --surface-darken-*, --motion-*, --ease-*
+
+   This file intentionally does not set global :root token values.
+   Defaults are resolved inline so consumers can override tokens without
+   import-order issues.
    ====================================================================== */
-
-:root {
-  /* ------------------------------------------------------------
-     Elevation (Y-axis movement)
-     ------------------------------------------------------------ */
-  --lift-base: 0px;
-  --lift-hover: -4px;
-  --lift-active: -2px;
-
-  /* ------------------------------------------------------------
-     Shadows (glass-friendly, layered)
-     ------------------------------------------------------------ */
-  --shadow-base: 0 0 0 rgba(0, 0, 0, 0%);
-  --shadow-hover: 0 10px 28px rgba(0, 0, 0, 0.35), 0 2px 8px rgba(0, 0, 0, 0.25);
-  --shadow-active: 0 6px 18px rgba(0, 0, 0, 0.3), 0 1px 4px rgba(0, 0, 0, 0.2);
-
-  /* ------------------------------------------------------------
-     Color modulation (non-opacity, glass-safe)
-     ------------------------------------------------------------ */
-  --surface-darken-hover: 0.96;
-  --surface-darken-active: 0.98;
-
-  /* ------------------------------------------------------------
-     Motion timing
-     ------------------------------------------------------------ */
-  --motion-default: 180ms;
-  --motion-press: 80ms;
-
-  /* ------------------------------------------------------------
-     Easing curves (stable, no flutter)
-     ------------------------------------------------------------ */
-  --ease-standard: cubic-bezier(0.2, 0, 0.2, 1);
-  --ease-press: cubic-bezier(0.4, 0, 0.6, 1);
-}
 
 /* ======================================================================
    2. Base Interactive Surface
    ====================================================================== */
 
 .interactive-surface {
+  /* Internal resolved tokens (public + legacy + hard fallback). */
+  --_is-lift-base: var(--interactive-surface-lift-base, var(--lift-base, 0px));
+  --_is-lift-hover: var(--interactive-surface-lift-hover, var(--lift-hover, -4px));
+  --_is-lift-active: var(--interactive-surface-lift-active, var(--lift-active, -2px));
+
+  --_is-shadow-base: var(--interactive-surface-shadow-base, var(--shadow-base, 0 0 0 rgba(0, 0, 0, 0)));
+  --_is-shadow-hover: var(
+    --interactive-surface-shadow-hover,
+    var(--shadow-hover, 0 10px 28px rgba(0, 0, 0, 0.35), 0 2px 8px rgba(0, 0, 0, 0.25))
+  );
+  --_is-shadow-active: var(
+    --interactive-surface-shadow-active,
+    var(--shadow-active, 0 6px 18px rgba(0, 0, 0, 0.3), 0 1px 4px rgba(0, 0, 0, 0.2))
+  );
+
+  --_is-darken-hover: var(--interactive-surface-darken-hover, var(--surface-darken-hover, 0.96));
+  --_is-darken-active: var(--interactive-surface-darken-active, var(--surface-darken-active, 0.98));
+
+  --_is-motion-default: var(--interactive-surface-motion-default, var(--motion-default, 140ms));
+  --_is-motion-press: var(--interactive-surface-motion-press, var(--motion-press, 60ms));
+  --_is-ease-standard: var(
+    --interactive-surface-ease-standard,
+    var(--ease-standard, cubic-bezier(0.2, 0, 0.2, 1))
+  );
+  --_is-ease-press: var(
+    --interactive-surface-ease-press,
+    var(--ease-press, cubic-bezier(0.4, 0, 0.6, 1))
+  );
+
+  --_is-bg: var(--interactive-surface-bg, var(--surface-bg, var(--bg-surface, #f8fafc)));
+  --_is-fg: var(--interactive-surface-fg, var(--surface-fg, var(--text-primary, #111827)));
+  --_is-border-color: var(
+    --interactive-surface-border-color,
+    var(--surface-border, var(--border-color, rgba(15, 23, 42, 0.2)))
+  );
+  --_is-border-width: var(--interactive-surface-border-width, 1px);
+  --_is-radius: var(--interactive-surface-radius, 0.75rem);
+
+  --_is-focus-ring-color: var(--interactive-surface-focus-ring-color, var(--focus-ring, #0b63f6));
+  --_is-focus-ring-width: var(--interactive-surface-focus-ring-width, 2px);
+  --_is-focus-ring-offset: var(--interactive-surface-focus-ring-offset, 2px);
+  --_is-disabled-opacity: var(--interactive-surface-disabled-opacity, 0.72);
+
   position: relative;
+  box-sizing: border-box;
+  border: var(--_is-border-width) solid var(--_is-border-color);
+  border-radius: var(--_is-radius);
+  background-color: var(--_is-bg);
+  color: var(--_is-fg);
   cursor: pointer;
-  transform: translateY(var(--lift-base)) !important;
-  box-shadow: var(--shadow-base);
-  transition-delay: var(--motion-default);
+  text-decoration: none;
+  font: inherit;
+  -webkit-appearance: none;
+  appearance: none;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  transform: translateY(var(--_is-lift-base)) translateZ(0) !important;
+  box-shadow: var(--_is-shadow-base);
   transition:
-    transform var(--motion-default) var(--ease-standard),
-    box-shadow var(--motion-default) var(--ease-standard),
-    filter var(--motion-default) linear;
-  will-change: transform, box-shadow;
+    transform var(--_is-motion-default) var(--_is-ease-standard),
+    box-shadow var(--_is-motion-default) var(--_is-ease-standard),
+    filter var(--_is-motion-default) linear,
+    background-color var(--_is-motion-default) linear,
+    color var(--_is-motion-default) linear;
+  will-change: auto;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .interactive-surface {
+    will-change: transform, box-shadow;
+  }
+
+  .interactive-surface:hover {
+    transform: translateY(var(--_is-lift-hover)) translateZ(0) !important;
+    box-shadow: var(--_is-shadow-hover);
+    filter: brightness(var(--_is-darken-hover));
+  }
 }
 
 /* ======================================================================
-   3. Hover & Focus (Primary Elevation)
+   3. Focus (Keyboard Visibility)
    ====================================================================== */
 
-.interactive-surface:hover,
+.interactive-surface:focus {
+  outline: var(--_is-focus-ring-width) solid var(--_is-focus-ring-color);
+  outline-offset: var(--_is-focus-ring-offset);
+}
+
+@supports selector(:focus-visible) {
+  .interactive-surface:focus {
+    outline: none;
+  }
+}
+
 .interactive-surface:focus-visible {
-  transform: translateY(var(--lift-hover)) !important;
-  box-shadow: var(--shadow-hover);
-  filter: brightness(var(--surface-darken-hover));
+  transform: translateY(var(--_is-lift-hover)) translateZ(0) !important;
+  box-shadow: var(--_is-shadow-hover);
+  filter: brightness(var(--_is-darken-hover));
+  outline: var(--_is-focus-ring-width) solid var(--_is-focus-ring-color);
+  outline-offset: var(--_is-focus-ring-offset);
 }
 
 /* ======================================================================
    4. Active (Selected / Toggled State)
    ====================================================================== */
 
-.interactive-surface.is-active {
-  transform: translateY(var(--lift-active)) !important;
-  box-shadow: var(--shadow-active);
-  filter: brightness(var(--surface-darken-active));
+.interactive-surface.is-active,
+.interactive-surface[aria-pressed="true"] {
+  transform: translateY(var(--_is-lift-active)) translateZ(0) !important;
+  box-shadow: var(--_is-shadow-active);
+  filter: brightness(var(--_is-darken-active));
 }
 
 /* ======================================================================
@@ -100,37 +154,29 @@
    ====================================================================== */
 
 .interactive-surface:active {
-  transform: translateY(var(--lift-base)) !important;
-  box-shadow: var(--shadow-base);
+  transform: translateY(var(--_is-lift-base)) translateZ(0) !important;
+  box-shadow: var(--_is-shadow-base);
   filter: brightness(1);
-  transition-duration: var(--motion-press);
-  transition-timing-function: var(--ease-press);
+  transition-duration: var(--_is-motion-press);
+  transition-timing-function: var(--_is-ease-press);
 }
 
 /* ======================================================================
    6. Size Variants (Elevation Scaling)
    ====================================================================== */
 
-/* ---------------- Small ---------------- */
 .interactive-surface.size-sm {
-  --lift-hover: -4px;
-  --lift-active: -2px;
-  --shadow-hover: 0 6px 16px rgba(0, 0, 0, 0.28), 0 1px 4px rgba(0, 0, 0, 0.2);
-  --shadow-active: 0 4px 10px rgba(0, 0, 0, 0.25);
+  --interactive-surface-lift-hover: -4px;
+  --interactive-surface-lift-active: -2px;
+  --interactive-surface-shadow-hover: 0 6px 16px rgba(0, 0, 0, 0.28), 0 1px 4px rgba(0, 0, 0, 0.2);
+  --interactive-surface-shadow-active: 0 4px 10px rgba(0, 0, 0, 0.25);
 }
 
-/* ---------------- Medium (Default) ---------------- */
-
-/** .interactive-surface.size-md {
-   Uses root defaults
-} */
-
-/* ---------------- Large ---------------- */
 .interactive-surface.size-lg {
-  --lift-hover: -8px;
-  --lift-active: -4px;
-  --shadow-hover: 0 14px 36px rgba(0, 0, 0, 0.38), 0 3px 10px rgba(0, 0, 0, 0.3);
-  --shadow-active: 0 8px 22px rgba(0, 0, 0, 0.32);
+  --interactive-surface-lift-hover: -8px;
+  --interactive-surface-lift-active: -4px;
+  --interactive-surface-shadow-hover: 0 14px 36px rgba(0, 0, 0, 0.38), 0 3px 10px rgba(0, 0, 0, 0.3);
+  --interactive-surface-shadow-active: 0 8px 22px rgba(0, 0, 0, 0.32);
 }
 
 /* ======================================================================
@@ -138,59 +184,52 @@
    ====================================================================== */
 
 .interactive-surface.icon-only {
-  --lift-hover: -3px;
-  --lift-active: -1.5px;
-  --motion-default: 140ms;
-  --shadow-hover: 0 4px 10px rgba(0, 0, 0, 0.3);
-  --shadow-active: 0 2px 6px rgba(0, 0, 0, 0.25);
+  --interactive-surface-lift-hover: -3px;
+  --interactive-surface-lift-active: -1.5px;
+  --interactive-surface-shadow-hover: 0 4px 10px rgba(0, 0, 0, 0.3);
+  --interactive-surface-shadow-active: 0 2px 6px rgba(0, 0, 0, 0.25);
 
   display: inline-flex;
   justify-content: center;
   align-items: center;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0;
   border-radius: 0.5rem;
 }
 
 /* ======================================================================
    8. Visual Variant Tokens
-   ----------------------------------------------------------------------
-   These variants only influence color treatment.
-   Actual background / text colors should be defined elsewhere.
    ====================================================================== */
 
-/* ---------------- Primary ---------------- */
 .interactive-surface.variant-primary {
-  --surface-darken-hover: 0.95;
-  --surface-darken-active: 0.97;
+  --interactive-surface-darken-hover: 0.95;
+  --interactive-surface-darken-active: 0.97;
 }
 
-/* ---------------- Secondary ---------------- */
 .interactive-surface.variant-secondary {
-  --surface-darken-hover: 0.97;
-  --surface-darken-active: 0.99;
+  --interactive-surface-darken-hover: 0.97;
+  --interactive-surface-darken-active: 0.99;
 }
 
-/* ---------------- Accent ---------------- */
 .interactive-surface.variant-accent {
-  --surface-darken-hover: 0.94;
-  --surface-darken-active: 0.96;
+  --interactive-surface-darken-hover: 0.94;
+  --interactive-surface-darken-active: 0.96;
 }
 
-/* ---------------- Subtle ---------------- */
 .interactive-surface.variant-subtle {
-  --surface-darken-hover: 0.98;
-  --surface-darken-active: 1;
+  --interactive-surface-darken-hover: 0.98;
+  --interactive-surface-darken-active: 1;
 }
 
-/* ---------------- Warning ---------------- */
 .interactive-surface.variant-warning {
-  --surface-darken-hover: 0.93;
-  --surface-darken-active: 0.95;
+  --interactive-surface-darken-hover: 0.93;
+  --interactive-surface-darken-active: 0.95;
 }
 
-/* ---------------- Danger ---------------- */
 .interactive-surface.variant-danger {
-  --surface-darken-hover: 0.92;
-  --surface-darken-active: 0.94;
+  --interactive-surface-darken-hover: 0.92;
+  --interactive-surface-darken-active: 0.94;
 }
 
 /* ======================================================================
@@ -198,12 +237,14 @@
    ====================================================================== */
 
 .interactive-surface.is-disabled,
-.interactive-surface:disabled {
+.interactive-surface:disabled,
+.interactive-surface[aria-disabled="true"] {
   cursor: not-allowed;
   pointer-events: none;
   transform: none !important;
   box-shadow: none;
-  filter: grayscale(0.2) brightness(0.9);
+  filter: saturate(0.6) contrast(0.9) brightness(0.92);
+  opacity: var(--_is-disabled-opacity);
   transition: none;
 }
 
@@ -219,7 +260,7 @@
 }
 
 /* ======================================================================
-   10. Reduced Motion (Accessibility)
+   10. Reduced Motion
    ====================================================================== */
 
 @media (prefers-reduced-motion: reduce) {
@@ -229,8 +270,59 @@
   }
 
   .interactive-surface:hover,
+  .interactive-surface:focus-visible,
   .interactive-surface:active,
-  .interactive-surface.is-active {
+  .interactive-surface.is-active,
+  .interactive-surface[aria-pressed="true"] {
     transform: none !important;
+    box-shadow: none;
+    filter: none;
+  }
+}
+
+/* ======================================================================
+   11. Contrast and High-Contrast Modes
+   ====================================================================== */
+
+@media (prefers-contrast: more) {
+  .interactive-surface {
+    --interactive-surface-darken-hover: 1;
+    --interactive-surface-darken-active: 1;
+    --interactive-surface-focus-ring-width: 3px;
+  }
+}
+
+@media (forced-colors: active) {
+  .interactive-surface {
+    forced-color-adjust: auto;
+    background-color: ButtonFace;
+    color: ButtonText;
+    border-color: ButtonText;
+    box-shadow: none;
+    filter: none;
+  }
+
+  .interactive-surface:hover,
+  .interactive-surface:focus-visible,
+  .interactive-surface.is-active,
+  .interactive-surface[aria-pressed="true"],
+  .interactive-surface:active {
+    transform: none !important;
+    box-shadow: none;
+    filter: none;
+  }
+
+  .interactive-surface:focus,
+  .interactive-surface:focus-visible {
+    outline: 2px solid Highlight;
+    outline-offset: 2px;
+  }
+
+  .interactive-surface.is-disabled,
+  .interactive-surface:disabled,
+  .interactive-surface[aria-disabled="true"] {
+    color: GrayText;
+    border-color: GrayText;
+    opacity: 1;
   }
 }
