@@ -1,39 +1,30 @@
-/* ======================================================================
-   interactive-surface.css
-   ----------------------------------------------------------------------
-   Reusable interaction primitives for clickable UI surfaces.
-   Designed for:
-   - Buttons
-   - Icon buttons
-   - Glassmorphic tiles
-   - RSuite-compatible components
-   - Full-stack MERN templates
+/*
+ * interactive-surface.css
+ *
+ * Purpose:
+ * - Provide a standalone interaction primitive for clickable surfaces.
+ * - Keep behavior consistent across buttons, cards, and icon controls.
+ * - Allow zero-config usage with optional token-driven theming.
+ *
+ * State model:
+ * - base -> hover/focus-visible -> active -> press -> disabled
+ */
 
-   Interaction model:
-   - Base (rest)
-   - Hover (lifted, strongest elevation)
-   - Active (selected, medium elevation)
-   - Press impulse (momentary bounce-down)
-   - Disabled (no interaction)
-   ====================================================================== */
+/*
+ * 1) Token contract
+ *
+ * Preferred token namespace:
+ * - --interactive-surface-*
+ *
+ * Legacy fallback tokens are still supported:
+ * - --lift-*, --shadow-*, --surface-darken-*, --motion-*, --ease-*
+ *
+ * Implementation note:
+ * - No global :root token defaults are set in this file.
+ * - Defaults are resolved inline to avoid import-order conflicts.
+ */
 
-/* ======================================================================
-   1. Token Contract
-   ----------------------------------------------------------------------
-   Public tokens (preferred):
-   - --interactive-surface-*
-
-   Legacy fallback tokens (still supported):
-   - --lift-*, --shadow-*, --surface-darken-*, --motion-*, --ease-*
-
-   This file intentionally does not set global :root token values.
-   Defaults are resolved inline so consumers can override tokens without
-   import-order issues.
-   ====================================================================== */
-
-/* ======================================================================
-   2. Base Interactive Surface
-   ====================================================================== */
+/* 2) Base primitive and token resolution */
 
 .interactive-surface {
   /* Internal resolved tokens (public + legacy + hard fallback). */
@@ -115,9 +106,7 @@
   }
 }
 
-/* ======================================================================
-   3. Focus (Keyboard Visibility)
-   ====================================================================== */
+/* 3) Keyboard focus visibility */
 
 .interactive-surface:focus {
   outline: var(--_is-focus-ring-width) solid var(--_is-focus-ring-color);
@@ -138,9 +127,7 @@
   outline-offset: var(--_is-focus-ring-offset);
 }
 
-/* ======================================================================
-   4. Active (Selected / Toggled State)
-   ====================================================================== */
+/* 4) Active and toggled states */
 
 .interactive-surface.is-active,
 .interactive-surface[aria-pressed="true"] {
@@ -149,9 +136,7 @@
   filter: brightness(var(--_is-darken-active));
 }
 
-/* ======================================================================
-   5. Press Impulse (Click Feedback)
-   ====================================================================== */
+/* 5) Press feedback */
 
 .interactive-surface:active {
   transform: translateY(var(--_is-lift-base)) translateZ(0) !important;
@@ -161,9 +146,7 @@
   transition-timing-function: var(--_is-ease-press);
 }
 
-/* ======================================================================
-   6. Size Variants (Elevation Scaling)
-   ====================================================================== */
+/* 6) Size modifiers */
 
 .interactive-surface.size-sm {
   --interactive-surface-lift-hover: -4px;
@@ -179,9 +162,7 @@
   --interactive-surface-shadow-active: 0 8px 22px rgba(0, 0, 0, 0.32);
 }
 
-/* ======================================================================
-   7. Icon-only Micro Variant
-   ====================================================================== */
+/* 7) Icon-only modifier */
 
 .interactive-surface.icon-only {
   --interactive-surface-lift-hover: -3px;
@@ -198,9 +179,7 @@
   border-radius: 0.5rem;
 }
 
-/* ======================================================================
-   8. Visual Variant Tokens
-   ====================================================================== */
+/* 8) Visual variant token modifiers */
 
 .interactive-surface.variant-primary {
   --interactive-surface-darken-hover: 0.95;
@@ -232,9 +211,7 @@
   --interactive-surface-darken-active: 0.94;
 }
 
-/* ======================================================================
-   9. Disabled State
-   ====================================================================== */
+/* 9) Disabled states */
 
 .interactive-surface.is-disabled,
 .interactive-surface:disabled,
@@ -248,7 +225,7 @@
   transition: none;
 }
 
-/* Guardrail: this class owns motion primitives for clickable elements. */
+/* Guardrail: this class owns motion on the host element. */
 .interactive-surface,
 .interactive-surface:hover,
 .interactive-surface:focus-visible,
@@ -259,9 +236,7 @@
   translate: 0 0 !important;
 }
 
-/* ======================================================================
-   10. Reduced Motion
-   ====================================================================== */
+/* 10) Reduced motion */
 
 @media (prefers-reduced-motion: reduce) {
   .interactive-surface {
@@ -280,9 +255,7 @@
   }
 }
 
-/* ======================================================================
-   11. Contrast and High-Contrast Modes
-   ====================================================================== */
+/* 11) Contrast and forced-colors support */
 
 @media (prefers-contrast: more) {
   .interactive-surface {

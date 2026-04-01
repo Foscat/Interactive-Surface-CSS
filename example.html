@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Interactive Surface Library Demo</title>
+
+    <link rel="stylesheet" href="./interactive-surface.css" />
+
+    <style>
+      :root {
+        --interactive-surface-bg: #ffffff;
+        --interactive-surface-fg: #102a43;
+        --interactive-surface-border-color: #d5dfe8;
+        --interactive-surface-radius: 14px;
+        --interactive-surface-focus-ring-color: #007e8a;
+
+        --bg-app: #f4f8fb;
+        --bg-panel: rgb(255 255 255 / 82%);
+        --text-primary: #102a43;
+        --text-secondary: #486581;
+        --accent-teal: #007e8a;
+        --accent-slate: #2f455c;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: "Avenir Next", "Segoe UI", "Helvetica Neue", sans-serif;
+        color: var(--text-primary);
+        background:
+          radial-gradient(circle at 10% 10%, rgb(0 126 138 / 18%), transparent 42%),
+          radial-gradient(circle at 85% 20%, rgb(34 107 163 / 15%), transparent 38%),
+          linear-gradient(165deg, #f8fbfd 0%, var(--bg-app) 100%);
+      }
+
+      main {
+        width: min(1100px, 92vw);
+        margin: 0 auto;
+        padding: clamp(2rem, 4vw, 4rem) 0 4rem;
+      }
+
+      .hero {
+        margin-bottom: 1.5rem;
+      }
+
+      .hero h1 {
+        margin: 0 0 0.5rem;
+        font-size: clamp(1.7rem, 3.6vw, 2.8rem);
+        letter-spacing: 0.01em;
+      }
+
+      .hero p {
+        margin: 0;
+        max-width: 68ch;
+        color: var(--text-secondary);
+        line-height: 1.5;
+      }
+
+      .pill-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        margin-top: 1rem;
+      }
+
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.45rem 0.8rem;
+        border-radius: 999px;
+        border: 1px solid rgb(16 42 67 / 15%);
+        background: rgb(255 255 255 / 72%);
+        color: var(--accent-slate);
+        font-size: 0.85rem;
+      }
+
+      .panel {
+        margin-top: 1rem;
+        padding: clamp(1rem, 2vw, 1.5rem);
+        border: 1px solid rgb(16 42 67 / 12%);
+        border-radius: 20px;
+        background: var(--bg-panel);
+        -webkit-backdrop-filter: blur(5px);
+        backdrop-filter: blur(5px);
+      }
+
+      .panel h2 {
+        margin-top: 0;
+        margin-bottom: 1rem;
+        font-size: 1.2rem;
+      }
+
+      .button-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 0.9rem;
+      }
+
+      .surface-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 46px;
+        padding: 0.78rem 1rem;
+        font-weight: 600;
+      }
+
+      .variant-primary {
+        --interactive-surface-bg: #0f4f7f;
+        --interactive-surface-fg: #f4fbff;
+        --interactive-surface-border-color: #0f4f7f;
+      }
+
+      .variant-secondary {
+        --interactive-surface-bg: #dce8f2;
+        --interactive-surface-fg: #1d3547;
+      }
+
+      .variant-accent {
+        --interactive-surface-bg: #e6faf9;
+        --interactive-surface-fg: #09585e;
+        --interactive-surface-border-color: #8ad6da;
+      }
+
+      .variant-warning {
+        --interactive-surface-bg: #fff5e6;
+        --interactive-surface-fg: #7a4a00;
+        --interactive-surface-border-color: #efc27c;
+      }
+
+      .variant-danger {
+        --interactive-surface-bg: #ffecec;
+        --interactive-surface-fg: #892323;
+        --interactive-surface-border-color: #ea9b9b;
+      }
+
+      .card-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 0.9rem;
+      }
+
+      .surface-card {
+        text-align: left;
+        padding: 1rem;
+      }
+
+      .surface-card strong {
+        display: block;
+        margin-bottom: 0.35rem;
+        font-size: 1rem;
+      }
+
+      .surface-card span {
+        display: block;
+        color: var(--text-secondary);
+        font-size: 0.92rem;
+        line-height: 1.4;
+      }
+
+      .icon-demo {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+      }
+
+      .icon-glyph {
+        font-size: 1.15rem;
+        font-weight: 700;
+      }
+
+      .a11y-list {
+        margin: 0;
+        padding-left: 1.1rem;
+        color: var(--text-secondary);
+        line-height: 1.5;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header class="hero">
+        <h1>Interactive Surface Library</h1>
+        <p>
+          A drop-in CSS interaction primitive for buttons, cards, and icon controls. This demo
+          shows theme overrides, state helpers, and accessibility-friendly defaults.
+        </p>
+
+        <div class="pill-row">
+          <span class="pill">Standalone defaults</span>
+          <span class="pill">Token override ready</span>
+          <span class="pill">Keyboard focus visible</span>
+          <span class="pill">Reduced-motion aware</span>
+        </div>
+      </header>
+
+      <section class="panel">
+        <h2>Buttons and states</h2>
+        <div class="button-grid">
+          <button class="interactive-surface surface-btn variant-primary">Primary CTA</button>
+          <button class="interactive-surface surface-btn variant-secondary">Secondary</button>
+          <button class="interactive-surface surface-btn variant-accent is-active">Selected</button>
+          <button class="interactive-surface surface-btn variant-warning">Warning</button>
+          <button class="interactive-surface surface-btn variant-danger">Danger</button>
+          <button class="interactive-surface surface-btn" disabled>Disabled</button>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>Card surfaces</h2>
+        <div class="card-grid">
+          <button class="interactive-surface surface-card size-lg">
+            <strong>Reusable elevation</strong>
+            <span>Apply one class and keep all hover/press/focus behavior consistent.</span>
+          </button>
+          <button class="interactive-surface surface-card variant-subtle">
+            <strong>Theme-safe defaults</strong>
+            <span>Uses fallbacks automatically and accepts token overrides per component.</span>
+          </button>
+          <button class="interactive-surface surface-card" aria-pressed="true">
+            <strong>ARIA-aware state</strong>
+            <span>`aria-pressed="true"` gets active styling without extra JavaScript.</span>
+          </button>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>Icon micro controls</h2>
+        <div class="icon-demo">
+          <button class="interactive-surface icon-only variant-secondary" aria-label="Search">
+            <span class="icon-glyph">S</span>
+          </button>
+          <button class="interactive-surface icon-only variant-accent" aria-label="Edit">
+            <span class="icon-glyph">E</span>
+          </button>
+          <button class="interactive-surface icon-only variant-primary" aria-label="Share">
+            <span class="icon-glyph">+</span>
+          </button>
+          <button class="interactive-surface icon-only is-disabled" aria-disabled="true" aria-label="Locked">
+            <span class="icon-glyph">L</span>
+          </button>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>Accessibility highlights</h2>
+        <ul class="a11y-list">
+          <li>Focus ring is visible for keyboard users (`:focus-visible` with fallback).</li>
+          <li>Reduced-motion users get non-animated state transitions.</li>
+          <li>Forced-colors and high-contrast modes are supported.</li>
+          <li>Icon-only controls keep a minimum 44px target size.</li>
+        </ul>
+      </section>
+    </main>
+  </body>
+</html>

@@ -11,6 +11,48 @@ It is designed to be:
 
 ---
 
+## Package
+
+Package name:
+
+- `interactive-surface-css`
+
+Install:
+
+```bash
+npm install interactive-surface-css
+```
+
+Import:
+
+```js
+import "interactive-surface-css";
+```
+
+Or import the stylesheet directly:
+
+```js
+import "interactive-surface-css/interactive-surface.css";
+```
+
+CDN (no build step):
+
+```html
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/interactive-surface-css@1.0.0/interactive-surface.css"
+/>
+```
+
+```html
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/interactive-surface-css@1.0.0/interactive-surface.css"
+/>
+```
+
+---
+
 ## What it provides
 
 State model:
@@ -51,18 +93,22 @@ Core behavior:
 </button>
 ```
 
+Demo page:
+
+- `example.html`
+
 ---
 
 ## Import
 
 ```css
-@import "./interactive-surface.css";
+@import "interactive-surface-css/interactive-surface.css";
 ```
 
 Or with JS bundlers:
 
 ```js
-import "./interactive-surface.css";
+import "interactive-surface-css/interactive-surface.css";
 ```
 
 ---
@@ -200,9 +246,35 @@ Validated via Playwright cross-browser spec:
 
 Validation includes hover/focus/active/disabled states and reduced-motion behavior.
 
-Spec file:
+Spec files (package-local):
 
-- `playwright/interactive-surface.cross-browser.spec.ts`
+- `tests/interactive-surface.spec.ts`
+- `tests/example.spec.ts`
+
+---
+
+## Testing
+
+From the package root (`Interactive-Surface-CSS`):
+
+```bash
+npm run lint:css
+npm test
+npm run test:chromium
+npm run pack:dry
+```
+
+Publish checklist:
+
+1. Bump version in `package.json`
+2. Update `CHANGELOG.md`
+3. Run `npm run lint:css` and `npm test`
+4. Run `npm run pack:dry` and verify package contents
+5. Authenticate once on this machine: `npm adduser`
+6. Publish with `npm publish --access public`
+7. Verify CDN availability:
+   - `https://cdn.jsdelivr.net/npm/interactive-surface-css@<version>/interactive-surface.css`
+   - `https://unpkg.com/interactive-surface-css@<version>/interactive-surface.css`
 
 ---
 
