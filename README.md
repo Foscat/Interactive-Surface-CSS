@@ -1,13 +1,18 @@
 # Interactive Surface
 
-`interactive-surface.css` is a reusable, framework-agnostic interaction primitive for clickable UI surfaces.
+Interactive Surface is a framework-agnostic CSS library for building accessible, reusable interactive surfaces with consistent hover, focus, active, press, and disabled states.
 
-It is designed to be:
+It is built for design-system authors and product teams who want one small, importable interaction primitive they can reuse across buttons, cards, toggles, and icon controls.
 
-- Drop-in with zero required configuration
-- Accessible by default
-- Easy to theme with CSS custom properties
-- Safe to reuse across projects as a small importable library
+## Why this package exists
+
+Most UI projects eventually repeat the same interaction logic in multiple places: one button style, another card treatment, a separate icon button pattern, then custom fixes for focus rings, disabled states, and motion behavior.
+
+`interactive-surface.css` centralizes that behavior into a single primitive so interactive elements feel consistent, remain accessible, and stay easy to theme with CSS custom properties.
+
+## Release positioning
+
+**A framework-agnostic, accessible CSS interaction primitive for buttons, cards, and icon controls with token-driven theming.**
 
 ---
 

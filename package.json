@@ -1,15 +1,20 @@
 {
   "name": "interactive-surface-css",
   "version": "1.0.0",
-  "description": "Accessible, token-driven CSS interaction primitive for buttons, cards, and icon controls.",
+  "description": "A framework-agnostic, accessible CSS interaction primitive for buttons, cards, and icon controls with token-driven theming.",
   "keywords": [
     "css",
-    "design-system",
     "ui",
+    "design-system",
     "accessibility",
+    "a11y",
+    "framework-agnostic",
+    "interaction-primitive",
+    "theming",
+    "design-tokens",
     "buttons",
-    "interaction",
-    "tokens"
+    "cards",
+    "icon-button"
   ],
   "license": "MIT",
   "author": "Kyle Foster",
