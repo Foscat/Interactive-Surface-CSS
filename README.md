@@ -81,8 +81,8 @@ Webpack:
     CDN:
 
     ```html
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/interactive-surface-css@1.0.0/interactive-surface.css" />
-    <link rel="stylesheet" href="https://unpkg.com/interactive-surface-css@1.0.0/interactive-surface.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/interactive-surface-css@<version>/interactive-surface.css" />
+    <link rel="stylesheet" href="https://unpkg.com/interactive-surface-css@<version>/interactive-surface.css" />
     ```
 
 ## Quick Start
