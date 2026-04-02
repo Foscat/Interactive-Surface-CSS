@@ -70,7 +70,7 @@ Webpack:
         ]
       }
     };
-   ```
+    ```
 
 3. Import in your app entry:
 
