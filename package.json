@@ -27,13 +27,14 @@
   },
   "homepage": "https://github.com/Foscat/Interactive-Surface-CSS#readme",
   "type": "module",
-  "main": "./index.js",
+  "main": "./index.cjs",
   "module": "./index.js",
   "style": "./interactive-surface.css",
   "unpkg": "./interactive-surface.css",
   "jsdelivr": "./interactive-surface.css",
   "exports": {
     ".": {
+      "require": "./index.cjs",
       "import": "./index.js",
       "default": "./index.js",
       "style": "./interactive-surface.css"
@@ -44,10 +45,12 @@
   },
   "sideEffects": [
     "./index.js",
+    "./index.cjs",
     "*.css"
   ],
   "files": [
     "index.js",
+    "index.cjs",
     "interactive-surface.css",
     "README.md",
     "CHANGELOG.md",

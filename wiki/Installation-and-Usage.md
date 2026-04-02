@@ -37,6 +37,35 @@ import "interactive-surface-css/interactive-surface.css";
 />
 ```
 
+## Webpack setup
+
+Install CSS loaders:
+
+```bash
+npm install -D css-loader style-loader
+```
+
+Example `webpack.config.js` rule:
+
+```js
+module.exports = {
+  module: {
+    rules: [
+      {
+        test: /\.css$/i,
+        use: ["style-loader", "css-loader"]
+      }
+    ]
+  }
+};
+```
+
+Then import in your app entry:
+
+```js
+import "interactive-surface-css";
+```
+
 ## Common usage patterns
 
 ### Standard action button

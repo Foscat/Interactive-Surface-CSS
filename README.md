@@ -49,6 +49,35 @@ Or import CSS directly:
 import "interactive-surface-css/interactive-surface.css";
 ```
 
+Webpack:
+
+1. Install loaders:
+
+```bash
+npm install -D css-loader style-loader
+```
+
+2. Configure `webpack.config.js`:
+
+```js
+module.exports = {
+  module: {
+    rules: [
+      {
+        test: /\.css$/i,
+        use: ["style-loader", "css-loader"]
+      }
+    ]
+  }
+};
+```
+
+3. Import in your app entry:
+
+```js
+import "interactive-surface-css";
+```
+
 CDN:
 
 ```html
