@@ -1,26 +1,35 @@
-# Interactive Surface
+﻿# Interactive Surface
 
-Interactive Surface is a framework-agnostic CSS library for building accessible, reusable interactive surfaces with consistent hover, focus, active, press, and disabled states.
+Interactive Surface is a framework-agnostic CSS interaction primitive for buttons, cards, icon controls, and similar click targets.
 
-It is built for design-system authors and product teams who want one small, importable interaction primitive they can reuse across buttons, cards, toggles, and icon controls.
+It provides consistent hover, focus-visible, active, press, and disabled behavior with token-driven theming and accessibility guardrails.
 
-## Why this package exists
+## Documentation
 
-Most UI projects eventually repeat the same interaction logic in multiple places: one button style, another card treatment, a separate icon button pattern, then custom fixes for focus rings, disabled states, and motion behavior.
+Project docs live in this repository:
 
-`interactive-surface.css` centralizes that behavior into a single primitive so interactive elements feel consistent, remain accessible, and stay easy to theme with CSS custom properties.
+- [Wiki Home](./wiki/Home.md)
+- [Getting Started](./wiki/Getting-Started.md)
+- [Installation and Usage](./wiki/Installation-and-Usage.md)
+- [API Reference](./wiki/API-Reference.md)
+- [Token Reference](./wiki/Token-Reference.md)
+- [Accessibility](./wiki/Accessibility.md)
+- [Testing and Quality](./wiki/Testing-and-Quality.md)
+- [Publishing and Releases](./wiki/Publishing-and-Releases.md)
+- [FAQ](./wiki/FAQ.md)
+- [Roadmap](./wiki/Roadmap.md)
 
-## Release positioning
+Community and governance docs:
 
-**A framework-agnostic, accessible CSS interaction primitive for buttons, cards, and icon controls with token-driven theming.**
-
----
+- [Contributing](./CONTRIBUTING.md)
+- [Code of Conduct](./CODE_OF_CONDUCT.md)
+- [Security Policy](./SECURITY.md)
 
 ## Package
 
-Package name:
-
-- `interactive-surface-css`
+- Package name: `interactive-surface-css`
+- Style entry: `interactive-surface.css`
+- JS entry: `index.js` (imports CSS)
 
 Install:
 
@@ -34,62 +43,27 @@ Import:
 import "interactive-surface-css";
 ```
 
-Or import the stylesheet directly:
+Or import CSS directly:
 
 ```js
 import "interactive-surface-css/interactive-surface.css";
 ```
 
-CDN (no build step):
+CDN:
 
 ```html
-<link
-  rel="stylesheet"
-  href="https://cdn.jsdelivr.net/npm/interactive-surface-css@1.0.0/interactive-surface.css"
-/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/interactive-surface-css@1.0.0/interactive-surface.css" />
+<link rel="stylesheet" href="https://unpkg.com/interactive-surface-css@1.0.0/interactive-surface.css" />
 ```
 
-```html
-<link
-  rel="stylesheet"
-  href="https://unpkg.com/interactive-surface-css@1.0.0/interactive-surface.css"
-/>
-```
-
----
-
-## What it provides
-
-State model:
-
-- Base
-- Hover
-- Focus-visible
-- Active/toggled (`.is-active` or `[aria-pressed="true"]`)
-- Press (`:active`)
-- Disabled (`.is-disabled`, `:disabled`, `[aria-disabled="true"]`)
-
-Core behavior:
-
-- Elevation and shadow hierarchy (hover > active > base)
-- Tactile press feedback
-- Keyboard-visible focus ring
-- Reduced-motion support
-- High-contrast and forced-colors support
-- Touch-friendly defaults (`touch-action: manipulation`, 44x44 icon target)
-
----
-
-## Quick start
+## Quick Start
 
 ```html
 <button class="interactive-surface">Save</button>
 ```
 
 ```html
-<button class="interactive-surface size-lg variant-primary">
-  Continue
-</button>
+<button class="interactive-surface size-lg variant-primary">Continue</button>
 ```
 
 ```html
@@ -98,25 +72,7 @@ Core behavior:
 </button>
 ```
 
-Demo page:
-
-- `example.html`
-
----
-
-## Import
-
-```css
-@import "interactive-surface-css/interactive-surface.css";
-```
-
-Or with JS bundlers:
-
-```js
-import "interactive-surface-css/interactive-surface.css";
-```
-
----
+Demo page: `example.html`
 
 ## Class API
 
@@ -124,18 +80,24 @@ Base:
 
 - `.interactive-surface`
 
-Size variants:
+Size modifiers:
 
 - `.size-sm`
 - `.size-lg`
-- `.size-md` is implicit default (no class needed)
+- medium is default when no size class is set
 
 State helpers:
 
 - `.is-active`
 - `.is-disabled`
 
-Visual variants (brightness tuning only):
+Semantic states:
+
+- `[aria-pressed="true"]`
+- `[aria-disabled="true"]`
+- `:disabled`
+
+Visual variants:
 
 - `.variant-primary`
 - `.variant-secondary`
@@ -144,123 +106,31 @@ Visual variants (brightness tuning only):
 - `.variant-warning`
 - `.variant-danger`
 
-Icon micro pattern:
+Icon pattern:
 
 - `.icon-only`
 
----
+## Token Contract
 
-## Token contract
+Preferred token namespace:
 
-Preferred tokens:
+- `--interactive-surface-*`
 
-- `--interactive-surface-lift-base`
-- `--interactive-surface-lift-hover`
-- `--interactive-surface-lift-active`
-- `--interactive-surface-shadow-base`
-- `--interactive-surface-shadow-hover`
-- `--interactive-surface-shadow-active`
-- `--interactive-surface-darken-hover`
-- `--interactive-surface-darken-active`
-- `--interactive-surface-motion-default`
-- `--interactive-surface-motion-press`
-- `--interactive-surface-ease-standard`
-- `--interactive-surface-ease-press`
-- `--interactive-surface-bg`
-- `--interactive-surface-fg`
-- `--interactive-surface-border-color`
-- `--interactive-surface-border-width`
-- `--interactive-surface-radius`
-- `--interactive-surface-focus-ring-color`
-- `--interactive-surface-focus-ring-width`
-- `--interactive-surface-focus-ring-offset`
-- `--interactive-surface-disabled-opacity`
+The package also supports legacy fallback tokens and semantic fallback tokens. Full details and examples are in [Token Reference](./wiki/Token-Reference.md).
 
-Legacy fallback tokens (still supported):
+## Accessibility
 
-- `--lift-base`, `--lift-hover`, `--lift-active`
-- `--shadow-base`, `--shadow-hover`, `--shadow-active`
-- `--surface-darken-hover`, `--surface-darken-active`
-- `--motion-default`, `--motion-press`
-- `--ease-standard`, `--ease-press`
+Built-in support includes:
 
-Also recognized as semantic color fallbacks:
+- `:focus-visible` behavior with fallback handling
+- reduced-motion preference handling
+- high-contrast and forced-colors handling
+- ARIA pressed/disabled styling
+- 44x44 minimum target size for `.icon-only`
 
-- `--surface-bg`, `--bg-surface`
-- `--surface-fg`, `--text-primary`
-- `--surface-border`, `--border-color`
-- `--focus-ring`
-
-Important:
-
-- The file does not define global `:root` token defaults.
-- Defaults are resolved inline with fallback chains, so it can work standalone while still being easy to override.
-
----
-
-## Theming examples
-
-Global theme values:
-
-```css
-:root {
-  --interactive-surface-bg: #0f172a;
-  --interactive-surface-fg: #e2e8f0;
-  --interactive-surface-border-color: #334155;
-  --interactive-surface-focus-ring-color: #38bdf8;
-  --interactive-surface-radius: 12px;
-}
-```
-
-Per-component override:
-
-```css
-.product-card .interactive-surface {
-  --interactive-surface-lift-hover: -6px;
-  --interactive-surface-shadow-hover: 0 14px 30px rgb(0 0 0 / 32%);
-}
-```
-
----
-
-## Accessibility behavior
-
-- Uses `:focus-visible` with `:focus` fallback for browsers without `:focus-visible`
-- Honors `prefers-reduced-motion: reduce`
-- Supports `prefers-contrast: more`
-- Supports `forced-colors: active` with system colors
-- Supports semantic state attributes:
-  - `[aria-pressed="true"]` -> active style
-  - `[aria-disabled="true"]` -> disabled style
-- `icon-only` enforces a minimum 44px target size
-
-Note for semantics:
-
-- Prefer native interactive elements (`<button>`, `<a>`) whenever possible.
-- If using non-semantic elements (`<div>`), provide proper roles and keyboard handling in your component code.
-
----
-
-## Browser confidence
-
-Validated via Playwright cross-browser spec:
-
-- Chromium
-- Firefox
-- WebKit
-
-Validation includes hover/focus/active/disabled states and reduced-motion behavior.
-
-Spec files (package-local):
-
-- `tests/interactive-surface.spec.ts`
-- `tests/example.spec.ts`
-
----
+See [Accessibility](./wiki/Accessibility.md) for implementation guidance.
 
 ## Testing
-
-From the package root (`Interactive-Surface-CSS`):
 
 ```bash
 npm run lint:css
@@ -269,24 +139,31 @@ npm run test:chromium
 npm run pack:dry
 ```
 
-Publish checklist:
+## Publishing
 
-1. Bump version in `package.json`
-2. Update `CHANGELOG.md`
-3. Run `npm run lint:css` and `npm test`
-4. Run `npm run pack:dry` and verify package contents
-5. Authenticate once on this machine: `npm adduser`
-6. Publish with `npm publish --access public`
+This repo is configured for release-driven npm publish through GitHub Actions at `.github/workflows/npm-publish.yml`.
+
+Release checklist:
+
+1. Add repository secret `NPM_TOKEN` (npm token with publish rights).
+2. Bump `version` in `package.json`.
+3. Update `CHANGELOG.md`.
+4. Push to `main`.
+5. Create and publish a GitHub Release tag (for example `v1.0.1`).
+6. Verify the `Publish to npm` workflow succeeds.
 7. Verify CDN availability:
    - `https://cdn.jsdelivr.net/npm/interactive-surface-css@<version>/interactive-surface.css`
    - `https://unpkg.com/interactive-surface-css@<version>/interactive-surface.css`
 
----
+Manual fallback:
+
+```bash
+npm adduser
+npm publish --access public
+```
 
 ## Guardrail
 
-`interactive-surface` should be the single source of motion on that element.
+`interactive-surface` should be the only transform-based motion owner on its host element.
 
-Avoid applying additional `transform`, `translate`, `scale`, or `rotate` rules directly to the same node.
-
-If additional motion is needed, apply it to a child element instead to prevent conflicts with the built-in press feedback.
+Avoid applying additional `transform`, `translate`, `scale`, or `rotate` rules to the same node. If you need extra animation, apply it to a child element.
