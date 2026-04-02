@@ -53,37 +53,37 @@ Webpack:
 
 1. Install loaders:
 
-```bash
-npm install -D css-loader style-loader
-```
+    ```bash
+    npm install -D css-loader style-loader
+    ```
 
 2. Configure `webpack.config.js`:
 
-```js
-module.exports = {
-  module: {
-    rules: [
-      {
-        test: /\.css$/i,
-        use: ["style-loader", "css-loader"]
+    ```js
+    module.exports = {
+      module: {
+        rules: [
+          {
+            test: /\.css$/i,
+            use: ["style-loader", "css-loader"]
+          }
+        ]
       }
-    ]
-  }
-};
-```
+    };
+   ```
 
 3. Import in your app entry:
 
-```js
-import "interactive-surface-css";
-```
+    ```js
+    import "interactive-surface-css";
+    ```
 
-CDN:
+    CDN:
 
-```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/interactive-surface-css@1.0.0/interactive-surface.css" />
-<link rel="stylesheet" href="https://unpkg.com/interactive-surface-css@1.0.0/interactive-surface.css" />
-```
+    ```html
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/interactive-surface-css@1.0.0/interactive-surface.css" />
+    <link rel="stylesheet" href="https://unpkg.com/interactive-surface-css@1.0.0/interactive-surface.css" />
+    ```
 
 ## Quick Start
 
