@@ -78,12 +78,12 @@ Webpack:
     import "interactive-surface-css";
     ```
 
-    CDN:
+CDN:
 
-    ```html
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/interactive-surface-css@<version>/interactive-surface.css" />
-    <link rel="stylesheet" href="https://unpkg.com/interactive-surface-css@<version>/interactive-surface.css" />
-    ```
+```html
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/interactive-surface-css@1.0.2/interactive-surface.css" />
+<link rel="stylesheet" href="https://unpkg.com/interactive-surface-css@1.0.2/interactive-surface.css" />
+```
 
 ## Quick Start
 
@@ -181,8 +181,8 @@ Release checklist:
 5. Create and publish a GitHub Release tag (for example `v1.0.1`).
 6. Verify the `Publish to npm` workflow succeeds.
 7. Verify CDN availability:
-   - `https://cdn.jsdelivr.net/npm/interactive-surface-css@<version>/interactive-surface.css`
-   - `https://unpkg.com/interactive-surface-css@<version>/interactive-surface.css`
+   - `https://cdn.jsdelivr.net/npm/interactive-surface-css@1.0.2/interactive-surface.css`
+   - `https://unpkg.com/interactive-surface-css@1.0.2/interactive-surface.css`
 
 Manual fallback:
 
