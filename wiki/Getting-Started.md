@@ -33,14 +33,14 @@ import "interactive-surface-css/interactive-surface.css";
 ```html
 <link
   rel="stylesheet"
-  href="https://cdn.jsdelivr.net/npm/interactive-surface-css@1.0.0/interactive-surface.css"
+  href="https://cdn.jsdelivr.net/npm/interactive-surface-css@1.0.2/interactive-surface.css"
 />
 ```
 
 ```html
 <link
   rel="stylesheet"
-  href="https://unpkg.com/interactive-surface-css@1.0.0/interactive-surface.css"
+  href="https://unpkg.com/interactive-surface-css@1.0.2/interactive-surface.css"
 />
 ```
 

@@ -1,6 +1,6 @@
 {
   "name": "interactive-surface-css",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "A framework-agnostic, accessible CSS interaction primitive for buttons, cards, and icon controls with token-driven theming.",
   "keywords": [
     "css",
