@@ -2,4 +2,3 @@ node_modules/
 .npm-cache/
 playwright-report/
 test-results/
-package-lock.json
