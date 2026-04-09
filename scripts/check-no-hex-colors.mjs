@@ -32,5 +32,5 @@ console.error("Hex color literals are not allowed in interactive-surface.css:");
 violations.forEach((violation) => {
   console.error(`- line ${violation.line}: ${violation.value}`);
 });
-console.error("Use rgb(...) or rgba(...) color formats instead.");
+console.error("Use CSS functional color notation instead (for example, rgb(...), rgb(... / <alpha>), or hsl(...)).");
 process.exit(1);
