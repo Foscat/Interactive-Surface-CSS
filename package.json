@@ -1,6 +1,6 @@
 {
   "name": "interactive-surface-css",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "description": "A framework-agnostic, accessible CSS interaction primitive for buttons, cards, and icon controls with token-driven theming.",
   "keywords": [
     "css",
@@ -41,7 +41,8 @@
     },
     "./package.json": "./package.json",
     "./interactive-surface.css": "./interactive-surface.css",
-    "./example.html": "./example.html"
+    "./index.html": "./index.html",
+    "./example.html": "./index.html"
   },
   "sideEffects": [
     "./index.js",
@@ -55,17 +56,18 @@
     "README.md",
     "CHANGELOG.md",
     "LICENSE",
-    "example.html"
+    "index.html"
   ],
   "engines": {
     "node": ">=18"
   },
   "scripts": {
+    "check:no-hex-colors": "node ./scripts/check-no-hex-colors.mjs",
     "lint:css": "stylelint interactive-surface.css",
     "test": "playwright test --config=./playwright.config.mjs",
     "test:chromium": "playwright test --config=./playwright.config.mjs --project=chromium",
     "pack:dry": "npm pack --dry-run --cache ./.npm-cache",
-    "prepublishOnly": "npm run lint:css && npm test && npm run pack:dry"
+    "prepublishOnly": "npm run check:no-hex-colors && npm run lint:css && npm test && npm run pack:dry"
   },
   "devDependencies": {
     "@playwright/test": "^1.57.0",

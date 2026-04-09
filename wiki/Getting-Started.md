@@ -33,14 +33,14 @@ import "interactive-surface-css/interactive-surface.css";
 ```html
 <link
   rel="stylesheet"
-  href="https://cdn.jsdelivr.net/npm/interactive-surface-css@1.0.2/interactive-surface.css"
+  href="https://cdn.jsdelivr.net/npm/interactive-surface-css@latest/interactive-surface.css"
 />
 ```
 
 ```html
 <link
   rel="stylesheet"
-  href="https://unpkg.com/interactive-surface-css@1.0.2/interactive-surface.css"
+  href="https://unpkg.com/interactive-surface-css@latest/interactive-surface.css"
 />
 ```
 
@@ -91,10 +91,10 @@ That one class gives the element:
 
 ```css
 :root {
-  --interactive-surface-bg: #0f172a;
-  --interactive-surface-fg: #e2e8f0;
-  --interactive-surface-border-color: #334155;
-  --interactive-surface-focus-ring-color: #38bdf8;
+  --interactive-surface-bg: rgb(15 23 42);
+  --interactive-surface-fg: rgb(226 232 240);
+  --interactive-surface-border-color: rgb(51 65 85);
+  --interactive-surface-focus-ring-color: rgb(56 189 248);
   --interactive-surface-radius: 12px;
 }
 ```

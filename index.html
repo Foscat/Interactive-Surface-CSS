@@ -1,0 +1,2173 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Interactive Surface Library Demo</title>
+
+    <link rel="stylesheet" href="./interactive-surface.css" />
+
+    <style id="demoThemeStyles">
+      /* Theme tokens: every rendered color in this file resolves through variables. */
+      :root {
+        /* Package tokens mirrored from interactive-surface.css */
+        --interactive-surface-bg: rgb(255 255 255);
+        --interactive-surface-fg: rgb(16 42 67);
+        --interactive-surface-border-color: rgb(203 215 227);
+        --interactive-surface-radius: 14px;
+        --interactive-surface-focus-ring-color: rgb(30 91 240);
+
+        /* Shared RGB triplets for alpha-based tokens */
+        --rgb-ink-primary: 16 42 67;
+        --rgb-surface-light: 255 255 255;
+        --rgb-swatch-border: 15 23 42;
+
+        /* Page foundation */
+        --bg-app: rgb(244 248 251);
+        --bg-panel: rgb(var(--rgb-surface-light) / 84%);
+        --text-primary: rgb(16 42 67);
+        --text-secondary: rgb(72 101 129);
+        --accent-main: rgb(15 79 127);
+        --accent-soft: rgb(220 232 242);
+        --accent-highlight: rgb(30 91 240);
+
+        /* Background atmosphere */
+        --bg-gradient-orb-primary: rgb(30 91 240 / 18%);
+        --bg-gradient-orb-secondary: rgb(15 79 127 / 16%);
+        --bg-gradient-lift: rgb(255 255 255);
+
+        /* Demo controls */
+        --surface-btn-bg: rgb(223 233 243);
+        --surface-btn-fg: rgb(16 42 67);
+        --surface-btn-border: rgb(177 195 212);
+        --demo-readout-border: rgb(var(--rgb-ink-primary) / 18%);
+        --demo-readout-bg: rgb(var(--rgb-surface-light) / 66%);
+        --jump-link-border: rgb(var(--rgb-ink-primary) / 20%);
+        --jump-link-bg: rgb(var(--rgb-surface-light) / 75%);
+
+        /* Panel and content surfaces */
+        --panel-border: rgb(var(--rgb-ink-primary) / 14%);
+        --token-card-border: rgb(var(--rgb-ink-primary) / 12%);
+        --token-card-bg: rgb(var(--rgb-surface-light) / 82%);
+        --swatch-border: rgb(var(--rgb-swatch-border) / 20%);
+        --code-strip-border: rgb(var(--rgb-ink-primary) / 25%);
+        --code-strip-bg: rgb(var(--rgb-surface-light) / 66%);
+        --compare-block-border: rgb(var(--rgb-ink-primary) / 16%);
+        --compare-block-bg: rgb(var(--rgb-surface-light) / 68%);
+        --plain-btn-border: rgb(143 166 188);
+        --plain-btn-bg: rgb(231 238 245);
+        --plain-btn-fg: rgb(18 39 57);
+        --pattern-border: rgb(var(--rgb-ink-primary) / 14%);
+        --pattern-bg: rgb(var(--rgb-surface-light) / 76%);
+        --kbd-border: rgb(var(--rgb-ink-primary) / 25%);
+
+        /* Documentation UI */
+        --docs-link-border: rgb(var(--rgb-ink-primary) / 18%);
+        --docs-link-bg: rgb(var(--rgb-surface-light) / 72%);
+        --docs-outline-border: rgb(var(--rgb-ink-primary) / 18%);
+        --docs-outline-bg: rgb(var(--rgb-surface-light) / 66%);
+        --docs-error: rgb(184 61 47);
+        --markdown-pre-border: rgb(var(--rgb-ink-primary) / 18%);
+        --markdown-pre-bg: rgb(var(--rgb-surface-light) / 76%);
+        --markdown-inline-code-border: rgb(var(--rgb-ink-primary) / 18%);
+        --markdown-inline-code-bg: rgb(var(--rgb-surface-light) / 66%);
+        --editor-border: rgb(var(--rgb-ink-primary) / 18%);
+        --editor-bg: rgb(var(--rgb-surface-light) / 74%);
+        --editor-input-bg: rgb(var(--rgb-surface-light) / 92%);
+        --editor-input-border: rgb(var(--rgb-ink-primary) / 22%);
+        --editor-muted: var(--text-secondary);
+        --editor-success: rgb(11 122 76);
+        --editor-error: var(--docs-error);
+
+        /* Variant palette for interactive surfaces */
+        --variant-primary-bg: rgb(15 79 127);
+        --variant-primary-fg: rgb(244 251 255);
+        --variant-primary-border: rgb(15 79 127);
+        --variant-secondary-bg: rgb(198 220 237);
+        --variant-secondary-fg: rgb(20 48 70);
+        --variant-secondary-border: rgb(155 183 206);
+        --variant-accent-bg: rgb(201 240 237);
+        --variant-accent-fg: rgb(6 74 79);
+        --variant-accent-border: rgb(105 195 200);
+        --variant-warning-bg: rgb(255 227 186);
+        --variant-warning-fg: rgb(102 61 0);
+        --variant-warning-border: rgb(218 172 103);
+        --variant-danger-bg: rgb(255 211 213);
+        --variant-danger-fg: rgb(116 32 32);
+        --variant-danger-border: rgb(215 125 130);
+        --variant-subtle-bg: rgb(219 231 243);
+        --variant-subtle-fg: rgb(26 52 75);
+        --variant-subtle-border: rgb(173 191 206);
+
+        /* Icon role colors */
+        --icon-light: rgb(212 175 55);
+        --icon-dark: rgb(0 0 0);
+        --icon-accessibility: rgb(59 130 246);
+      }
+
+      /* Dark theme overrides: keep the same semantic variable interface. */
+      body[data-theme="dark"] {
+        --interactive-surface-bg: rgb(24, 38, 49);
+        --interactive-surface-fg: rgb(226, 237, 245);
+        --interactive-surface-border-color: rgb(56, 82, 104);
+        --interactive-surface-focus-ring-color: rgb(109, 168, 255);
+
+        /* Shared RGB triplets for alpha-based dark tokens */
+        --rgb-ink-contrast: 159 187 209;
+        --rgb-surface-panel-dark: 13 26 38;
+        --rgb-surface-elevated-dark: 12 27 40;
+        --rgb-surface-deep-dark: 14 30 44;
+        --rgb-surface-readout-dark: 17 36 52;
+
+        --bg-app: rgb(9, 19, 28);
+        --bg-panel: rgb(var(--rgb-surface-panel-dark) / 82%);
+        --text-primary: rgb(226, 237, 245);
+        --text-secondary: rgb(159, 187, 209);
+        --accent-main: rgb(91, 164, 255);
+        --accent-soft: rgb(29, 52, 71);
+        --accent-highlight: rgb(156 196 255);
+
+        --bg-gradient-orb-primary: rgb(79 145 255 / 22%);
+        --bg-gradient-orb-secondary: rgb(43 122 190 / 20%);
+        --bg-gradient-lift: rgb(143, 183, 221);
+
+        --surface-btn-bg: rgb(35 56 74);
+        --surface-btn-fg: rgb(226 237 245);
+        --surface-btn-border: rgb(76 104 127);
+        --demo-readout-border: rgb(var(--rgb-ink-contrast) / 30%);
+        --demo-readout-bg: rgb(var(--rgb-surface-readout-dark) / 58%);
+        --jump-link-border: rgb(var(--rgb-ink-contrast) / 34%);
+        --jump-link-bg: rgb(var(--rgb-surface-deep-dark) / 80%);
+
+        --panel-border: rgb(var(--rgb-ink-contrast) / 24%);
+        --token-card-border: rgb(var(--rgb-ink-contrast) / 24%);
+        --token-card-bg: rgb(var(--rgb-surface-elevated-dark) / 82%);
+        --swatch-border: rgb(var(--rgb-ink-contrast) / 30%);
+        --code-strip-border: rgb(var(--rgb-ink-contrast) / 32%);
+        --code-strip-bg: rgb(var(--rgb-surface-elevated-dark) / 72%);
+        --compare-block-border: rgb(var(--rgb-ink-contrast) / 24%);
+        --compare-block-bg: rgb(var(--rgb-surface-deep-dark) / 70%);
+        --plain-btn-border: rgb(85 113 139);
+        --plain-btn-bg: rgb(31 52 70);
+        --plain-btn-fg: rgb(212 228 239);
+        --pattern-border: rgb(var(--rgb-ink-contrast) / 24%);
+        --pattern-bg: rgb(var(--rgb-surface-panel-dark) / 80%);
+        --kbd-border: rgb(var(--rgb-ink-contrast) / 34%);
+
+        --docs-link-border: rgb(var(--rgb-ink-contrast) / 34%);
+        --docs-link-bg: rgb(var(--rgb-surface-panel-dark) / 82%);
+        --docs-outline-border: rgb(var(--rgb-ink-contrast) / 34%);
+        --docs-outline-bg: rgb(var(--rgb-surface-panel-dark) / 78%);
+        --docs-error: rgb(255 159 149);
+        --markdown-pre-border: rgb(var(--rgb-ink-contrast) / 30%);
+        --markdown-pre-bg: rgb(var(--rgb-surface-elevated-dark) / 84%);
+        --markdown-inline-code-border: rgb(var(--rgb-ink-contrast) / 32%);
+        --markdown-inline-code-bg: rgb(var(--rgb-surface-panel-dark) / 80%);
+        --editor-border: rgb(var(--rgb-ink-contrast) / 30%);
+        --editor-bg: rgb(var(--rgb-surface-panel-dark) / 86%);
+        --editor-input-bg: rgb(var(--rgb-surface-elevated-dark) / 88%);
+        --editor-input-border: rgb(var(--rgb-ink-contrast) / 36%);
+        --editor-muted: var(--text-secondary);
+        --editor-success: rgb(117 255 196);
+        --editor-error: var(--docs-error);
+
+        --variant-primary-bg: rgb(33 93 141);
+        --variant-primary-fg: rgb(244 251 255);
+        --variant-primary-border: rgb(47 118 173);
+        --variant-secondary-bg: rgb(35 62 84);
+        --variant-secondary-fg: rgb(212 228 239);
+        --variant-secondary-border: rgb(76 104 127);
+        --variant-accent-bg: rgb(29 73 79);
+        --variant-accent-fg: rgb(209 255 255);
+        --variant-accent-border: rgb(45 107 115);
+        --variant-warning-bg: rgb(95 68 36);
+        --variant-warning-fg: rgb(255 235 200);
+        --variant-warning-border: rgb(151 115 74);
+        --variant-danger-bg: rgb(90 40 40);
+        --variant-danger-fg: rgb(255 218 218);
+        --variant-danger-border: rgb(141 65 65);
+        --variant-subtle-bg: rgb(37 58 78);
+        --variant-subtle-fg: rgb(216 233 246);
+        --variant-subtle-border: rgb(76 104 127);
+
+        --icon-light: rgb(255 255 255);
+        --icon-dark: rgb(30 58 138);
+        --icon-accessibility: rgb(156 163 175);
+      }
+
+      /* Global reset. */
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      /* Page-level layout and atmosphere. */
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: "Avenir Next", "Segoe UI", "Helvetica Neue", sans-serif;
+        color: var(--text-primary);
+        background:
+          radial-gradient(circle at 10% 10%, var(--bg-gradient-orb-primary), transparent 40%),
+          radial-gradient(circle at 90% 14%, var(--bg-gradient-orb-secondary), transparent 35%),
+          linear-gradient(165deg, color-mix(in srgb, var(--bg-app), var(--bg-gradient-lift) 14%) 0%, var(--bg-app) 100%);
+        transition: background-color 180ms linear, color 180ms linear;
+      }
+
+      main {
+        width: min(1160px, 94vw);
+        margin: 0 auto;
+        padding: clamp(2rem, 3.8vw, 3.6rem) 0 4rem;
+      }
+
+      /* Hero section and top controls. */
+      .hero {
+        margin-bottom: 1.3rem;
+      }
+
+      .hero h1 {
+        margin: 0;
+        font-size: clamp(1.8rem, 4vw, 3rem);
+        letter-spacing: 0.01em;
+      }
+
+      .hero p {
+        margin: 0.55rem 0 1rem;
+        max-width: 74ch;
+        line-height: 1.55;
+        color: var(--text-secondary);
+      }
+
+      .hero-tools {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.7rem;
+      }
+
+      .surface-btn {
+        --interactive-surface-bg: var(--surface-btn-bg);
+        --interactive-surface-fg: var(--surface-btn-fg);
+        --interactive-surface-border-color: var(--surface-btn-border);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.45rem;
+        min-height: 46px;
+        padding: 0.78rem 1rem;
+        font-weight: 600;
+      }
+
+      .surface-btn .meta {
+        font-size: 0.76rem;
+        opacity: 0.75;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+      }
+
+      .demo-readout {
+        display: inline-flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.6rem;
+        padding: 0.56rem 0.75rem;
+        border-radius: 999px;
+        border: 1px solid var(--demo-readout-border);
+        background: var(--demo-readout-bg);
+        color: var(--text-secondary);
+        font-size: 0.82rem;
+      }
+
+      .jump-nav {
+        position: sticky;
+        top: 0.6rem;
+        z-index: 20;
+        margin-top: 0;
+      }
+
+      .jump-nav h2 {
+        margin-bottom: 0.65rem;
+      }
+
+      .jump-links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+      }
+
+      .jump-link {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.4rem 0.7rem;
+        border-radius: 999px;
+        border: 1px solid var(--jump-link-border);
+        color: var(--text-primary);
+        text-decoration: none;
+        font-size: 0.82rem;
+        font-weight: 600;
+        background: var(--jump-link-bg);
+      }
+
+      .jump-link:hover,
+      .jump-link:focus-visible {
+        border-color: var(--accent-highlight);
+        outline: none;
+      }
+
+      /* Shared panel container. */
+      .panel {
+        margin-top: 1rem;
+        padding: clamp(1rem, 2vw, 1.4rem);
+        border: 1px solid var(--panel-border);
+        border-radius: 20px;
+        background: var(--bg-panel);
+        -webkit-backdrop-filter: blur(5px);
+        backdrop-filter: blur(5px);
+      }
+
+      .panel h2 {
+        margin: 0;
+        font-size: 1.2rem;
+      }
+
+      .section-lead {
+        margin: 0.55rem 0 1rem;
+        color: var(--text-secondary);
+        line-height: 1.45;
+      }
+
+      /* Token map cards. */
+      .token-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+        gap: 0.75rem;
+      }
+
+      .token-card {
+        display: grid;
+        gap: 0.45rem;
+        padding: 0.8rem;
+        border: 1px solid var(--token-card-border);
+        border-radius: 14px;
+        background: var(--token-card-bg);
+      }
+
+      .swatch {
+        width: 100%;
+        height: 34px;
+        border-radius: 9px;
+        border: 1px solid var(--swatch-border);
+      }
+
+      .swatch-interactive-surface-bg {
+        background: var(--interactive-surface-bg);
+      }
+
+      .swatch-interactive-surface-fg {
+        background: var(--interactive-surface-fg);
+      }
+
+      .swatch-interactive-surface-border-color {
+        background: var(--interactive-surface-border-color);
+      }
+
+      .swatch-interactive-surface-focus-ring-color {
+        background: var(--interactive-surface-focus-ring-color);
+      }
+
+      .swatch-accent-main {
+        background: var(--accent-main);
+      }
+
+      .swatch-accent-soft {
+        background: var(--accent-soft);
+      }
+
+      .token-name {
+        margin: 0;
+        font-size: 0.86rem;
+        font-family: "Consolas", "SFMono-Regular", "Menlo", monospace;
+      }
+
+      .token-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.45rem;
+      }
+
+      .token-edit-btn {
+        min-width: 34px;
+        min-height: 34px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.35rem;
+        line-height: 0;
+      }
+
+      .token-edit-icon {
+        display: block;
+        width: 14px;
+        height: 14px;
+        fill: currentcolor;
+      }
+
+      .token-value {
+        margin: 0;
+        color: var(--text-secondary);
+        font-size: 0.83rem;
+      }
+
+      .token-tools {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.6rem;
+        margin-top: 0.95rem;
+      }
+
+      .file-control {
+        position: relative;
+        overflow: hidden;
+      }
+
+      .file-control input {
+        position: absolute;
+        inset: 0;
+        opacity: 0;
+        cursor: pointer;
+      }
+
+      .token-modal {
+        position: fixed;
+        inset: 0;
+        z-index: 60;
+        display: grid;
+        place-items: center;
+        padding: clamp(0.75rem, 3vw, 1.4rem);
+      }
+
+      .token-modal[hidden] {
+        display: none;
+      }
+
+      .token-modal-backdrop {
+        position: absolute;
+        inset: 0;
+        border: 0;
+        background: rgb(var(--rgb-swatch-border) / 46%);
+        -webkit-backdrop-filter: blur(2px);
+        backdrop-filter: blur(2px);
+      }
+
+      .token-modal-panel {
+        position: relative;
+        width: min(650px, 100%);
+        max-height: min(86vh, 760px);
+        overflow: auto;
+        padding: 0.9rem;
+        border: 1px solid var(--editor-border);
+        border-radius: 16px;
+        background: var(--editor-bg);
+      }
+
+      .token-editor {
+        margin: 0;
+        padding: 0.85rem;
+        border: 1px solid var(--editor-border);
+        border-radius: 14px;
+        background: var(--editor-bg);
+        display: grid;
+        gap: 0.7rem;
+      }
+
+      .token-editor-head {
+        display: grid;
+        gap: 0.2rem;
+      }
+
+      .token-editor-head p {
+        margin: 0;
+        color: var(--editor-muted);
+        font-size: 0.82rem;
+      }
+
+      .token-editor-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 0.65rem;
+      }
+
+      .token-field {
+        display: grid;
+        gap: 0.35rem;
+      }
+
+      .token-field label {
+        font-size: 0.82rem;
+        color: var(--editor-muted);
+      }
+
+      .token-field input {
+        width: 100%;
+        min-height: 40px;
+        padding: 0.5rem 0.62rem;
+        border: 1px solid var(--editor-input-border);
+        border-radius: 10px;
+        background: var(--editor-input-bg);
+        color: var(--text-primary);
+      }
+
+      .token-field input:focus-visible {
+        outline: 2px solid var(--accent-highlight);
+        outline-offset: 1px;
+      }
+
+      .token-editor-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.55rem;
+      }
+
+      .token-status {
+        margin: 0;
+        font-size: 0.82rem;
+        color: var(--editor-muted);
+      }
+
+      .token-status.is-success {
+        color: var(--editor-success);
+      }
+
+      .token-status.is-error {
+        color: var(--editor-error);
+      }
+
+      .code-strip {
+        margin-top: 0.85rem;
+        padding: 0.7rem 0.8rem;
+        border-radius: 12px;
+        border: 1px dashed var(--code-strip-border);
+        font-family: "Consolas", "SFMono-Regular", "Menlo", monospace;
+        font-size: 0.82rem;
+        background: var(--code-strip-bg);
+      }
+
+      .button-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+        gap: 0.8rem;
+      }
+
+      /* Variant mapping for interactive-surface instances. */
+      .variant-primary {
+        --interactive-surface-bg: var(--variant-primary-bg);
+        --interactive-surface-fg: var(--variant-primary-fg);
+        --interactive-surface-border-color: var(--variant-primary-border);
+      }
+
+      .variant-secondary {
+        --interactive-surface-bg: var(--variant-secondary-bg);
+        --interactive-surface-fg: var(--variant-secondary-fg);
+        --interactive-surface-border-color: var(--variant-secondary-border);
+      }
+
+      .variant-accent {
+        --interactive-surface-bg: var(--variant-accent-bg);
+        --interactive-surface-fg: var(--variant-accent-fg);
+        --interactive-surface-border-color: var(--variant-accent-border);
+      }
+
+      .variant-warning {
+        --interactive-surface-bg: var(--variant-warning-bg);
+        --interactive-surface-fg: var(--variant-warning-fg);
+        --interactive-surface-border-color: var(--variant-warning-border);
+      }
+
+      .variant-danger {
+        --interactive-surface-bg: var(--variant-danger-bg);
+        --interactive-surface-fg: var(--variant-danger-fg);
+        --interactive-surface-border-color: var(--variant-danger-border);
+      }
+
+      .variant-subtle {
+        --interactive-surface-bg: var(--variant-subtle-bg);
+        --interactive-surface-fg: var(--variant-subtle-fg);
+        --interactive-surface-border-color: var(--variant-subtle-border);
+      }
+
+      .light-icon {
+        color: var(--icon-light);
+      }
+
+      .dark-icon {
+        color: var(--icon-dark);
+      }
+
+      .accessibility-icon {
+        color: var(--icon-accessibility);
+      }
+
+      /* Card and icon showcase layouts. */
+      .card-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(235px, 1fr));
+        gap: 0.85rem;
+      }
+
+      .surface-card {
+        text-align: left;
+        padding: 1rem;
+      }
+
+      .surface-card strong {
+        display: block;
+        margin-bottom: 0.35rem;
+        font-size: 0.97rem;
+      }
+
+      .surface-card p {
+        margin: 0;
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+        line-height: 1.4;
+      }
+
+      .surface-card.variant-primary p {
+        color: var(--interactive-surface-fg);
+      }
+
+      .icon-demo {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(148px, 1fr));
+        gap: 0.8rem;
+      }
+
+      .icon-tile {
+        display: grid;
+        justify-items: start;
+        gap: 0.45rem;
+      }
+
+      .icon-glyph {
+        font-size: 0.82rem;
+        font-weight: 800;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+      }
+
+      .icon-label {
+        margin: 0;
+        font-size: 0.78rem;
+        color: var(--text-secondary);
+        font-family: "Consolas", "SFMono-Regular", "Menlo", monospace;
+      }
+
+      /* Accessibility comparison blocks. */
+      .a11y-compare {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 0.85rem;
+      }
+
+      .compare-block {
+        padding: 0.9rem;
+        border-radius: 14px;
+        border: 1px solid var(--compare-block-border);
+        background: var(--compare-block-bg);
+      }
+
+      .compare-block h3 {
+        margin: 0 0 0.6rem;
+        font-size: 0.98rem;
+      }
+
+      .compare-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.6rem;
+      }
+
+      .plain-btn {
+        border: 1px solid var(--plain-btn-border);
+        border-radius: 8px;
+        background: var(--plain-btn-bg);
+        color: var(--plain-btn-fg);
+        padding: 0.66rem 0.85rem;
+        font-weight: 600;
+      }
+
+      .a11y-list {
+        margin: 0.75rem 0 0;
+        padding-left: 1.1rem;
+        color: var(--text-secondary);
+        line-height: 1.5;
+      }
+
+      /* Composition pattern cards. */
+      .creative-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 0.85rem;
+      }
+
+      .pattern {
+        padding: 0.95rem;
+        border-radius: 14px;
+        border: 1px solid var(--pattern-border);
+        background: var(--pattern-bg);
+      }
+
+      .pattern h3 {
+        margin: 0 0 0.55rem;
+        font-size: 0.98rem;
+      }
+
+      .pattern .row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.55rem;
+      }
+
+      .kbd {
+        padding: 0.1rem 0.35rem;
+        border-radius: 6px;
+        border: 1px solid var(--kbd-border);
+        font-size: 0.72rem;
+        font-family: "Consolas", "SFMono-Regular", "Menlo", monospace;
+      }
+
+      .command-launcher-btn {
+        width: 100%;
+        justify-content: space-between;
+      }
+
+      .playlist-card-btn {
+        width: 100%;
+      }
+
+      /* Embedded README and docs-link system. */
+      .docs-shell {
+        display: grid;
+        gap: 1rem;
+      }
+
+      .docs-link-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 0.5rem;
+      }
+
+      .docs-link {
+        display: block;
+        padding: 0.6rem 0.7rem;
+        border: 1px solid var(--docs-link-border);
+        border-radius: 10px;
+        color: var(--text-primary);
+        background: var(--docs-link-bg);
+        text-decoration: none;
+        font-size: 0.9rem;
+        font-weight: 600;
+      }
+
+      .docs-link:hover,
+      .docs-link:focus-visible {
+        outline: none;
+        border-color: var(--accent-highlight);
+      }
+
+      .docs-outline {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+      }
+
+      .docs-outline-link {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.35rem 0.62rem;
+        border: 1px solid var(--docs-outline-border);
+        border-radius: 8px;
+        color: var(--text-secondary);
+        text-decoration: none;
+        font-size: 0.8rem;
+        background: var(--docs-outline-bg);
+      }
+
+      .docs-outline-link:hover,
+      .docs-outline-link:focus-visible {
+        outline: none;
+        border-color: var(--accent-highlight);
+        color: var(--text-primary);
+      }
+
+      .docs-placeholder {
+        margin: 0;
+        color: var(--text-secondary);
+      }
+
+      .docs-error {
+        margin: 0;
+        color: var(--docs-error);
+      }
+
+      .markdown-body {
+        display: grid;
+        gap: 0.9rem;
+      }
+
+      .markdown-body > * {
+        margin: 0;
+      }
+
+      .markdown-body h1,
+      .markdown-body h2,
+      .markdown-body h3,
+      .markdown-body h4 {
+        scroll-margin-top: 5.8rem;
+      }
+
+      .markdown-body h1 {
+        font-size: 1.55rem;
+      }
+
+      .markdown-body h2 {
+        margin-top: 0.6rem;
+        font-size: 1.25rem;
+      }
+
+      .markdown-body h3 {
+        font-size: 1.05rem;
+      }
+
+      .markdown-body p,
+      .markdown-body li {
+        line-height: 1.55;
+      }
+
+      .markdown-body ul,
+      .markdown-body ol {
+        margin: 0;
+        padding-left: 1.2rem;
+      }
+
+      .markdown-body pre {
+        margin: 0;
+        padding: 0.75rem 0.85rem;
+        border-radius: 10px;
+        border: 1px solid var(--markdown-pre-border);
+        background: var(--markdown-pre-bg);
+        overflow-x: auto;
+      }
+
+      .markdown-body code {
+        font-family: "Consolas", "SFMono-Regular", "Menlo", monospace;
+        font-size: 0.86em;
+      }
+
+      .markdown-body :not(pre) > code {
+        padding: 0.12rem 0.3rem;
+        border-radius: 6px;
+        border: 1px solid var(--markdown-inline-code-border);
+        background: var(--markdown-inline-code-bg);
+      }
+
+      .markdown-body a {
+        color: var(--accent-highlight);
+      }
+
+      /* Reduced-motion safeguard overrides. */
+      body[data-motion="reduced"] .interactive-surface {
+        transition: none;
+      }
+
+      body[data-motion="reduced"] .interactive-surface:hover,
+      body[data-motion="reduced"] .interactive-surface:focus-visible,
+      body[data-motion="reduced"] .interactive-surface:active,
+      body[data-motion="reduced"] .interactive-surface.is-active,
+      body[data-motion="reduced"] .interactive-surface[aria-pressed="true"] {
+        transform: none !important;
+        box-shadow: none;
+        filter: none;
+      }
+
+      /* Mobile tuning for controls and compact nav labels. */
+      @media (max-width: 720px) {
+        .jump-nav {
+          position: static;
+        }
+
+        .jump-link,
+        .docs-outline-link {
+          font-size: 0.78rem;
+        }
+
+        .surface-btn {
+          min-height: 44px;
+        }
+
+        .hero-tools {
+          gap: 0.55rem;
+        }
+
+        .token-tools,
+        .token-editor-actions {
+          gap: 0.45rem;
+        }
+      }
+    </style>
+    <style id="userTokenOverrides"></style>
+  </head>
+  <body data-theme="light" data-motion="system">
+    <main>
+      <!-- Hero: library positioning and global demo controls. -->
+      <header class="hero">
+        <h1>Interactive Surface Library</h1>
+        <p>
+          A drop-in CSS interaction primitive for buttons, cards, and icon controls. This page
+          makes each feature visible: token values, state behavior, accessibility outcomes, and
+          creative ways to compose the same primitive.
+        </p>
+
+        <div class="hero-tools">
+          <button id="themeToggle" class="interactive-surface surface-btn variant-secondary" aria-pressed="false">
+            Theme
+            <span class="meta" id="themeState">Light</span>
+          </button>
+          <button id="motionToggle" class="interactive-surface surface-btn variant-subtle" aria-pressed="false">
+            Motion
+            <span class="meta" id="motionState">System</span>
+          </button>
+          <span class="demo-readout">Tokens are shown with live values and color codes.</span>
+        </div>
+      </header>
+
+      <!-- Sticky jump links to keep the long page easy to navigate. -->
+      <nav class="panel jump-nav" aria-label="Page section navigation">
+        <h2>Section navigation</h2>
+        <div class="jump-links" id="demoSectionNav"></div>
+      </nav>
+
+      <!-- Token reference cards keep theme values visible while interacting with controls. -->
+      <section id="token-map" class="panel" data-nav-label="Token map">
+        <h2>Token map: color codes and vars</h2>
+        <p class="section-lead">
+          These are the same variables consumed by <code>interactive-surface.css</code>. Each card
+          includes the variable and its current value in this demo theme.
+        </p>
+        <div class="token-grid">
+          <article class="token-card" data-token="--interactive-surface-bg">
+            <div class="swatch swatch-interactive-surface-bg"></div>
+            <div class="token-row">
+              <p class="token-name">--interactive-surface-bg</p>
+              <button
+                type="button"
+                class="interactive-surface token-edit-btn variant-subtle"
+                data-token-edit
+                aria-label="Edit --interactive-surface-bg"
+              >
+                <svg class="token-edit-icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M3 17.25V21h3.75L17.8 9.95l-3.75-3.75L3 17.25Zm18-11.5a1 1 0 0 0 0-1.42L19.66 3a1 1 0 0 0-1.42 0l-1.8 1.8 3.75 3.75L21 5.75Z"></path>
+                </svg>
+              </button>
+            </div>
+            <p class="token-value" data-token-value></p>
+          </article>
+          <article class="token-card" data-token="--interactive-surface-fg">
+            <div class="swatch swatch-interactive-surface-fg"></div>
+            <div class="token-row">
+              <p class="token-name">--interactive-surface-fg</p>
+              <button
+                type="button"
+                class="interactive-surface token-edit-btn variant-subtle"
+                data-token-edit
+                aria-label="Edit --interactive-surface-fg"
+              >
+                <svg class="token-edit-icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M3 17.25V21h3.75L17.8 9.95l-3.75-3.75L3 17.25Zm18-11.5a1 1 0 0 0 0-1.42L19.66 3a1 1 0 0 0-1.42 0l-1.8 1.8 3.75 3.75L21 5.75Z"></path>
+                </svg>
+              </button>
+            </div>
+            <p class="token-value" data-token-value></p>
+          </article>
+          <article class="token-card" data-token="--interactive-surface-border-color">
+            <div class="swatch swatch-interactive-surface-border-color"></div>
+            <div class="token-row">
+              <p class="token-name">--interactive-surface-border-color</p>
+              <button
+                type="button"
+                class="interactive-surface token-edit-btn variant-subtle"
+                data-token-edit
+                aria-label="Edit --interactive-surface-border-color"
+              >
+                <svg class="token-edit-icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M3 17.25V21h3.75L17.8 9.95l-3.75-3.75L3 17.25Zm18-11.5a1 1 0 0 0 0-1.42L19.66 3a1 1 0 0 0-1.42 0l-1.8 1.8 3.75 3.75L21 5.75Z"></path>
+                </svg>
+              </button>
+            </div>
+            <p class="token-value" data-token-value></p>
+          </article>
+          <article class="token-card" data-token="--interactive-surface-focus-ring-color">
+            <div class="swatch swatch-interactive-surface-focus-ring-color"></div>
+            <div class="token-row">
+              <p class="token-name">--interactive-surface-focus-ring-color</p>
+              <button
+                type="button"
+                class="interactive-surface token-edit-btn variant-subtle"
+                data-token-edit
+                aria-label="Edit --interactive-surface-focus-ring-color"
+              >
+                <svg class="token-edit-icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M3 17.25V21h3.75L17.8 9.95l-3.75-3.75L3 17.25Zm18-11.5a1 1 0 0 0 0-1.42L19.66 3a1 1 0 0 0-1.42 0l-1.8 1.8 3.75 3.75L21 5.75Z"></path>
+                </svg>
+              </button>
+            </div>
+            <p class="token-value" data-token-value></p>
+          </article>
+          <article class="token-card" data-token="--accent-main">
+            <div class="swatch swatch-accent-main"></div>
+            <div class="token-row">
+              <p class="token-name">--accent-main</p>
+              <button
+                type="button"
+                class="interactive-surface token-edit-btn variant-subtle"
+                data-token-edit
+                aria-label="Edit --accent-main"
+              >
+                <svg class="token-edit-icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M3 17.25V21h3.75L17.8 9.95l-3.75-3.75L3 17.25Zm18-11.5a1 1 0 0 0 0-1.42L19.66 3a1 1 0 0 0-1.42 0l-1.8 1.8 3.75 3.75L21 5.75Z"></path>
+                </svg>
+              </button>
+            </div>
+            <p class="token-value" data-token-value></p>
+          </article>
+          <article class="token-card" data-token="--accent-soft">
+            <div class="swatch swatch-accent-soft"></div>
+            <div class="token-row">
+              <p class="token-name">--accent-soft</p>
+              <button
+                type="button"
+                class="interactive-surface token-edit-btn variant-subtle"
+                data-token-edit
+                aria-label="Edit --accent-soft"
+              >
+                <svg class="token-edit-icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M3 17.25V21h3.75L17.8 9.95l-3.75-3.75L3 17.25Zm18-11.5a1 1 0 0 0 0-1.42L19.66 3a1 1 0 0 0-1.42 0l-1.8 1.8 3.75 3.75L21 5.75Z"></path>
+                </svg>
+              </button>
+            </div>
+            <p class="token-value" data-token-value></p>
+          </article>
+        </div>
+        <div class="code-strip">
+          <code>
+            .my-control { --interactive-surface-bg:rgb(15 79 127); --interactive-surface-fg:rgb(244 251 255);
+            --interactive-surface-focus-ring-color:rgb(30 91 240); }
+          </code>
+        </div>
+        <div class="token-tools">
+          <label class="interactive-surface surface-btn variant-secondary size-sm file-control">
+            Import CSS
+            <input id="tokenCssImport" type="file" accept=".css,text/css" />
+          </label>
+          <button id="tokenCssExport" type="button" class="interactive-surface surface-btn variant-primary size-sm">
+            Export CSS
+          </button>
+          <span id="tokenThemeReadout" class="demo-readout">Editing Light theme token overrides.</span>
+        </div>
+      </section>
+
+      <!-- State behavior matrix for primary button interactions. -->
+      <section id="buttons-and-states" class="panel" data-nav-label="Buttons and states">
+        <h2>Buttons and states</h2>
+        <p class="section-lead">Hover, focus, active, pressed, and disabled are all handled by one class.</p>
+        <div class="button-grid">
+          <button class="interactive-surface surface-btn variant-primary">Primary CTA</button>
+          <button class="interactive-surface surface-btn variant-secondary">Secondary</button>
+          <button class="interactive-surface surface-btn variant-accent is-active">Selected (.is-active)</button>
+          <button class="interactive-surface surface-btn variant-warning">Warning</button>
+          <button class="interactive-surface surface-btn variant-danger">Danger</button>
+          <button class="interactive-surface surface-btn variant-subtle" aria-pressed="true">Pressed (ARIA)</button>
+          <button class="interactive-surface surface-btn size-sm">Size SM</button>
+          <button class="interactive-surface surface-btn" disabled>Disabled</button>
+        </div>
+      </section>
+
+      <!-- Card composition examples reuse the same interaction primitive. -->
+      <section id="card-surfaces" class="panel" data-nav-label="Card surfaces">
+        <h2>Card surfaces</h2>
+        <p class="section-lead">The same primitive works for card-like affordances with no extra runtime logic.</p>
+        <div class="card-grid">
+          <button class="interactive-surface surface-card size-lg">
+            <strong>Reusable elevation</strong>
+            <p>One class keeps hover, press, and focus behavior consistent across your system.</p>
+          </button>
+          <button class="interactive-surface surface-card variant-subtle">
+            <strong>Theme-safe defaults</strong>
+            <p>Fallback tokens keep controls usable even before full design-token rollout.</p>
+          </button>
+          <button class="interactive-surface surface-card" aria-pressed="true">
+            <strong>ARIA-aware state</strong>
+            <p>Pressed style can come from semantic attributes instead of custom state classes.</p>
+          </button>
+          <button class="interactive-surface surface-card variant-secondary">
+            <strong>Content-rich cards</strong>
+            <p>Compose text, metadata, and icons while preserving a single interaction model.</p>
+          </button>
+        </div>
+      </section>
+
+      <!-- Icon controls emphasize tap target sizing and role-based color cues. -->
+      <section id="icon-micro-controls" class="panel" data-nav-label="Icon controls">
+        <h2>Icon micro controls</h2>
+        <p class="section-lead">Role-based icon colors can change by mode while keeping a consistent hit target.</p>
+        <div class="icon-demo">
+          <article class="icon-tile">
+            <button class="interactive-surface icon-only variant-secondary" aria-label="Light mode icon">
+              <span class="icon-glyph light-icon" data-icon-role="light">Li</span>
+            </button>
+            <p class="icon-label">light-icon: var(--icon-light)</p>
+          </article>
+          <article class="icon-tile">
+            <button class="interactive-surface icon-only variant-subtle" aria-label="Dark mode icon">
+              <span class="icon-glyph dark-icon" data-icon-role="dark">Da</span>
+            </button>
+            <p class="icon-label">dark-icon: var(--icon-dark)</p>
+          </article>
+          <article class="icon-tile">
+            <button class="interactive-surface icon-only variant-accent" aria-label="Accessibility icon">
+              <span class="icon-glyph accessibility-icon" data-icon-role="accessibility">A11Y</span>
+            </button>
+            <p class="icon-label">accessibility-icon: var(--icon-accessibility)</p>
+          </article>
+          <article class="icon-tile">
+            <button class="interactive-surface icon-only variant-primary" aria-label="Share">
+              <span class="icon-glyph">+</span>
+            </button>
+            <p class="icon-label">icon-only keeps 44px minimum target</p>
+          </article>
+          <article class="icon-tile">
+            <button class="interactive-surface icon-only is-disabled" aria-disabled="true" aria-label="Locked">
+              <span class="icon-glyph">L</span>
+            </button>
+            <p class="icon-label">disabled + aria-disabled support</p>
+          </article>
+        </div>
+      </section>
+
+      <!-- Accessibility comparison between primitive-enabled and plain controls. -->
+      <section id="accessibility-highlights" class="panel" data-nav-label="Accessibility highlights">
+        <h2>Accessibility highlights</h2>
+        <p class="section-lead">
+          Side-by-side comparison: left inherits the full interaction/accessibility model; right is a
+          plain control baseline.
+        </p>
+        <div class="a11y-compare">
+          <article class="compare-block">
+            <h3>With interactive-surface</h3>
+            <div class="compare-row">
+              <button class="interactive-surface surface-btn variant-primary">Focusable Action</button>
+              <button class="interactive-surface surface-btn variant-secondary" aria-pressed="true">
+                Pressed state
+              </button>
+              <button class="interactive-surface icon-only" aria-label="Settings">
+                <span class="icon-glyph">SET</span>
+              </button>
+            </div>
+            <ul class="a11y-list">
+              <li>Focus ring is visible with <code>:focus-visible</code> fallback.</li>
+              <li>Pressed and disabled states map directly to ARIA attributes.</li>
+              <li>Reduced motion and forced colors are supported by default.</li>
+            </ul>
+          </article>
+          <article class="compare-block">
+            <h3>Plain controls baseline</h3>
+            <div class="compare-row">
+              <button class="plain-btn">Focusable Action</button>
+              <button class="plain-btn" aria-pressed="true">Pressed state</button>
+              <button class="plain-btn" aria-label="Settings">SET</button>
+            </div>
+            <ul class="a11y-list">
+              <li>No unified hover/active model.</li>
+              <li>No tokenized theming contract.</li>
+              <li>Requires extra CSS to reach parity with contrast and motion handling.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <!-- Composition patterns that map to common product UI motifs. -->
+      <section id="creative-composition-ideas" class="panel" data-nav-label="Creative composition">
+        <h2>Creative composition ideas</h2>
+        <p class="section-lead">Use the same primitive for launcher bars, filters, and dashboard cards.</p>
+        <div class="creative-grid">
+          <article class="pattern">
+            <h3>Command launcher</h3>
+            <div class="row">
+              <button class="interactive-surface surface-btn variant-subtle command-launcher-btn">
+                Open command palette
+                <span class="kbd">Ctrl+K</span>
+              </button>
+            </div>
+          </article>
+          <article class="pattern">
+            <h3>Filter chip row</h3>
+            <div class="row">
+              <button class="interactive-surface surface-btn size-sm variant-secondary">All</button>
+              <button class="interactive-surface surface-btn size-sm variant-accent" aria-pressed="true">Open</button>
+              <button class="interactive-surface surface-btn size-sm">Blocked</button>
+            </div>
+          </article>
+          <article class="pattern">
+            <h3>Playlist card</h3>
+            <button class="interactive-surface surface-card variant-primary playlist-card-btn">
+              <strong>Deep Work Mix</strong>
+              <p>Use card-style controls for media, dashboards, or map markers.</p>
+            </button>
+          </article>
+        </div>
+      </section>
+
+      <!-- Embedded docs: quick links plus rendered README markdown. -->
+      <section id="readme-docs" class="panel" data-nav-label="README docs">
+        <h2>README and wiki links</h2>
+        <p class="section-lead">
+          This section mirrors README content so GitHub Pages users can test the library and read docs without
+          switching pages.
+        </p>
+        <div class="docs-shell">
+          <div class="docs-link-grid" id="wikiLinks">
+            <a class="docs-link" href="./wiki/Home.md">Wiki Home</a>
+            <a class="docs-link" href="./wiki/Getting-Started.md">Getting Started</a>
+            <a class="docs-link" href="./wiki/Installation-and-Usage.md">Installation and Usage</a>
+            <a class="docs-link" href="./wiki/API-Reference.md">API Reference</a>
+            <a class="docs-link" href="./wiki/Token-Reference.md">Token Reference</a>
+            <a class="docs-link" href="./wiki/Accessibility.md">Accessibility</a>
+            <a class="docs-link" href="./wiki/Testing-and-Quality.md">Testing and Quality</a>
+            <a class="docs-link" href="./wiki/Publishing-and-Releases.md">Publishing and Releases</a>
+            <a class="docs-link" href="./wiki/FAQ.md">FAQ</a>
+            <a class="docs-link" href="./wiki/Roadmap.md">Roadmap</a>
+            <a class="docs-link" href="./CONTRIBUTING.md">Contributing</a>
+            <a class="docs-link" href="./CODE_OF_CONDUCT.md">Code of Conduct</a>
+            <a class="docs-link" href="./SECURITY.md">Security Policy</a>
+          </div>
+          <nav class="docs-outline" id="docsOutline" aria-label="README outline"></nav>
+          <article id="readmeContent" class="markdown-body" aria-live="polite">
+            <p class="docs-placeholder">Loading README.md...</p>
+          </article>
+        </div>
+      </section>
+    </main>
+    <div id="tokenModal" class="token-modal" hidden>
+      <button id="tokenModalBackdrop" type="button" class="token-modal-backdrop" aria-label="Close token editor"></button>
+      <div class="token-modal-panel" role="dialog" aria-modal="true" aria-labelledby="tokenEditorTitle">
+        <form id="tokenEditor" class="token-editor">
+          <div class="token-editor-head">
+            <strong id="tokenEditorTitle">Edit token</strong>
+            <p>Updates are written to a page style override on submit.</p>
+          </div>
+          <div class="token-editor-grid">
+            <div class="token-field">
+              <label for="tokenEditorName">Token</label>
+              <input id="tokenEditorName" type="text" readonly />
+            </div>
+            <div class="token-field">
+              <label for="tokenEditorValue">Color value</label>
+              <input id="tokenEditorValue" type="text" placeholder="rgb(255 255 255)" required />
+            </div>
+          </div>
+          <div class="token-editor-actions">
+            <button type="submit" class="interactive-surface surface-btn variant-primary size-sm">Apply Token</button>
+            <button id="tokenEditorCancel" type="button" class="interactive-surface surface-btn variant-subtle size-sm">
+              Cancel
+            </button>
+          </div>
+          <p id="tokenStatus" class="token-status" aria-live="polite"></p>
+        </form>
+      </div>
+    </div>
+    <script id="embeddedReadme" type="text/markdown">
+# Interactive Surface
+
+Interactive Surface is a framework-agnostic CSS interaction primitive for buttons, cards, icon controls, and similar click targets.
+
+It provides consistent hover, focus-visible, active, press, and disabled behavior with token-driven theming and accessibility guardrails.
+
+## Documentation
+
+Project docs live in this repository:
+
+- [Wiki Home](./wiki/Home.md)
+- [Getting Started](./wiki/Getting-Started.md)
+- [Installation and Usage](./wiki/Installation-and-Usage.md)
+- [API Reference](./wiki/API-Reference.md)
+- [Token Reference](./wiki/Token-Reference.md)
+- [Accessibility](./wiki/Accessibility.md)
+- [Testing and Quality](./wiki/Testing-and-Quality.md)
+- [Publishing and Releases](./wiki/Publishing-and-Releases.md)
+- [FAQ](./wiki/FAQ.md)
+- [Roadmap](./wiki/Roadmap.md)
+
+Community and governance docs:
+
+- [Contributing](./CONTRIBUTING.md)
+- [Code of Conduct](./CODE_OF_CONDUCT.md)
+- [Security Policy](./SECURITY.md)
+
+## Package
+
+- Package name: `interactive-surface-css`
+- Style entry: `interactive-surface.css`
+- JS entry: `index.js` (imports CSS)
+
+Install:
+
+```bash
+npm install interactive-surface-css
+```
+
+Import:
+
+```js
+import "interactive-surface-css";
+```
+
+Or import CSS directly:
+
+```js
+import "interactive-surface-css/interactive-surface.css";
+```
+
+Webpack:
+
+1. Install loaders:
+
+    ```bash
+    npm install -D css-loader style-loader
+    ```
+
+2. Configure `webpack.config.js`:
+
+    ```js
+    module.exports = {
+      module: {
+        rules: [
+          {
+            test: /\.css$/i,
+            use: ["style-loader", "css-loader"]
+          }
+        ]
+      }
+    };
+    ```
+
+3. Import in your app entry:
+
+    ```js
+    import "interactive-surface-css";
+    ```
+
+CDN:
+
+```html
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/interactive-surface-css@1.0.2/interactive-surface.css" />
+<link rel="stylesheet" href="https://unpkg.com/interactive-surface-css@1.0.2/interactive-surface.css" />
+```
+
+## Quick Start
+
+```html
+<button class="interactive-surface">Save</button>
+```
+
+```html
+<button class="interactive-surface size-lg variant-primary">Continue</button>
+```
+
+```html
+<button class="interactive-surface icon-only" aria-label="Settings">
+  <svg aria-hidden="true" viewBox="0 0 24 24">...</svg>
+</button>
+```
+
+Demo page: `index.html`
+
+## Class API
+
+Base:
+
+- `.interactive-surface`
+
+Size modifiers:
+
+- `.size-sm`
+- `.size-lg`
+- medium is default when no size class is set
+
+State helpers:
+
+- `.is-active`
+- `.is-disabled`
+
+Semantic states:
+
+- `[aria-pressed="true"]`
+- `[aria-disabled="true"]`
+- `:disabled`
+
+Visual variants:
+
+- `.variant-primary`
+- `.variant-secondary`
+- `.variant-accent`
+- `.variant-subtle`
+- `.variant-warning`
+- `.variant-danger`
+
+Icon pattern:
+
+- `.icon-only`
+
+## Token Contract
+
+Preferred token namespace:
+
+- `--interactive-surface-*`
+
+The package also supports legacy fallback tokens and semantic fallback tokens. Full details and examples are in [Token Reference](./wiki/Token-Reference.md).
+
+## Accessibility
+
+Built-in support includes:
+
+- `:focus-visible` behavior with fallback handling
+- reduced-motion preference handling
+- high-contrast and forced-colors handling
+- ARIA pressed/disabled styling
+- 44x44 minimum target size for `.icon-only`
+
+See [Accessibility](./wiki/Accessibility.md) for implementation guidance.
+
+## Testing
+
+```bash
+npm run lint:css
+npm test
+npm run test:chromium
+npm run pack:dry
+```
+
+## Publishing
+
+This repo is configured for release-driven npm publish through GitHub Actions at `.github/workflows/npm-publish.yml`.
+
+Release checklist:
+
+1. Add repository secret `NPM_TOKEN` (npm token with publish rights).
+2. Bump `version` in `package.json`.
+3. Update `CHANGELOG.md`.
+4. Push to `main`.
+5. Create and publish a GitHub Release tag (for example `v1.0.1`).
+6. Verify the `Publish to npm` workflow succeeds.
+7. Verify CDN availability:
+   - `https://cdn.jsdelivr.net/npm/interactive-surface-css@1.0.2/interactive-surface.css`
+   - `https://unpkg.com/interactive-surface-css@1.0.2/interactive-surface.css`
+
+Manual fallback:
+
+```bash
+npm adduser
+npm publish --access public
+```
+
+## Guardrail
+
+`interactive-surface` should be the only transform-based motion owner on its host element.
+
+Avoid applying additional `transform`, `translate`, `scale`, or `rotate` rules to the same node. If you need extra animation, apply it to a child element.
+
+</script>
+    <script>
+      (function () {
+        // Core DOM references for controls, docs rendering, and token readouts.
+        const body = document.body;
+        const userTokenOverrides = document.getElementById("userTokenOverrides");
+        const themeToggle = document.getElementById("themeToggle");
+        const motionToggle = document.getElementById("motionToggle");
+        const themeState = document.getElementById("themeState");
+        const motionState = document.getElementById("motionState");
+        const tokenThemeReadout = document.getElementById("tokenThemeReadout");
+        const demoSectionNav = document.getElementById("demoSectionNav");
+        const wikiLinks = document.getElementById("wikiLinks");
+        const docsOutline = document.getElementById("docsOutline");
+        const readmeContent = document.getElementById("readmeContent");
+        const embeddedReadme = document.getElementById("embeddedReadme");
+        const tokenCards = Array.from(document.querySelectorAll(".token-card[data-token]"));
+        const tokenGrid = document.querySelector(".token-grid");
+        const tokenModal = document.getElementById("tokenModal");
+        const tokenModalBackdrop = document.getElementById("tokenModalBackdrop");
+        const tokenEditor = document.getElementById("tokenEditor");
+        const tokenEditorTitle = document.getElementById("tokenEditorTitle");
+        const tokenEditorName = document.getElementById("tokenEditorName");
+        const tokenEditorValue = document.getElementById("tokenEditorValue");
+        const tokenEditorCancel = document.getElementById("tokenEditorCancel");
+        const tokenStatus = document.getElementById("tokenStatus");
+        const tokenCssImport = document.getElementById("tokenCssImport");
+        const tokenCssExport = document.getElementById("tokenCssExport");
+        const editableTokenNames = Array.from(new Set(tokenCards.map((card) => card.dataset.token).filter(Boolean)));
+        const tokenOverrideState = { light: {}, dark: {} };
+        const prefersReducedMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+        const usedIds = new Set(Array.from(document.querySelectorAll("[id]"), (element) => element.id));
+
+        // Reflects active theme state in the toggle metadata.
+        function syncThemeLabel() {
+          const isDark = body.dataset.theme === "dark";
+          themeToggle.setAttribute("aria-pressed", String(isDark));
+          themeState.textContent = isDark ? "Dark" : "Light";
+        }
+
+        // Reflects active motion mode in the toggle metadata.
+        function syncMotionLabel() {
+          const reduced = body.dataset.motion === "reduced";
+          motionToggle.setAttribute("aria-pressed", String(reduced));
+          motionState.textContent = reduced ? "Reduced" : "System";
+          syncScrollBehavior();
+        }
+
+        // Smooth-scroll anchors unless system or explicit user preference requests reduced motion.
+        function syncScrollBehavior() {
+          const reducedBySystem = body.dataset.motion === "system" && prefersReducedMotionQuery.matches;
+          const reducedByToggle = body.dataset.motion === "reduced";
+          document.documentElement.style.scrollBehavior = reducedBySystem || reducedByToggle ? "auto" : "smooth";
+        }
+
+        function activeTheme() {
+          return body.dataset.theme === "dark" ? "dark" : "light";
+        }
+
+        function refreshTokenThemeReadout() {
+          if (!tokenThemeReadout) {
+            return;
+          }
+
+          const themeLabel = activeTheme() === "dark" ? "Dark" : "Light";
+          tokenThemeReadout.textContent = `Editing ${themeLabel} theme token overrides.`;
+        }
+
+        // Reads a CSS custom property from the currently applied theme.
+        function readCssVariable(variableName) {
+          return getComputedStyle(body).getPropertyValue(variableName).trim();
+        }
+
+        // Keeps token cards synchronized with live variable values.
+        function syncTokenValueReadout() {
+          tokenCards.forEach(function (card) {
+            const tokenName = card.dataset.token;
+            const tokenValueElement = card.querySelector("[data-token-value]");
+            if (!tokenName || !tokenValueElement) {
+              return;
+            }
+
+            tokenValueElement.textContent = readCssVariable(tokenName) || "unresolved";
+          });
+        }
+
+        // Normalizes user input and keeps CSS value spacing consistent.
+        function normalizeCssValue(rawValue) {
+          return String(rawValue || "")
+            .trim()
+            .replace(/\s+/g, " ");
+        }
+
+        function setTokenStatus(message, type) {
+          if (!tokenStatus) {
+            return;
+          }
+
+          tokenStatus.textContent = message || "";
+          tokenStatus.classList.remove("is-success", "is-error");
+          if (type === "success") {
+            tokenStatus.classList.add("is-success");
+          } else if (type === "error") {
+            tokenStatus.classList.add("is-error");
+          }
+        }
+
+        function isValidTokenColor(value) {
+          const normalized = normalizeCssValue(value);
+          return Boolean(normalized) && CSS.supports("color", normalized);
+        }
+
+        // Emits active overrides into a dedicated <style> node for deterministic edits.
+        function renderTokenOverrideStyle() {
+          if (!userTokenOverrides) {
+            return;
+          }
+
+          const blocks = [];
+          const lightEntries = Object.entries(tokenOverrideState.light);
+          const darkEntries = Object.entries(tokenOverrideState.dark);
+
+          if (lightEntries.length) {
+            const declarations = lightEntries.map(function ([tokenName, tokenValue]) {
+              return `  ${tokenName}: ${tokenValue};`;
+            });
+            blocks.push(`:root {\n${declarations.join("\n")}\n}`);
+          }
+
+          if (darkEntries.length) {
+            const declarations = darkEntries.map(function ([tokenName, tokenValue]) {
+              return `  ${tokenName}: ${tokenValue};`;
+            });
+            blocks.push(`body[data-theme="dark"] {\n${declarations.join("\n")}\n}`);
+          }
+
+          userTokenOverrides.textContent = blocks.join("\n\n");
+        }
+
+        function openTokenEditor(tokenName) {
+          if (!tokenEditor || !tokenEditorName || !tokenEditorValue || !tokenModal) {
+            return;
+          }
+
+          tokenEditor.dataset.token = tokenName;
+          tokenEditorName.value = tokenName;
+          tokenEditorValue.value = readCssVariable(tokenName);
+          tokenModal.hidden = false;
+
+          if (tokenEditorTitle) {
+            tokenEditorTitle.textContent = `Edit ${tokenName}`;
+          }
+
+          tokenEditorValue.focus();
+          tokenEditorValue.select();
+        }
+
+        function closeTokenEditor() {
+          if (!tokenEditor || !tokenModal) {
+            return;
+          }
+
+          tokenModal.hidden = true;
+          tokenEditor.dataset.token = "";
+        }
+
+        function readTokenValueForTheme(tokenName, themeName) {
+          const previousTheme = activeTheme();
+          body.dataset.theme = themeName;
+          const tokenValue = readCssVariable(tokenName);
+          body.dataset.theme = previousTheme;
+          return tokenValue;
+        }
+
+        function triggerTokenExport() {
+          const lightLines = editableTokenNames.map(function (tokenName) {
+            return `  ${tokenName}: ${readTokenValueForTheme(tokenName, "light")};`;
+          });
+          const darkLines = editableTokenNames.map(function (tokenName) {
+            return `  ${tokenName}: ${readTokenValueForTheme(tokenName, "dark")};`;
+          });
+
+          const exportCss = [
+            ":root {",
+            ...lightLines,
+            "}",
+            "",
+            'body[data-theme="dark"] {',
+            ...darkLines,
+            "}"
+          ].join("\n");
+
+          const exportBlob = new Blob([exportCss], { type: "text/css;charset=utf-8" });
+          const exportUrl = URL.createObjectURL(exportBlob);
+          const exportLink = document.createElement("a");
+          const dateStamp = new Date().toISOString().slice(0, 10);
+          exportLink.href = exportUrl;
+          exportLink.download = `interactive-surface-tokens-${dateStamp}.css`;
+          exportLink.click();
+          URL.revokeObjectURL(exportUrl);
+        }
+
+        function parseCssDeclarations(blockText, target) {
+          const declarationPattern = /(--[a-z0-9-]+)\s*:\s*([^;]+);/gi;
+          let match = declarationPattern.exec(blockText);
+
+          while (match) {
+            const tokenName = match[1];
+            const tokenValue = normalizeCssValue(match[2]);
+            if (editableTokenNames.includes(tokenName) && isValidTokenColor(tokenValue)) {
+              target[tokenName] = tokenValue;
+            }
+            match = declarationPattern.exec(blockText);
+          }
+        }
+
+        function importTokenCss(cssText) {
+          const imported = { light: {}, dark: {} };
+          const rootMatch = cssText.match(/:root\s*\{([\s\S]*?)\}/i);
+          const darkMatch = cssText.match(/body\[data-theme=["']dark["']\]\s*\{([\s\S]*?)\}/i);
+
+          if (rootMatch) {
+            parseCssDeclarations(rootMatch[1], imported.light);
+          }
+
+          if (darkMatch) {
+            parseCssDeclarations(darkMatch[1], imported.dark);
+          }
+
+          if (!rootMatch && !darkMatch) {
+            parseCssDeclarations(cssText, imported[activeTheme()]);
+          }
+
+          return imported;
+        }
+
+        // Utility helpers used by generated anchors and markdown conversion.
+        function slugify(text) {
+          return text
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, "-")
+            .replace(/(^-|-$)+/g, "");
+        }
+
+        function createUniqueId(baseValue) {
+          const base = baseValue || "section";
+          let candidate = base;
+          let counter = 2;
+
+          while (usedIds.has(candidate)) {
+            candidate = `${base}-${counter}`;
+            counter += 1;
+          }
+
+          usedIds.add(candidate);
+          return candidate;
+        }
+
+        // Escapes raw text for safe HTML output.
+        function escapeHtml(value) {
+          return value
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/\"/g, "&quot;")
+            .replace(/'/g, "&#39;");
+        }
+
+        // Prevents unsafe link protocols in markdown links.
+        function sanitizeHref(hrefValue) {
+          const trimmedHref = hrefValue.trim();
+          if (!trimmedHref) {
+            return "#";
+          }
+
+          if (/^(javascript|data|vbscript):/i.test(trimmedHref)) {
+            return "#";
+          }
+
+          return trimmedHref;
+        }
+
+        // Parses inline markdown syntax for links, emphasis, and code spans.
+        function formatInline(markdownText) {
+          let htmlText = escapeHtml(markdownText);
+          const codeTokens = [];
+
+          htmlText = htmlText.replace(/`([^`]+)`/g, function (_, codeValue) {
+            const token = `@@INLINE_CODE_${codeTokens.length}@@`;
+            codeTokens.push(`<code>${codeValue}</code>`);
+            return token;
+          });
+
+          htmlText = htmlText.replace(/\[([^\]]+)\]\(([^)]+)\)/g, function (_, label, rawHref) {
+            const href = sanitizeHref(rawHref.split(/\s+/)[0]);
+            const external = /^(?:https?:)?\/\//.test(href);
+            const attrs = external ? ' target="_blank" rel="noreferrer noopener"' : "";
+            return `<a href="${escapeHtml(href)}"${attrs}>${label}</a>`;
+          });
+
+          htmlText = htmlText.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
+          htmlText = htmlText.replace(/\*([^*]+)\*/g, "<em>$1</em>");
+
+          codeTokens.forEach(function (token, index) {
+            htmlText = htmlText.replace(`@@INLINE_CODE_${index}@@`, token);
+          });
+
+          return htmlText;
+        }
+
+        // Lightweight markdown renderer for the embedded README section.
+        function markdownToHtml(markdownSource) {
+          const lines = markdownSource.replace(/\r\n/g, "\n").split("\n");
+          const htmlBlocks = [];
+          const paragraphLines = [];
+          let listType = null;
+          let listItems = [];
+          let inCodeBlock = false;
+          let codeBlockLanguage = "";
+          let codeBlockLines = [];
+
+          function flushParagraph() {
+            if (!paragraphLines.length) {
+              return;
+            }
+
+            htmlBlocks.push(`<p>${formatInline(paragraphLines.join(" "))}</p>`);
+            paragraphLines.length = 0;
+          }
+
+          function flushList() {
+            if (!listType || !listItems.length) {
+              listType = null;
+              listItems = [];
+              return;
+            }
+
+            htmlBlocks.push(`<${listType}>${listItems.join("")}</${listType}>`);
+            listType = null;
+            listItems = [];
+          }
+
+          function flushCodeBlock() {
+            const languageClass = codeBlockLanguage ? ` class="language-${escapeHtml(codeBlockLanguage)}"` : "";
+            htmlBlocks.push(`<pre><code${languageClass}>${escapeHtml(codeBlockLines.join("\n"))}</code></pre>`);
+            codeBlockLanguage = "";
+            codeBlockLines = [];
+          }
+
+          lines.forEach(function (line) {
+            if (inCodeBlock) {
+              if (/^```/.test(line)) {
+                flushCodeBlock();
+                inCodeBlock = false;
+              } else {
+                codeBlockLines.push(line);
+              }
+              return;
+            }
+
+            const codeFenceMatch = line.match(/^```([a-zA-Z0-9_-]+)?\s*$/);
+            if (codeFenceMatch) {
+              flushParagraph();
+              flushList();
+              inCodeBlock = true;
+              codeBlockLanguage = codeFenceMatch[1] || "";
+              return;
+            }
+
+            if (/^\s*$/.test(line)) {
+              flushParagraph();
+              flushList();
+              return;
+            }
+
+            const headingMatch = line.match(/^(#{1,6})\s+(.*)$/);
+            if (headingMatch) {
+              flushParagraph();
+              flushList();
+
+              const headingLevel = headingMatch[1].length;
+              const headingText = formatInline(headingMatch[2].trim());
+              htmlBlocks.push(`<h${headingLevel}>${headingText}</h${headingLevel}>`);
+              return;
+            }
+
+            const unorderedListMatch = line.match(/^\s*[-*]\s+(.*)$/);
+            if (unorderedListMatch) {
+              flushParagraph();
+              if (listType !== "ul") {
+                flushList();
+                listType = "ul";
+              }
+              listItems.push(`<li>${formatInline(unorderedListMatch[1].trim())}</li>`);
+              return;
+            }
+
+            const orderedListMatch = line.match(/^\s*\d+\.\s+(.*)$/);
+            if (orderedListMatch) {
+              flushParagraph();
+              if (listType !== "ol") {
+                flushList();
+                listType = "ol";
+              }
+              listItems.push(`<li>${formatInline(orderedListMatch[1].trim())}</li>`);
+              return;
+            }
+
+            paragraphLines.push(line.trim());
+          });
+
+          if (inCodeBlock) {
+            flushCodeBlock();
+          }
+
+          flushParagraph();
+          flushList();
+          return htmlBlocks.join("");
+        }
+
+        // Builds sticky section links from semantic section metadata.
+        function renderDemoSectionNavigation() {
+          if (!demoSectionNav) {
+            return;
+          }
+
+          demoSectionNav.textContent = "";
+          const panels = Array.from(document.querySelectorAll("section[data-nav-label]"));
+
+          panels.forEach(function (panel) {
+            if (!panel.id) {
+              panel.id = createUniqueId(slugify(panel.dataset.navLabel || panel.querySelector("h2")?.textContent || ""));
+            }
+
+            const link = document.createElement("a");
+            link.className = "jump-link";
+            link.href = `#${panel.id}`;
+            link.textContent = panel.dataset.navLabel || panel.querySelector("h2")?.textContent || panel.id;
+            demoSectionNav.appendChild(link);
+          });
+        }
+
+        // Assigns predictable ids to README headings for deep-link navigation.
+        function assignReadmeHeadingIds() {
+          if (!readmeContent) {
+            return;
+          }
+
+          const headings = Array.from(readmeContent.querySelectorAll("h1, h2, h3"));
+          headings.forEach(function (heading) {
+            const headingSlug = slugify(heading.textContent || "");
+            heading.id = createUniqueId(headingSlug || "readme-section");
+          });
+        }
+
+        // Creates quick heading links for the rendered README block.
+        function buildReadmeOutline() {
+          if (!docsOutline || !readmeContent) {
+            return;
+          }
+
+          docsOutline.textContent = "";
+          const headings = Array.from(readmeContent.querySelectorAll("h2, h3"));
+
+          if (!headings.length) {
+            const emptyOutline = document.createElement("p");
+            emptyOutline.className = "docs-placeholder";
+            emptyOutline.textContent = "README outline appears after the markdown is loaded.";
+            docsOutline.appendChild(emptyOutline);
+            return;
+          }
+
+          headings.forEach(function (heading) {
+            const link = document.createElement("a");
+            link.className = "docs-outline-link";
+            link.href = `#${heading.id}`;
+            link.textContent = heading.tagName === "H3" ? `- ${heading.textContent}` : heading.textContent;
+            docsOutline.appendChild(link);
+          });
+        }
+
+        async function readMarkdownFile(markdownPath) {
+          const response = await fetch(markdownPath, { cache: "no-store" });
+          if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+          }
+
+          return response.text();
+        }
+
+        // Renders any markdown file into the docs article area.
+        async function renderMarkdownFile(markdownPath, headingLabel) {
+          if (!readmeContent) {
+            return;
+          }
+
+          try {
+            const markdown = await readMarkdownFile(markdownPath);
+            readmeContent.innerHTML = markdownToHtml(markdown);
+            assignReadmeHeadingIds();
+            buildReadmeOutline();
+          } catch (_error) {
+            if (markdownPath === "./README.md" && embeddedReadme?.textContent.trim()) {
+              readmeContent.innerHTML = markdownToHtml(embeddedReadme.textContent);
+              assignReadmeHeadingIds();
+              buildReadmeOutline();
+              return;
+            }
+
+            const name = headingLabel || markdownPath;
+            if (window.location.protocol === "file:") {
+              readmeContent.innerHTML = `<p class="docs-error">${name} could not be fetched from a local file URL. Start a local server (for example \`npx serve\`) and open this page through \`http://localhost\`.</p>`;
+            } else {
+              readmeContent.innerHTML = `<p class="docs-error">${name} could not be loaded in this context.</p>`;
+            }
+            buildReadmeOutline();
+          }
+        }
+
+        // Event wiring for theme and motion controls.
+        themeToggle.addEventListener("click", function () {
+          body.dataset.theme = body.dataset.theme === "dark" ? "light" : "dark";
+          syncThemeLabel();
+          refreshTokenThemeReadout();
+          syncTokenValueReadout();
+        });
+
+        motionToggle.addEventListener("click", function () {
+          body.dataset.motion = body.dataset.motion === "reduced" ? "system" : "reduced";
+          syncMotionLabel();
+        });
+
+        if (typeof prefersReducedMotionQuery.addEventListener === "function") {
+          prefersReducedMotionQuery.addEventListener("change", syncScrollBehavior);
+        } else if (typeof prefersReducedMotionQuery.addListener === "function") {
+          prefersReducedMotionQuery.addListener(syncScrollBehavior);
+        }
+
+        if (tokenGrid) {
+          tokenGrid.addEventListener("click", function (event) {
+            const trigger = event.target.closest("[data-token-edit]");
+            if (!trigger) {
+              return;
+            }
+
+            const tokenCard = trigger.closest(".token-card[data-token]");
+            if (!tokenCard?.dataset.token) {
+              return;
+            }
+
+            openTokenEditor(tokenCard.dataset.token);
+            setTokenStatus("", "");
+          });
+        }
+
+        if (tokenEditor) {
+          tokenEditor.addEventListener("submit", function (event) {
+            event.preventDefault();
+            const tokenName = tokenEditor.dataset.token;
+            const tokenValue = normalizeCssValue(tokenEditorValue?.value);
+
+            if (!tokenName) {
+              setTokenStatus("Choose a token to edit first.", "error");
+              return;
+            }
+
+            if (!isValidTokenColor(tokenValue)) {
+              setTokenStatus("Enter a valid CSS color value (for example rgb(16 42 67)).", "error");
+              return;
+            }
+
+            tokenOverrideState[activeTheme()][tokenName] = tokenValue;
+            renderTokenOverrideStyle();
+            syncTokenValueReadout();
+            setTokenStatus(`${tokenName} updated for ${activeTheme()} mode.`, "success");
+          });
+        }
+
+        if (tokenEditorCancel) {
+          tokenEditorCancel.addEventListener("click", function () {
+            closeTokenEditor();
+            setTokenStatus("", "");
+          });
+        }
+
+        if (tokenModalBackdrop) {
+          tokenModalBackdrop.addEventListener("click", function () {
+            closeTokenEditor();
+          });
+        }
+
+        document.addEventListener("keydown", function (event) {
+          if (event.key === "Escape" && tokenModal && !tokenModal.hidden) {
+            closeTokenEditor();
+            setTokenStatus("", "");
+          }
+        });
+
+        if (tokenCssImport) {
+          tokenCssImport.addEventListener("change", async function (event) {
+            const input = event.target;
+            const file = input.files && input.files[0];
+            if (!file) {
+              return;
+            }
+
+            const cssText = await file.text();
+            const imported = importTokenCss(cssText);
+            const importedCount = Object.keys(imported.light).length + Object.keys(imported.dark).length;
+
+            if (!importedCount) {
+              setTokenStatus("No matching color token declarations were found in that CSS file.", "error");
+              input.value = "";
+              return;
+            }
+
+            Object.assign(tokenOverrideState.light, imported.light);
+            Object.assign(tokenOverrideState.dark, imported.dark);
+            renderTokenOverrideStyle();
+            syncTokenValueReadout();
+            setTokenStatus(`Imported ${importedCount} token value${importedCount === 1 ? "" : "s"}.`, "success");
+            input.value = "";
+          });
+        }
+
+        if (tokenCssExport) {
+          tokenCssExport.addEventListener("click", function () {
+            triggerTokenExport();
+            setTokenStatus("Exported token CSS for the current light and dark values.", "success");
+          });
+        }
+
+        if (wikiLinks) {
+          wikiLinks.addEventListener("click", function (event) {
+            const link = event.target.closest("a.docs-link");
+            if (!link) {
+              return;
+            }
+
+            const markdownPath = link.getAttribute("href");
+            if (!markdownPath || !/\.md$/i.test(markdownPath)) {
+              return;
+            }
+
+            event.preventDefault();
+            renderMarkdownFile(markdownPath, link.textContent.trim());
+          });
+        }
+
+        if (readmeContent) {
+          readmeContent.addEventListener("click", function (event) {
+            const link = event.target.closest("a");
+            if (!link) {
+              return;
+            }
+
+            const markdownPath = link.getAttribute("href");
+            if (!markdownPath || !/\.md$/i.test(markdownPath) || /^(?:https?:)?\/\//.test(markdownPath)) {
+              return;
+            }
+
+            event.preventDefault();
+            renderMarkdownFile(markdownPath, link.textContent.trim());
+          });
+        }
+
+        // Initial render pass.
+        syncThemeLabel();
+        syncMotionLabel();
+        refreshTokenThemeReadout();
+        renderTokenOverrideStyle();
+        syncTokenValueReadout();
+        renderDemoSectionNavigation();
+        renderMarkdownFile("./README.md", "README.md");
+      })();
+    </script>
+</body>
+</html>
+
+

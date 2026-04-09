@@ -9,7 +9,7 @@ const packageRoot = path.resolve(__dirname, "..");
 
 const css = fs.readFileSync(path.join(packageRoot, "interactive-surface.css"), "utf8");
 const exampleHtml = fs
-  .readFileSync(path.join(packageRoot, "example.html"), "utf8")
+  .readFileSync(path.join(packageRoot, "index.html"), "utf8")
   .replace('<link rel="stylesheet" href="./interactive-surface.css" />', `<style>${css}</style>`);
 
 test.describe("example page", () => {
@@ -27,6 +27,6 @@ test.describe("example page", () => {
 
   test("example exposes a variety of interactive surfaces", async ({ page }) => {
     const controls = page.locator(".interactive-surface");
-    await expect(controls).toHaveCount(13);
+    await expect(await controls.count()).toBeGreaterThanOrEqual(27);
   });
 });

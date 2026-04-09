@@ -24,13 +24,14 @@ Add this secret in GitHub repository settings:
 4. Run local checks:
 
 ```bash
+npm run check:no-hex-colors
 npm run lint:css
 npm test
 npm run pack:dry
 ```
 
 5. Push changes to `main`.
-6. Create and publish a GitHub Release for that version tag (for example `v1.0.1`).
+6. Create and publish a GitHub Release for that version tag (for example `v1.1.0`).
 7. Confirm `Publish to npm` workflow succeeds.
 8. Verify distribution:
 

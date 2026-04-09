@@ -11,11 +11,13 @@ For the full policy and expectations, see:
 - keep API growth intentional and minimal
 - preserve accessibility behavior
 - prefer token-driven extensions over one-off classes
+- use functional color notation (`rgb(...)`, `hsl(...)`) instead of hex literals
 - update docs and tests when behavior changes
 
 ## Local Validation
 
 ```bash
+npm run check:no-hex-colors
 npm run lint:css
 npm test
 npm run pack:dry

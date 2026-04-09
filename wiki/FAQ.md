@@ -18,6 +18,12 @@ No. The stylesheet does not declare global `:root` tokens. It resolves values in
 
 No. The variant classes primarily tune brightness behavior. They are designed to sit on top of your own color tokens.
 
+## Is there a safe way to customize tokens without manual copy/paste errors?
+
+Yes. Use the package demo app at `index.html`.
+
+It includes token editing controls and CSS import/export helpers so you can generate a token stylesheet without hand-editing every variable.
+
 ## Can I use it on cards as well as buttons?
 
 Yes. That is one of the intended use cases.

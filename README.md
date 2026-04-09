@@ -81,8 +81,8 @@ Webpack:
 CDN:
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/interactive-surface-css@1.0.2/interactive-surface.css" />
-<link rel="stylesheet" href="https://unpkg.com/interactive-surface-css@1.0.2/interactive-surface.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/interactive-surface-css@latest/interactive-surface.css" />
+<link rel="stylesheet" href="https://unpkg.com/interactive-surface-css@latest/interactive-surface.css" />
 ```
 
 ## Quick Start
@@ -101,7 +101,13 @@ CDN:
 </button>
 ```
 
-Demo page: `example.html`
+Demo page: `index.html`
+
+`index.html` is a practical customization playground for this library:
+
+- It provides guided token editing controls instead of freehand CSS typing.
+- It supports importing and exporting token CSS so teams can reuse exact values.
+- It helps reduce manual entry mistakes when creating app-level theme overrides.
 
 ## Class API
 
@@ -162,6 +168,7 @@ See [Accessibility](./wiki/Accessibility.md) for implementation guidance.
 ## Testing
 
 ```bash
+npm run check:no-hex-colors
 npm run lint:css
 npm test
 npm run test:chromium
@@ -178,11 +185,11 @@ Release checklist:
 2. Bump `version` in `package.json`.
 3. Update `CHANGELOG.md`.
 4. Push to `main`.
-5. Create and publish a GitHub Release tag (for example `v1.0.1`).
+5. Create and publish a GitHub Release tag (for example `v1.1.0`).
 6. Verify the `Publish to npm` workflow succeeds.
 7. Verify CDN availability:
-   - `https://cdn.jsdelivr.net/npm/interactive-surface-css@1.0.2/interactive-surface.css`
-   - `https://unpkg.com/interactive-surface-css@1.0.2/interactive-surface.css`
+   - `https://cdn.jsdelivr.net/npm/interactive-surface-css@<version>/interactive-surface.css`
+   - `https://unpkg.com/interactive-surface-css@<version>/interactive-surface.css`
 
 Manual fallback:
 
