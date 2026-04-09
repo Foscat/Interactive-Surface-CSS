@@ -18,17 +18,21 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Checkout wiki repository
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.repository }}.wiki
+          token: ${{ github.token }}
+          path: wiki-repo
+
       - name: Push wiki folder to GitHub Wiki
         run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git -C wiki-repo config user.name "github-actions[bot]"
+          git -C wiki-repo config user.email "github-actions[bot]@users.noreply.github.com"
 
-          WIKI_REPO="https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.wiki.git"
-
-          git clone "$WIKI_REPO" wiki-repo
-
-          # Copy wiki files, excluding the setup notes file
+          # Copy wiki files while preserving the cloned repository metadata
           rsync -av --delete \
+            --exclude=".git/" \
             --exclude="WIKI_SETUP.md" \
             wiki/ wiki-repo/
 
