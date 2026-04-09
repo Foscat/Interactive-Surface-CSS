@@ -63,15 +63,25 @@ The package does **not** define global `:root` tokens.
 
 Instead, values are resolved inline through fallback chains. That makes the stylesheet safer to drop into an existing app without unexpectedly redefining the global token layer.
 
+## Color notation standard
+
+Use functional color notation for token values:
+
+- `rgb(255 255 255)`
+- `rgb(15 23 42 / 80%)`
+- `hsl(200deg 100% 50%)`
+
+Avoid hex literals in examples and production token files so palette updates are easier to audit and automate.
+
 ## Starter theme example
 
 ```css
 :root {
-  --interactive-surface-bg: #ffffff;
-  --interactive-surface-fg: #102a43;
-  --interactive-surface-border-color: #d5dfe8;
+  --interactive-surface-bg: rgb(255 255 255);
+  --interactive-surface-fg: rgb(16 42 67);
+  --interactive-surface-border-color: rgb(213 223 232);
   --interactive-surface-radius: 14px;
-  --interactive-surface-focus-ring-color: #007e8a;
+  --interactive-surface-focus-ring-color: rgb(0 126 138);
 
   --interactive-surface-lift-hover: -4px;
   --interactive-surface-lift-active: -2px;

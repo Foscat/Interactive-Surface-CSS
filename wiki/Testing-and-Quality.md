@@ -5,6 +5,7 @@ The repository includes both CSS linting and Playwright-based behavioral tests.
 ## Available scripts
 
 ```bash
+npm run check:no-hex-colors
 npm run lint:css
 npm test
 npm run test:chromium
@@ -12,6 +13,10 @@ npm run pack:dry
 ```
 
 ## What each script does
+
+### `npm run check:no-hex-colors`
+
+Runs a guard script that fails if hex color literals are present in `interactive-surface.css`.
 
 ### `npm run lint:css`
 
@@ -39,7 +44,7 @@ Current Playwright tests validate:
 - `aria-disabled` non-interactivity
 - reduced-motion transform removal
 - icon-only minimum target size
-- example page rendering and control count
+- index demo page rendering and control count
 
 ## Relevant test files
 
@@ -55,6 +60,7 @@ This library is visual and state-driven. Browser-level validation is more useful
 Run this sequence before publishing:
 
 ```bash
+npm run check:no-hex-colors
 npm run lint:css
 npm test
 npm run pack:dry
@@ -69,4 +75,4 @@ Review the dry-run output and confirm that only intended public files are includ
 - `README.md`
 - `CHANGELOG.md`
 - `LICENSE`
-- `example.html`
+- `index.html`

@@ -97,7 +97,8 @@ The CSS state model is:
 - `interactive-surface-css`
 - `interactive-surface-css/interactive-surface.css`
 - `interactive-surface-css/package.json`
-- `interactive-surface-css/example.html`
+- `interactive-surface-css/index.html` (primary demo/customization app)
+- `interactive-surface-css/example.html` (backward-compatible alias to `index.html`)
 
 ## Non-goals
 

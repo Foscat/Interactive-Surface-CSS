@@ -56,8 +56,8 @@
     var(--ease-press, cubic-bezier(0.4, 0, 0.6, 1))
   );
 
-  --_is-bg: var(--interactive-surface-bg, var(--surface-bg, var(--bg-surface, #f8fafc)));
-  --_is-fg: var(--interactive-surface-fg, var(--surface-fg, var(--text-primary, #111827)));
+  --_is-bg: var(--interactive-surface-bg, var(--surface-bg, var(--bg-surface, rgb(248 250 252))));
+  --_is-fg: var(--interactive-surface-fg, var(--surface-fg, var(--text-primary, rgb(17 24 39))));
   --_is-border-color: var(
     --interactive-surface-border-color,
     var(--surface-border, var(--border-color, rgba(15, 23, 42, 0.2)))
@@ -65,7 +65,7 @@
   --_is-border-width: var(--interactive-surface-border-width, 1px);
   --_is-radius: var(--interactive-surface-radius, 0.75rem);
 
-  --_is-focus-ring-color: var(--interactive-surface-focus-ring-color, var(--focus-ring, #0b63f6));
+  --_is-focus-ring-color: var(--interactive-surface-focus-ring-color, var(--focus-ring, rgb(11 99 246)));
   --_is-focus-ring-width: var(--interactive-surface-focus-ring-width, 2px);
   --_is-focus-ring-offset: var(--interactive-surface-focus-ring-offset, 2px);
   --_is-disabled-opacity: var(--interactive-surface-disabled-opacity, 0.72);
@@ -177,6 +177,63 @@
   min-height: 44px;
   padding: 0;
   border-radius: 0.5rem;
+}
+
+/* Optional icon-role hooks for theme toggles and accessibility controls. */
+.interactive-surface.icon-only .light-icon,
+.interactive-surface.icon-only [data-icon-role="light"] {
+  color: var(--interactive-surface-light-icon-color, rgb(212 175 55));
+}
+
+.interactive-surface.icon-only .dark-icon,
+.interactive-surface.icon-only [data-icon-role="dark"] {
+  color: var(--interactive-surface-dark-icon-color, rgb(0 0 0));
+}
+
+.interactive-surface.icon-only .accessibility-icon,
+.interactive-surface.icon-only [data-icon-role="accessibility"] {
+  color: var(--interactive-surface-accessibility-icon-color, rgb(59 130 246));
+  border-radius: 0;
+}
+
+@media (prefers-color-scheme: dark) {
+  .interactive-surface.icon-only .light-icon,
+  .interactive-surface.icon-only [data-icon-role="light"] {
+    color: var(--interactive-surface-light-icon-color-dark, rgb(255 255 255));
+  }
+
+  .interactive-surface.icon-only .dark-icon,
+  .interactive-surface.icon-only [data-icon-role="dark"] {
+    color: var(--interactive-surface-dark-icon-color-dark, rgb(30 58 138));
+  }
+
+  .interactive-surface.icon-only .accessibility-icon,
+  .interactive-surface.icon-only [data-icon-role="accessibility"] {
+    color: var(--interactive-surface-accessibility-icon-color-dark, rgb(156 163 175));
+  }
+}
+
+:where([data-theme="dark"], .theme-dark, .dark-mode, .dark) .interactive-surface.icon-only .light-icon,
+:where([data-theme="dark"], .theme-dark, .dark-mode, .dark)
+  .interactive-surface.icon-only
+  [data-icon-role="light"] {
+  color: var(--interactive-surface-light-icon-color-dark, rgb(255 255 255));
+}
+
+:where([data-theme="dark"], .theme-dark, .dark-mode, .dark) .interactive-surface.icon-only .dark-icon,
+:where([data-theme="dark"], .theme-dark, .dark-mode, .dark)
+  .interactive-surface.icon-only
+  [data-icon-role="dark"] {
+  color: var(--interactive-surface-dark-icon-color-dark, rgb(30 58 138));
+}
+
+:where([data-theme="dark"], .theme-dark, .dark-mode, .dark)
+  .interactive-surface.icon-only
+  .accessibility-icon,
+:where([data-theme="dark"], .theme-dark, .dark-mode, .dark)
+  .interactive-surface.icon-only
+  [data-icon-role="accessibility"] {
+  color: var(--interactive-surface-accessibility-icon-color-dark, rgb(156 163 175));
 }
 
 /* 8) Visual variant token modifiers */
