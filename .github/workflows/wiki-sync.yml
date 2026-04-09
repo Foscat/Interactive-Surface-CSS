@@ -1,0 +1,45 @@
+name: Sync wiki
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - wiki/**
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Push wiki folder to GitHub Wiki
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+          WIKI_REPO="https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.wiki.git"
+
+          git clone "$WIKI_REPO" wiki-repo
+
+          # Copy wiki files, excluding the setup notes file
+          rsync -av --delete \
+            --exclude="WIKI_SETUP.md" \
+            wiki/ wiki-repo/
+
+          cd wiki-repo
+
+          git add -A
+
+          if git diff --cached --quiet; then
+            echo "No wiki changes to commit."
+            exit 0
+          fi
+
+          git commit -m "Sync wiki from main repo @ ${{ github.sha }}"
+          git push
