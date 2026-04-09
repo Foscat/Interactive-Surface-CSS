@@ -53,8 +53,8 @@
     "index.js",
     "index.cjs",
     "interactive-surface.css",
-    "README.md",
-    "CHANGELOG.md",
+    "*.md",
+    "wiki",
     "LICENSE",
     "index.html"
   ],
