@@ -42,8 +42,26 @@
     var(--shadow-active, 0 6px 18px rgba(0, 0, 0, 0.3), 0 1px 4px rgba(0, 0, 0, 0.2))
   );
 
+  /*
+   * Legacy brightness tokens are preserved, but state rendering now uses
+   * inset state layers instead of host-level filters so text and icons are
+   * less likely to lose contrast in consumer themes.
+   */
   --_is-darken-hover: var(--interactive-surface-darken-hover, var(--surface-darken-hover, 0.96));
   --_is-darken-active: var(--interactive-surface-darken-active, var(--surface-darken-active, 0.98));
+  --_is-state-layer-hover-opacity: var(
+    --interactive-surface-state-layer-hover-opacity,
+    calc(1 - var(--_is-darken-hover))
+  );
+  --_is-state-layer-active-opacity: var(
+    --interactive-surface-state-layer-active-opacity,
+    calc(1 - var(--_is-darken-active))
+  );
+  --_is-state-layer-color: var(--interactive-surface-state-layer-color, rgb(0 0 0));
+  --_is-shadow-hover-composite: var(--_is-shadow-hover),
+    inset 0 0 0 9999px rgb(from var(--_is-state-layer-color) r g b / var(--_is-state-layer-hover-opacity));
+  --_is-shadow-active-composite: var(--_is-shadow-active),
+    inset 0 0 0 9999px rgb(from var(--_is-state-layer-color) r g b / var(--_is-state-layer-active-opacity));
 
   --_is-motion-default: var(--interactive-surface-motion-default, var(--motion-default, 140ms));
   --_is-motion-press: var(--interactive-surface-motion-press, var(--motion-press, 60ms));
@@ -69,6 +87,7 @@
   --_is-focus-ring-width: var(--interactive-surface-focus-ring-width, 2px);
   --_is-focus-ring-offset: var(--interactive-surface-focus-ring-offset, 2px);
   --_is-disabled-opacity: var(--interactive-surface-disabled-opacity, 0.72);
+  --_is-tap-highlight: var(--interactive-surface-tap-highlight-color, rgb(11 99 246 / 0.18));
 
   position: relative;
   box-sizing: border-box;
@@ -82,27 +101,54 @@
   -webkit-appearance: none;
   appearance: none;
   touch-action: manipulation;
-  -webkit-tap-highlight-color: transparent;
+  -webkit-tap-highlight-color: var(--_is-tap-highlight);
+  background-clip: padding-box;
   transform: translateY(var(--_is-lift-base)) translateZ(0) !important;
   box-shadow: var(--_is-shadow-base);
   transition:
     transform var(--_is-motion-default) var(--_is-ease-standard),
     box-shadow var(--_is-motion-default) var(--_is-ease-standard),
-    filter var(--_is-motion-default) linear,
     background-color var(--_is-motion-default) linear,
-    color var(--_is-motion-default) linear;
+    border-color var(--_is-motion-default) linear,
+    color var(--_is-motion-default) linear,
+    outline-color var(--_is-motion-default) linear;
   will-change: auto;
 }
 
-@media (hover: hover) and (pointer: fine) {
+@supports not (color: rgb(from white r g b / 0.5)) {
   .interactive-surface {
-    will-change: transform, box-shadow;
+    --_is-shadow-hover-composite: var(--_is-shadow-hover), inset 0 0 0 9999px rgb(0 0 0 / 0.04);
+    --_is-shadow-active-composite: var(--_is-shadow-active), inset 0 0 0 9999px rgb(0 0 0 / 0.02);
   }
 
-  .interactive-surface:hover {
-    transform: translateY(var(--_is-lift-hover)) translateZ(0) !important;
-    box-shadow: var(--_is-shadow-hover);
-    filter: brightness(var(--_is-darken-hover));
+  .interactive-surface.variant-primary {
+    --_is-shadow-hover-composite: var(--_is-shadow-hover), inset 0 0 0 9999px rgb(0 0 0 / 0.05);
+    --_is-shadow-active-composite: var(--_is-shadow-active), inset 0 0 0 9999px rgb(0 0 0 / 0.03);
+  }
+
+  .interactive-surface.variant-secondary {
+    --_is-shadow-hover-composite: var(--_is-shadow-hover), inset 0 0 0 9999px rgb(0 0 0 / 0.03);
+    --_is-shadow-active-composite: var(--_is-shadow-active), inset 0 0 0 9999px rgb(0 0 0 / 0.01);
+  }
+
+  .interactive-surface.variant-accent {
+    --_is-shadow-hover-composite: var(--_is-shadow-hover), inset 0 0 0 9999px rgb(0 0 0 / 0.06);
+    --_is-shadow-active-composite: var(--_is-shadow-active), inset 0 0 0 9999px rgb(0 0 0 / 0.04);
+  }
+
+  .interactive-surface.variant-subtle {
+    --_is-shadow-hover-composite: var(--_is-shadow-hover), inset 0 0 0 9999px rgb(0 0 0 / 0.02);
+    --_is-shadow-active-composite: var(--_is-shadow-active), inset 0 0 0 9999px rgb(0 0 0 / 0);
+  }
+
+  .interactive-surface.variant-warning {
+    --_is-shadow-hover-composite: var(--_is-shadow-hover), inset 0 0 0 9999px rgb(0 0 0 / 0.07);
+    --_is-shadow-active-composite: var(--_is-shadow-active), inset 0 0 0 9999px rgb(0 0 0 / 0.05);
+  }
+
+  .interactive-surface.variant-danger {
+    --_is-shadow-hover-composite: var(--_is-shadow-hover), inset 0 0 0 9999px rgb(0 0 0 / 0.08);
+    --_is-shadow-active-composite: var(--_is-shadow-active), inset 0 0 0 9999px rgb(0 0 0 / 0.06);
   }
 }
 
@@ -119,29 +165,42 @@
   }
 }
 
-.interactive-surface:focus-visible {
+.interactive-surface:not(.is-disabled):not(:disabled):not([aria-disabled="true"]):focus-visible {
   transform: translateY(var(--_is-lift-hover)) translateZ(0) !important;
-  box-shadow: var(--_is-shadow-hover);
-  filter: brightness(var(--_is-darken-hover));
+  box-shadow: var(--_is-shadow-hover-composite);
+  outline: var(--_is-focus-ring-width) solid var(--_is-focus-ring-color);
+  outline-offset: var(--_is-focus-ring-offset);
+}
+
+.interactive-surface[aria-disabled="true"]:focus-visible {
   outline: var(--_is-focus-ring-width) solid var(--_is-focus-ring-color);
   outline-offset: var(--_is-focus-ring-offset);
 }
 
 /* 4) Active and toggled states */
 
-.interactive-surface.is-active,
-.interactive-surface[aria-pressed="true"] {
+.interactive-surface.is-active:not(.is-disabled):not([aria-disabled="true"]),
+.interactive-surface[aria-pressed="true"]:not(.is-disabled):not(:disabled):not([aria-disabled="true"]) {
   transform: translateY(var(--_is-lift-active)) translateZ(0) !important;
-  box-shadow: var(--_is-shadow-active);
-  filter: brightness(var(--_is-darken-active));
+  box-shadow: var(--_is-shadow-active-composite);
 }
 
-/* 5) Press feedback */
+/* 5) Pointer hover and press feedback */
 
-.interactive-surface:active {
+@media (hover: hover) and (pointer: fine) {
+  .interactive-surface {
+    will-change: transform, box-shadow;
+  }
+
+  .interactive-surface:not(.is-disabled):not(:disabled):not([aria-disabled="true"]):hover {
+    transform: translateY(var(--_is-lift-hover)) translateZ(0) !important;
+    box-shadow: var(--_is-shadow-hover-composite);
+  }
+}
+
+.interactive-surface:not(.is-disabled):not(:disabled):not([aria-disabled="true"]):active {
   transform: translateY(var(--_is-lift-base)) translateZ(0) !important;
   box-shadow: var(--_is-shadow-base);
-  filter: brightness(1);
   transition-duration: var(--_is-motion-press);
   transition-timing-function: var(--_is-ease-press);
 }
@@ -271,15 +330,20 @@
 /* 9) Disabled states */
 
 .interactive-surface.is-disabled,
-.interactive-surface:disabled,
-.interactive-surface[aria-disabled="true"] {
+.interactive-surface:disabled {
   cursor: not-allowed;
   pointer-events: none;
   transform: none !important;
   box-shadow: none;
-  filter: saturate(0.6) contrast(0.9) brightness(0.92);
   opacity: var(--_is-disabled-opacity);
   transition: none;
+}
+
+.interactive-surface[aria-disabled="true"] {
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none;
+  opacity: var(--_is-disabled-opacity);
 }
 
 /* Guardrail: this class owns motion on the host element. */
@@ -308,7 +372,6 @@
   .interactive-surface[aria-pressed="true"] {
     transform: none !important;
     box-shadow: none;
-    filter: none;
   }
 }
 
@@ -319,6 +382,10 @@
     --interactive-surface-darken-hover: 1;
     --interactive-surface-darken-active: 1;
     --interactive-surface-focus-ring-width: 3px;
+    --interactive-surface-border-width: 2px;
+    --interactive-surface-shadow-base: none;
+    --interactive-surface-shadow-hover: none;
+    --interactive-surface-shadow-active: none;
   }
 }
 
@@ -329,7 +396,6 @@
     color: ButtonText;
     border-color: ButtonText;
     box-shadow: none;
-    filter: none;
   }
 
   .interactive-surface:hover,
@@ -339,7 +405,6 @@
   .interactive-surface:active {
     transform: none !important;
     box-shadow: none;
-    filter: none;
   }
 
   .interactive-surface:focus,

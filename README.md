@@ -1,8 +1,8 @@
-﻿# Interactive Surface
+# Interactive Surface
 
 Interactive Surface is a framework-agnostic CSS interaction primitive for buttons, cards, icon controls, and similar click targets.
 
-It provides consistent hover, focus-visible, active, press, and disabled behavior with token-driven theming and accessibility guardrails.
+It provides consistent hover, focus-visible, active, press, and disabled behavior with token-driven theming, accessibility guardrails, and minimal integration friction.
 
 ## Documentation
 
@@ -28,8 +28,9 @@ Community and governance docs:
 ## Package
 
 - Package name: `interactive-surface-css`
-- Style entry: `interactive-surface.css`
-- JS entry: `index.js` (imports CSS)
+- Primary stylesheet: `interactive-surface.css`
+- JavaScript entry: `index.js` (imports CSS for bundler-friendly usage)
+- Live demo: `https://foscat.github.io/Interactive-Surface-CSS/`
 
 Install:
 
@@ -48,6 +49,8 @@ Or import CSS directly:
 ```js
 import "interactive-surface-css/interactive-surface.css";
 ```
+
+Note: The JavaScript entry imports CSS, so it should be used in bundlers or toolchains that support CSS imports. If you want the most portable, framework-agnostic path, import `interactive-surface-css/interactive-surface.css` directly. The package supports both approaches to accommodate different project setups and preferences.
 
 Webpack:
 
@@ -101,9 +104,9 @@ CDN:
 </button>
 ```
 
-Demo page: `index.html`
+Live demo: [Interactive Surface Demo](https://foscat.github.io/Interactive-Surface-CSS/)
 
-`index.html` is a practical customization playground for this library:
+The demo page is a practical customization playground for this library:
 
 - It provides guided token editing controls instead of freehand CSS typing.
 - It supports importing and exporting token CSS so teams can reuse exact values.

@@ -2,6 +2,28 @@
 
 All notable changes to this package are documented in this file.
 
+## 1.1.1 - 2026-04-24
+
+### Improved
+
+- Refined interaction-state rendering to improve accessibility across varied site themes and token sets
+- Replaced whole-element filter-based state styling with safer state-layer treatment
+- Improved disabled-state behavior to better support real-world semantics and integration patterns
+- Strengthened high-contrast handling for `prefers-contrast: more`
+
+### Changed
+
+- Native disabled controls (`:disabled`) and `.is-disabled` now use stricter non-interactive behavior
+- `[aria-disabled="true"]` remains visually disabled without forcing `pointer-events: none`, allowing consuming applications to manage semantics and behavior more safely
+- Touch feedback now uses a tokenized tap highlight instead of fully removing native tap indication
+
+### Fixed
+
+- Fixed a bug where certain state combinations could cause unintended visual results with specific token sets
+- Reduced the risk of contrast loss caused by whole-element brightness and contrast filters
+- Reduced the chance of child text and icons being unintentionally affected by state styling
+- Softened disabled-state degradation to avoid overly washed-out presentation
+
 ## 1.1.0 - 2026-04-09
 
 - Standardized color usage to functional notation by converting remaining hex fallbacks in `interactive-surface.css` to `rgb(...)`.
@@ -9,6 +31,7 @@ All notable changes to this package are documented in this file.
 - Integrated the color-format guard into `prepublishOnly` so release builds validate RGB/HSL notation before publish.
 - Promoted `index.html` as the primary demo/customization app, with `example.html` retained as a backward-compatible export alias.
 - Updated docs and wiki guidance for the new color standard, release checklist updates, and demo customization workflow.
+- Added a visual preview block to the README demo section, showcasing the live demo with a screenshot.
 
 ## 1.0.2 - 2026-04-02
 
