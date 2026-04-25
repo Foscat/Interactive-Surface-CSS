@@ -341,6 +341,7 @@
 
 .interactive-surface[aria-disabled="true"] {
   cursor: not-allowed;
+  pointer-events: none;
   transform: none !important;
   box-shadow: none;
   opacity: var(--_is-disabled-opacity);
