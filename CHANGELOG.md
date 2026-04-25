@@ -14,7 +14,7 @@ All notable changes to this package are documented in this file.
 ### Changed
 
 - Native disabled controls (`:disabled`) and `.is-disabled` now use stricter non-interactive behavior
-- `[aria-disabled="true"]` remains visually disabled without forcing `pointer-events: none`, allowing consuming applications to manage semantics and behavior more safely
+- `[aria-disabled="true"]` receives the same visual disabled appearance and sets `pointer-events: none`; keyboard focus is still reachable so the focus ring remains visible
 - Touch feedback now uses a tokenized tap highlight instead of fully removing native tap indication
 
 ### Fixed
