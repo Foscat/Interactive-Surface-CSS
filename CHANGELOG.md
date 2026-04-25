@@ -31,7 +31,7 @@ All notable changes to this package are documented in this file.
 - Integrated the color-format guard into `prepublishOnly` so release builds validate RGB/HSL notation before publish.
 - Promoted `index.html` as the primary demo/customization app, with `example.html` retained as a backward-compatible export alias.
 - Updated docs and wiki guidance for the new color standard, release checklist updates, and demo customization workflow.
-- Added a visual preview block to the README demo section, showcasing the live demo with a screenshot.
+- Updated the README demo section to better highlight the live demo and customization workflow.
 
 ## 1.0.2 - 2026-04-02
 
