@@ -49,7 +49,7 @@ Receives the same active styling as `.is-active`.
 
 ### `[aria-disabled="true"]`
 
-Receives the same disabled styling as `.is-disabled`.
+Receives the same visual disabled styling as `.is-disabled` (reduced opacity, no transform or shadow, `cursor: not-allowed`, `pointer-events: none`). Unlike native `:disabled` controls, `[aria-disabled="true"]` elements can still receive keyboard focus, so the focus ring remains visible when the element is focused via Tab.
 
 ### `:disabled`
 

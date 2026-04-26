@@ -27,6 +27,7 @@ These are the primary public tokens:
 - `--interactive-surface-focus-ring-width`
 - `--interactive-surface-focus-ring-offset`
 - `--interactive-surface-disabled-opacity`
+- `--interactive-surface-tap-highlight-color`
 
 ## Legacy fallback tokens
 
@@ -128,5 +129,8 @@ Use these carefully:
 - focus ring width
 - focus ring offset
 - disabled opacity
+- tap highlight color
 
 Avoid reducing focus visibility below practical usability.
+
+`--interactive-surface-tap-highlight-color` controls the native mobile tap flash color applied via `-webkit-tap-highlight-color`. The default is a semi-transparent blue (`rgb(11 99 246 / 0.18)`). Set to `transparent` to suppress the flash entirely (not recommended for touch-only contexts), or set to a brand color to align tap feedback with your theme.
