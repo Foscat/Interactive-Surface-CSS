@@ -2001,11 +2001,12 @@ Avoid applying additional `transform`, `translate`, `scale`, or `rotate` rules t
             }
 
             const name = headingLabel || markdownPath;
-            if (window.location.protocol === "file:") {
-              readmeContent.innerHTML = `<p class="docs-error">${name} could not be fetched from a local file URL. Start a local server (for example \`npx serve\`) and open this page through \`http://localhost\`.</p>`;
-            } else {
-              readmeContent.innerHTML = `<p class="docs-error">${name} could not be loaded in this context.</p>`;
-            }
+            const errorParagraph = document.createElement("p");
+            errorParagraph.className = "docs-error";
+            errorParagraph.textContent = window.location.protocol === "file:"
+              ? `${name} could not be fetched from a local file URL. Start a local server (for example \`npx serve\`) and open this page through \`http://localhost\`.`
+              : `${name} could not be loaded in this context.`;
+            readmeContent.replaceChildren(errorParagraph);
             buildReadmeOutline();
           }
         }
