@@ -4,6 +4,11 @@ All notable changes to this package are documented in this file.
 
 ## Unreleased
 
+## 1.1.5 - 2026-05-18
+
+### Changed
+- Republished the release under `1.1.5` after npm rejected the already-published `1.1.4` version.
+
 ## 1.1.4 - 2026-05-18
 
 ### Fixed
