@@ -7,9 +7,9 @@ All notable changes to this package are documented in this file.
 ## 1.1.3 - 2026-05-17
 
 ### Changed
-- Updated package.json to new release #
-- Updated CHANGELOG.md
-- Set proper release number 
+- Aligned package metadata with the published `1.1.3` release.
+- Refined the changelog entries for the `1.1.3` release.
+- Corrected the recorded release version to `1.1.3`.
 
 ## 1.1.2 - 2026-05-17
 
