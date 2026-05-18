@@ -4,14 +4,14 @@ All notable changes to this package are documented in this file.
 
 ## Unreleased
 
-## 1.1.3 2026-05-17
+## 1.1.3 - 2026-05-17
 
 ### Changed
 - Updated package.json to new release #
 - Updated CHANGELOG.md
 - Set proper release number 
 
-## 1.1.2 2026-05-17
+## 1.1.2 - 2026-05-17
 
 ### Added
 
