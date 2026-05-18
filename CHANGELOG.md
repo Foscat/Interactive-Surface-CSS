@@ -2,6 +2,8 @@
 
 All notable changes to this package are documented in this file.
 
+## Unreleased
+
 ## 1.1.3 2026-05-17
 
 ### Changed
