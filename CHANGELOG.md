@@ -4,6 +4,16 @@ All notable changes to this package are documented in this file.
 
 ## Unreleased
 
+## 1.1.3 - 2026-05-17
+
+### Changed
+
+- Aligned package metadata with the published `1.1.3` release.
+- Refined the changelog entries for the `1.1.3` release.
+- Corrected the recorded release version to `1.1.3`.
+
+## 1.1.2 - 2026-05-17
+
 ### Added
 
 - Added robust markdown rendering for embedded docs in `index.html` using `marked` (browser UMD) with graceful fallback to the local parser.
