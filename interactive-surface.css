@@ -439,11 +439,11 @@
     transition: none;
   }
 
-  .interactive-surface:hover,
-  .interactive-surface:focus-visible,
-  .interactive-surface:active,
-  .interactive-surface.is-active,
-  .interactive-surface[aria-pressed="true"] {
+  .interactive-surface:not(.is-disabled, :disabled, [aria-disabled="true"]):hover,
+  .interactive-surface:not(.is-disabled, :disabled, [aria-disabled="true"]):focus-visible,
+  .interactive-surface:not(.is-disabled, :disabled, [aria-disabled="true"]):active,
+  .interactive-surface.is-active:not(.is-disabled, [aria-disabled="true"]),
+  .interactive-surface[aria-pressed="true"]:not(.is-disabled, :disabled, [aria-disabled="true"]) {
     transform: none !important;
     box-shadow: none;
   }

@@ -31,7 +31,7 @@ npm run pack:dry
 ```
 
 5. Push changes to `main`.
-6. Create and publish a GitHub Release for that version tag (for example `v1.1.0`).
+6. Create and publish a GitHub Release for that version tag (for example `v1.1.4`).
 7. Confirm `Publish to npm` workflow succeeds.
 8. Verify distribution:
 
