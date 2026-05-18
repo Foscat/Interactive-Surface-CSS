@@ -235,34 +235,34 @@
 /* Optional icon-role hooks for theme toggles and accessibility controls. */
 .interactive-surface.icon-only .light-icon,
 .interactive-surface.icon-only [data-icon-role="light"] {
-  color: var(--interactive-surface-light-icon-color, rgb(212 175 55));
+  color: var(--interactive-surface-light-icon-color, var(--icon-light, rgb(212 175 55)));
 }
 
 .interactive-surface.icon-only .dark-icon,
 .interactive-surface.icon-only [data-icon-role="dark"] {
-  color: var(--interactive-surface-dark-icon-color, rgb(0 0 0));
+  color: var(--interactive-surface-dark-icon-color, var(--icon-dark, rgb(0 0 0)));
 }
 
 .interactive-surface.icon-only .accessibility-icon,
 .interactive-surface.icon-only [data-icon-role="accessibility"] {
-  color: var(--interactive-surface-accessibility-icon-color, rgb(59 130 246));
+  color: var(--interactive-surface-accessibility-icon-color, var(--icon-accessibility, rgb(59 130 246)));
   border-radius: 0;
 }
 
 @media (prefers-color-scheme: dark) {
   .interactive-surface.icon-only .light-icon,
   .interactive-surface.icon-only [data-icon-role="light"] {
-    color: var(--interactive-surface-light-icon-color-dark, rgb(255 255 255));
+    color: var(--interactive-surface-light-icon-color-dark, var(--icon-light-dark, rgb(255 255 255)));
   }
 
   .interactive-surface.icon-only .dark-icon,
   .interactive-surface.icon-only [data-icon-role="dark"] {
-    color: var(--interactive-surface-dark-icon-color-dark, rgb(30 58 138));
+    color: var(--interactive-surface-dark-icon-color-dark, var(--icon-dark-dark, rgb(30 58 138)));
   }
 
   .interactive-surface.icon-only .accessibility-icon,
   .interactive-surface.icon-only [data-icon-role="accessibility"] {
-    color: var(--interactive-surface-accessibility-icon-color-dark, rgb(156 163 175));
+    color: var(--interactive-surface-accessibility-icon-color-dark, var(--icon-accessibility-dark, rgb(156 163 175)));
   }
 }
 
@@ -270,14 +270,14 @@
 :where([data-theme="dark"], .theme-dark, .dark-mode, .dark)
   .interactive-surface.icon-only
   [data-icon-role="light"] {
-  color: var(--interactive-surface-light-icon-color-dark, rgb(255 255 255));
+  color: var(--interactive-surface-light-icon-color-dark, var(--icon-light-dark, rgb(255 255 255)));
 }
 
 :where([data-theme="dark"], .theme-dark, .dark-mode, .dark) .interactive-surface.icon-only .dark-icon,
 :where([data-theme="dark"], .theme-dark, .dark-mode, .dark)
   .interactive-surface.icon-only
   [data-icon-role="dark"] {
-  color: var(--interactive-surface-dark-icon-color-dark, rgb(30 58 138));
+  color: var(--interactive-surface-dark-icon-color-dark, var(--icon-dark-dark, rgb(30 58 138)));
 }
 
 :where([data-theme="dark"], .theme-dark, .dark-mode, .dark)
@@ -286,37 +286,112 @@
 :where([data-theme="dark"], .theme-dark, .dark-mode, .dark)
   .interactive-surface.icon-only
   [data-icon-role="accessibility"] {
-  color: var(--interactive-surface-accessibility-icon-color-dark, rgb(156 163 175));
+  color: var(
+    --interactive-surface-accessibility-icon-color-dark,
+    var(--icon-accessibility-dark, rgb(156 163 175))
+  );
 }
 
 /* 8) Visual variant token modifiers */
 
 .interactive-surface.variant-primary {
+  --interactive-surface-bg: var(
+    --interactive-surface-variant-primary-bg,
+    var(--variant-primary-bg, rgb(15 79 127))
+  );
+  --interactive-surface-fg: var(
+    --interactive-surface-variant-primary-fg,
+    var(--variant-primary-fg, rgb(244 251 255))
+  );
+  --interactive-surface-border-color: var(
+    --interactive-surface-variant-primary-border-color,
+    var(--variant-primary-border, var(--interactive-surface-bg))
+  );
   --interactive-surface-darken-hover: 0.95;
   --interactive-surface-darken-active: 0.97;
 }
 
 .interactive-surface.variant-secondary {
+  --interactive-surface-bg: var(
+    --interactive-surface-variant-secondary-bg,
+    var(--variant-secondary-bg, rgb(198 220 237))
+  );
+  --interactive-surface-fg: var(
+    --interactive-surface-variant-secondary-fg,
+    var(--variant-secondary-fg, rgb(20 48 70))
+  );
+  --interactive-surface-border-color: var(
+    --interactive-surface-variant-secondary-border-color,
+    var(--variant-secondary-border, rgb(155 183 206))
+  );
   --interactive-surface-darken-hover: 0.97;
   --interactive-surface-darken-active: 0.99;
 }
 
 .interactive-surface.variant-accent {
+  --interactive-surface-bg: var(
+    --interactive-surface-variant-accent-bg,
+    var(--variant-accent-bg, rgb(201 240 237))
+  );
+  --interactive-surface-fg: var(
+    --interactive-surface-variant-accent-fg,
+    var(--variant-accent-fg, rgb(6 74 79))
+  );
+  --interactive-surface-border-color: var(
+    --interactive-surface-variant-accent-border-color,
+    var(--variant-accent-border, rgb(105 195 200))
+  );
   --interactive-surface-darken-hover: 0.94;
   --interactive-surface-darken-active: 0.96;
 }
 
 .interactive-surface.variant-subtle {
+  --interactive-surface-bg: var(
+    --interactive-surface-variant-subtle-bg,
+    var(--variant-subtle-bg, rgb(219 231 243))
+  );
+  --interactive-surface-fg: var(
+    --interactive-surface-variant-subtle-fg,
+    var(--variant-subtle-fg, rgb(26 52 75))
+  );
+  --interactive-surface-border-color: var(
+    --interactive-surface-variant-subtle-border-color,
+    var(--variant-subtle-border, rgb(173 191 206))
+  );
   --interactive-surface-darken-hover: 0.98;
   --interactive-surface-darken-active: 1;
 }
 
 .interactive-surface.variant-warning {
+  --interactive-surface-bg: var(
+    --interactive-surface-variant-warning-bg,
+    var(--variant-warning-bg, rgb(255 227 186))
+  );
+  --interactive-surface-fg: var(
+    --interactive-surface-variant-warning-fg,
+    var(--variant-warning-fg, rgb(102 61 0))
+  );
+  --interactive-surface-border-color: var(
+    --interactive-surface-variant-warning-border-color,
+    var(--variant-warning-border, rgb(218 172 103))
+  );
   --interactive-surface-darken-hover: 0.93;
   --interactive-surface-darken-active: 0.95;
 }
 
 .interactive-surface.variant-danger {
+  --interactive-surface-bg: var(
+    --interactive-surface-variant-danger-bg,
+    var(--variant-danger-bg, rgb(255 211 213))
+  );
+  --interactive-surface-fg: var(
+    --interactive-surface-variant-danger-fg,
+    var(--variant-danger-fg, rgb(116 32 32))
+  );
+  --interactive-surface-border-color: var(
+    --interactive-surface-variant-danger-border-color,
+    var(--variant-danger-border, rgb(215 125 130))
+  );
   --interactive-surface-darken-hover: 0.92;
   --interactive-surface-darken-active: 0.94;
 }

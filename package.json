@@ -25,7 +25,7 @@
   "bugs": {
     "url": "https://github.com/Foscat/Interactive-Surface-CSS/issues"
   },
-  "homepage": "https://github.com/Foscat/Interactive-Surface-CSS#readme",
+  "homepage": "https://foscat.github.io/Interactive-Surface-CSS/",
   "type": "module",
   "main": "./index.cjs",
   "module": "./index.js",
@@ -39,10 +39,10 @@
       "default": "./index.js",
       "style": "./interactive-surface.css"
     },
-    "./package.json": "./package.json",
     "./interactive-surface.css": "./interactive-surface.css",
     "./index.html": "./index.html",
-    "./example.html": "./index.html"
+    "./index.cjs": "./index.cjs",
+    "./package.json": "./package.json"
   },
   "sideEffects": [
     "./index.js",
@@ -53,10 +53,10 @@
     "index.js",
     "index.cjs",
     "interactive-surface.css",
-    "*.md",
-    "wiki",
-    "LICENSE",
-    "index.html"
+    "index.html",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
   ],
   "engines": {
     "node": ">=18"

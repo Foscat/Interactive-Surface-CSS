@@ -4,6 +4,84 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Interactive Surface Library Demo</title>
+    <meta name="description" content="A demo page showcasing the Interactive Surface CSS library, with live token values, state behavior, accessibility outcomes, and creative compositions." />
+    <meta name="keywords" content="interactive surface css, css interaction primitive, accessible ui, design tokens, component library, button states, focus visible, hover active states, frontend css" />
+    <meta name="author" content="Kyle Foster" />
+    <meta name="creator" content="Kyle Foster" />
+    <meta name="publisher" content="Kyle Foster" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <meta name="googlebot" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <meta name="bingbot" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta name="format-detection" content="telephone=no, date=no, email=no, address=no" />
+    <meta name="application-name" content="Interactive Surface Library Demo" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="Interactive Surface" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="rgb(244 248 251)" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="rgb(9 19 28)" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="subject" content="Interactive Surface CSS library demo and documentation" />
+    <meta name="classification" content="CSS library, UI component primitive, frontend tooling" />
+    <meta name="category" content="Developer Tools" />
+    <meta name="coverage" content="Worldwide" />
+    <meta name="distribution" content="Global" />
+    <meta name="rating" content="General" />
+
+    <link rel="canonical" href="https://foscat.github.io/Interactive-Surface-CSS/" />
+    <link rel="alternate" hreflang="en" href="https://foscat.github.io/Interactive-Surface-CSS/" />
+    <link rel="alternate" hreflang="x-default" href="https://foscat.github.io/Interactive-Surface-CSS/" />
+    <link rel="apple-touch-icon" href="https://foscat.github.io/Interactive-Surface-CSS/ISC%20logo.png" />
+    <link rel="shortcut icon" href="./ISC logo.png" type="image/png" />
+    <link rel="icon" href="./ISC logo.png" type="image/png" />
+
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Interactive Surface CSS" />
+    <meta property="og:title" content="Interactive Surface Library Demo" />
+    <meta property="og:description" content="Explore Interactive Surface CSS with live token values, state behavior, accessibility outcomes, and composition patterns." />
+    <meta property="og:url" content="https://foscat.github.io/Interactive-Surface-CSS/" />
+    <meta property="og:image" content="https://foscat.github.io/Interactive-Surface-CSS/ISC%20logo.png" />
+    <meta property="og:image:alt" content="Interactive Surface CSS logo" />
+    <meta property="og:image:type" content="image/png" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Interactive Surface Library Demo" />
+    <meta name="twitter:description" content="A practical demo for Interactive Surface CSS with token editing, accessibility states, and reusable UI interaction patterns." />
+    <meta name="twitter:image" content="https://foscat.github.io/Interactive-Surface-CSS/ISC%20logo.png" />
+    <meta name="twitter:image:alt" content="Interactive Surface CSS logo" />
+    <meta name="twitter:url" content="https://foscat.github.io/Interactive-Surface-CSS/" />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebPage",
+        "name": "Interactive Surface Library Demo",
+        "url": "https://foscat.github.io/Interactive-Surface-CSS/",
+        "description": "A demo page showcasing the Interactive Surface CSS library, with live token values, state behavior, accessibility outcomes, and creative compositions.",
+        "inLanguage": "en-US",
+        "image": "https://foscat.github.io/Interactive-Surface-CSS/ISC%20logo.png",
+        "isPartOf": {
+          "@type": "WebSite",
+          "name": "Interactive Surface CSS",
+          "url": "https://foscat.github.io/Interactive-Surface-CSS/"
+        },
+        "about": {
+          "@type": "SoftwareSourceCode",
+          "name": "interactive-surface-css",
+          "codeRepository": "https://github.com/Foscat/Interactive-Surface-CSS",
+          "programmingLanguage": "CSS",
+          "runtimePlatform": "Web Browser",
+          "license": "https://opensource.org/licenses/MIT",
+          "url": "https://www.npmjs.com/package/interactive-surface-css",
+          "sameAs": [
+            "https://cdn.jsdelivr.net/npm/interactive-surface-css@latest/interactive-surface.css",
+            "https://unpkg.com/interactive-surface-css@latest/interactive-surface.css"
+          ]
+        }
+      }
+    </script>
 
     <link rel="stylesheet" href="./interactive-surface.css" />
 
@@ -37,9 +115,9 @@
         --bg-gradient-lift: rgb(255 255 255);
 
         /* Demo controls */
-        --surface-btn-bg: rgb(223 233 243);
-        --surface-btn-fg: rgb(16 42 67);
-        --surface-btn-border: rgb(177 195 212);
+        --surface-btn-bg: var(--interactive-surface-variant-secondary-bg);
+        --surface-btn-fg: var(--interactive-surface-variant-secondary-fg);
+        --surface-btn-border: var(--interactive-surface-variant-secondary-border-color);
         --demo-readout-border: rgb(var(--rgb-ink-primary) / 18%);
         --demo-readout-bg: rgb(var(--rgb-surface-light) / 66%);
         --jump-link-border: rgb(var(--rgb-ink-primary) / 20%);
@@ -79,30 +157,78 @@
         --editor-success: rgb(11 122 76);
         --editor-error: var(--docs-error);
 
-        /* Variant palette for interactive surfaces */
-        --variant-primary-bg: rgb(15 79 127);
-        --variant-primary-fg: rgb(244 251 255);
-        --variant-primary-border: rgb(15 79 127);
-        --variant-secondary-bg: rgb(198 220 237);
-        --variant-secondary-fg: rgb(20 48 70);
-        --variant-secondary-border: rgb(155 183 206);
-        --variant-accent-bg: rgb(201 240 237);
-        --variant-accent-fg: rgb(6 74 79);
-        --variant-accent-border: rgb(105 195 200);
-        --variant-warning-bg: rgb(255 227 186);
-        --variant-warning-fg: rgb(102 61 0);
-        --variant-warning-border: rgb(218 172 103);
-        --variant-danger-bg: rgb(255 211 213);
-        --variant-danger-fg: rgb(116 32 32);
-        --variant-danger-border: rgb(215 125 130);
-        --variant-subtle-bg: rgb(219 231 243);
-        --variant-subtle-fg: rgb(26 52 75);
-        --variant-subtle-border: rgb(173 191 206);
+        /* Core variant palette consumed by interactive-surface.css */
+        --interactive-surface-variant-primary-bg: var(--accent-main);
+        --interactive-surface-variant-primary-fg: rgb(244 251 255);
+        --interactive-surface-variant-primary-border-color: color-mix(in srgb, var(--accent-main), rgb(0 0 0) 12%);
+
+        --interactive-surface-variant-secondary-bg: color-mix(
+          in srgb,
+          var(--interactive-surface-bg),
+          var(--accent-soft) 72%
+        );
+        --interactive-surface-variant-secondary-fg: color-mix(
+          in srgb,
+          var(--interactive-surface-fg),
+          var(--accent-main) 16%
+        );
+        --interactive-surface-variant-secondary-border-color: color-mix(
+          in srgb,
+          var(--interactive-surface-border-color),
+          var(--accent-main) 28%
+        );
+
+        --interactive-surface-variant-accent-bg: color-mix(in srgb, var(--accent-soft), var(--accent-main) 32%);
+        --interactive-surface-variant-accent-fg: color-mix(in srgb, var(--interactive-surface-fg), rgb(0 78 86) 34%);
+        --interactive-surface-variant-accent-border-color: color-mix(
+          in srgb,
+          var(--accent-main),
+          var(--accent-soft) 42%
+        );
+
+        --interactive-surface-variant-warning-bg: color-mix(in srgb, var(--accent-soft), rgb(255 205 118) 56%);
+        --interactive-surface-variant-warning-fg: color-mix(in srgb, var(--interactive-surface-fg), rgb(95 58 0) 56%);
+        --interactive-surface-variant-warning-border-color: color-mix(
+          in srgb,
+          var(--interactive-surface-border-color),
+          rgb(195 134 58) 55%
+        );
+
+        --interactive-surface-variant-danger-bg: color-mix(in srgb, var(--accent-soft), rgb(242 141 152) 52%);
+        --interactive-surface-variant-danger-fg: color-mix(in srgb, var(--interactive-surface-fg), rgb(118 33 33) 60%);
+        --interactive-surface-variant-danger-border-color: color-mix(
+          in srgb,
+          var(--interactive-surface-border-color),
+          rgb(160 63 74) 54%
+        );
+
+        --interactive-surface-variant-subtle-bg: color-mix(
+          in srgb,
+          var(--interactive-surface-bg),
+          var(--accent-soft) 58%
+        );
+        --interactive-surface-variant-subtle-fg: var(--interactive-surface-fg);
+        --interactive-surface-variant-subtle-border-color: color-mix(
+          in srgb,
+          var(--interactive-surface-border-color),
+          var(--accent-main) 20%
+        );
 
         /* Icon role colors */
-        --icon-light: rgb(212 175 55);
-        --icon-dark: rgb(0 0 0);
-        --icon-accessibility: rgb(59 130 246);
+        --interactive-surface-light-icon-color: rgb(212 175 55);
+        --interactive-surface-dark-icon-color: rgb(0 0 0);
+        --interactive-surface-accessibility-icon-color: rgb(59 130 246);
+        --interactive-surface-light-icon-color-dark: rgb(255 255 255);
+        --interactive-surface-dark-icon-color-dark: rgb(30 58 138);
+        --interactive-surface-accessibility-icon-color-dark: rgb(156 163 175);
+
+        /* Legacy icon aliases kept for compatibility with older token files */
+        --icon-light: var(--interactive-surface-light-icon-color);
+        --icon-dark: var(--interactive-surface-dark-icon-color);
+        --icon-accessibility: var(--interactive-surface-accessibility-icon-color);
+        --icon-light-dark: var(--interactive-surface-light-icon-color-dark);
+        --icon-dark-dark: var(--interactive-surface-dark-icon-color-dark);
+        --icon-accessibility-dark: var(--interactive-surface-accessibility-icon-color-dark);
       }
 
       /* Dark theme overrides: keep the same semantic variable interface. */
@@ -131,9 +257,9 @@
         --bg-gradient-orb-secondary: rgb(43 122 190 / 20%);
         --bg-gradient-lift: rgb(143, 183, 221);
 
-        --surface-btn-bg: rgb(35 56 74);
-        --surface-btn-fg: rgb(226 237 245);
-        --surface-btn-border: rgb(76 104 127);
+        --surface-btn-bg: var(--interactive-surface-variant-secondary-bg);
+        --surface-btn-fg: var(--interactive-surface-variant-secondary-fg);
+        --surface-btn-border: var(--interactive-surface-variant-secondary-border-color);
         --demo-readout-border: rgb(var(--rgb-ink-contrast) / 30%);
         --demo-readout-bg: rgb(var(--rgb-surface-readout-dark) / 58%);
         --jump-link-border: rgb(var(--rgb-ink-contrast) / 34%);
@@ -171,28 +297,6 @@
         --editor-success: rgb(117 255 196);
         --editor-error: var(--docs-error);
 
-        --variant-primary-bg: rgb(33 93 141);
-        --variant-primary-fg: rgb(244 251 255);
-        --variant-primary-border: rgb(47 118 173);
-        --variant-secondary-bg: rgb(35 62 84);
-        --variant-secondary-fg: rgb(212 228 239);
-        --variant-secondary-border: rgb(76 104 127);
-        --variant-accent-bg: rgb(29 73 79);
-        --variant-accent-fg: rgb(209 255 255);
-        --variant-accent-border: rgb(45 107 115);
-        --variant-warning-bg: rgb(95 68 36);
-        --variant-warning-fg: rgb(255 235 200);
-        --variant-warning-border: rgb(151 115 74);
-        --variant-danger-bg: rgb(90 40 40);
-        --variant-danger-fg: rgb(255 218 218);
-        --variant-danger-border: rgb(141 65 65);
-        --variant-subtle-bg: rgb(37 58 78);
-        --variant-subtle-fg: rgb(216 233 246);
-        --variant-subtle-border: rgb(76 104 127);
-
-        --icon-light: rgb(255 255 255);
-        --icon-dark: rgb(30 58 138);
-        --icon-accessibility: rgb(156 163 175);
       }
 
       /* Global reset. */
@@ -564,55 +668,6 @@
         gap: 0.8rem;
       }
 
-      /* Variant mapping for interactive-surface instances. */
-      .variant-primary {
-        --interactive-surface-bg: var(--variant-primary-bg);
-        --interactive-surface-fg: var(--variant-primary-fg);
-        --interactive-surface-border-color: var(--variant-primary-border);
-      }
-
-      .variant-secondary {
-        --interactive-surface-bg: var(--variant-secondary-bg);
-        --interactive-surface-fg: var(--variant-secondary-fg);
-        --interactive-surface-border-color: var(--variant-secondary-border);
-      }
-
-      .variant-accent {
-        --interactive-surface-bg: var(--variant-accent-bg);
-        --interactive-surface-fg: var(--variant-accent-fg);
-        --interactive-surface-border-color: var(--variant-accent-border);
-      }
-
-      .variant-warning {
-        --interactive-surface-bg: var(--variant-warning-bg);
-        --interactive-surface-fg: var(--variant-warning-fg);
-        --interactive-surface-border-color: var(--variant-warning-border);
-      }
-
-      .variant-danger {
-        --interactive-surface-bg: var(--variant-danger-bg);
-        --interactive-surface-fg: var(--variant-danger-fg);
-        --interactive-surface-border-color: var(--variant-danger-border);
-      }
-
-      .variant-subtle {
-        --interactive-surface-bg: var(--variant-subtle-bg);
-        --interactive-surface-fg: var(--variant-subtle-fg);
-        --interactive-surface-border-color: var(--variant-subtle-border);
-      }
-
-      .light-icon {
-        color: var(--icon-light);
-      }
-
-      .dark-icon {
-        color: var(--icon-dark);
-      }
-
-      .accessibility-icon {
-        color: var(--icon-accessibility);
-      }
-
       /* Card and icon showcase layouts. */
       .card-grid {
         display: grid;
@@ -865,6 +920,26 @@
         overflow-x: auto;
       }
 
+      .markdown-code-block {
+        position: relative;
+      }
+
+      .markdown-code-block pre {
+        padding-top: 2.7rem;
+      }
+
+      .code-copy-btn {
+        position: absolute;
+        top: 0.45rem;
+        right: 0.45rem;
+        z-index: 2;
+        min-height: 34px;
+        min-width: 74px;
+        padding: 0.4rem 0.72rem;
+        font-size: 0.76rem;
+        letter-spacing: 0.02em;
+      }
+
       .markdown-body code {
         font-family: "Consolas", "SFMono-Regular", "Menlo", monospace;
         font-size: 0.86em;
@@ -923,7 +998,7 @@
     </style>
     <style id="userTokenOverrides"></style>
   </head>
-  <body data-theme="light" data-motion="system">
+  <body data-theme="system" data-motion="system">
     <main>
       <!-- Hero: library positioning and global demo controls. -->
       <header class="hero">
@@ -1131,19 +1206,19 @@
             <button class="interactive-surface icon-only variant-secondary" aria-label="Light mode icon">
               <span class="icon-glyph light-icon" data-icon-role="light">Li</span>
             </button>
-            <p class="icon-label">light-icon: var(--icon-light)</p>
+            <p class="icon-label">light-icon: var(--interactive-surface-light-icon-color)</p>
           </article>
           <article class="icon-tile">
             <button class="interactive-surface icon-only variant-subtle" aria-label="Dark mode icon">
               <span class="icon-glyph dark-icon" data-icon-role="dark">Da</span>
             </button>
-            <p class="icon-label">dark-icon: var(--icon-dark)</p>
+            <p class="icon-label">dark-icon: var(--interactive-surface-dark-icon-color)</p>
           </article>
           <article class="icon-tile">
             <button class="interactive-surface icon-only variant-accent" aria-label="Accessibility icon">
               <span class="icon-glyph accessibility-icon" data-icon-role="accessibility">A11Y</span>
             </button>
-            <p class="icon-label">accessibility-icon: var(--icon-accessibility)</p>
+            <p class="icon-label">accessibility-icon: var(--interactive-surface-accessibility-icon-color)</p>
           </article>
           <article class="icon-tile">
             <button class="interactive-surface icon-only variant-primary" aria-label="Share">
@@ -1492,6 +1567,9 @@ npm publish --access public
 Avoid applying additional `transform`, `translate`, `scale`, or `rotate` rules to the same node. If you need extra animation, apply it to a child element.
 
 </script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/marked@13.0.2/lib/marked.umd.js"
+    ></script>
     <script>
       (function () {
         // Core DOM references for controls, docs rendering, and token readouts.
@@ -1521,8 +1599,15 @@ Avoid applying additional `transform`, `translate`, `scale`, or `rotate` rules t
         const tokenCssExport = document.getElementById("tokenCssExport");
         const editableTokenNames = Array.from(new Set(tokenCards.map((card) => card.dataset.token).filter(Boolean)));
         const tokenOverrideState = { light: {}, dark: {} };
+        const prefersColorSchemeQuery = window.matchMedia("(prefers-color-scheme: dark)");
         const prefersReducedMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
         const usedIds = new Set(Array.from(document.querySelectorAll("[id]"), (element) => element.id));
+        const hasExplicitTheme = body.dataset.theme === "light" || body.dataset.theme === "dark";
+
+        // Default to the browser color-scheme when the page is in system mode.
+        if (!hasExplicitTheme) {
+          body.dataset.theme = prefersColorSchemeQuery.matches ? "dark" : "light";
+        }
 
         // Reflects active theme state in the toggle metadata.
         function syncThemeLabel() {
@@ -1842,7 +1927,7 @@ Avoid applying additional `transform`, `translate`, `scale`, or `rotate` rules t
 
           lines.forEach(function (line) {
             if (inCodeBlock) {
-              if (/^```/.test(line)) {
+              if (/^\s*```/.test(line)) {
                 flushCodeBlock();
                 inCodeBlock = false;
               } else {
@@ -1851,7 +1936,7 @@ Avoid applying additional `transform`, `translate`, `scale`, or `rotate` rules t
               return;
             }
 
-            const codeFenceMatch = line.match(/^```([a-zA-Z0-9_-]+)?\s*$/);
+            const codeFenceMatch = line.match(/^\s*```([a-zA-Z0-9_-]+)?\s*$/);
             if (codeFenceMatch) {
               flushParagraph();
               flushList();
@@ -1972,6 +2057,135 @@ Avoid applying additional `transform`, `translate`, `scale`, or `rotate` rules t
           });
         }
 
+        function renderMarkdownToHtml(markdownSource) {
+          const normalizedMarkdownSource = String(markdownSource || "");
+
+          if (window.marked && typeof window.marked.parse === "function") {
+            try {
+              return window.marked.parse(normalizedMarkdownSource);
+            } catch (_error) {
+              // Fallback keeps docs usable even if the external markdown parser fails.
+            }
+          }
+
+          return markdownToHtml(normalizedMarkdownSource);
+        }
+
+        async function copyTextToClipboard(rawText) {
+          const text = String(rawText || "");
+          if (!text) {
+            return false;
+          }
+
+          if (navigator.clipboard && window.isSecureContext) {
+            try {
+              await navigator.clipboard.writeText(text);
+              return true;
+            } catch (_error) {
+              // Clipboard API can fail in restricted contexts; try the fallback below.
+            }
+          }
+
+          const textarea = document.createElement("textarea");
+          textarea.value = text;
+          textarea.setAttribute("readonly", "");
+          textarea.style.position = "fixed";
+          textarea.style.top = "-9999px";
+          document.body.appendChild(textarea);
+          textarea.select();
+          textarea.setSelectionRange(0, textarea.value.length);
+
+          let copied = false;
+          try {
+            copied = document.execCommand("copy");
+          } catch (_error) {
+            copied = false;
+          }
+
+          textarea.remove();
+          return copied;
+        }
+
+        function enhanceRenderedMarkdown() {
+          if (!readmeContent) {
+            return;
+          }
+
+          const unsafeNodes = readmeContent.querySelectorAll("script, iframe, object, embed");
+          unsafeNodes.forEach(function (node) {
+            node.remove();
+          });
+
+          const links = Array.from(readmeContent.querySelectorAll("a[href]"));
+          links.forEach(function (link) {
+            const href = sanitizeHref(link.getAttribute("href") || "");
+            link.setAttribute("href", href);
+
+            const external = /^(?:https?:)?\/\//.test(href);
+            if (external) {
+              link.setAttribute("target", "_blank");
+              link.setAttribute("rel", "noreferrer noopener");
+            } else {
+              link.removeAttribute("target");
+              link.removeAttribute("rel");
+            }
+          });
+
+          const codeBlocks = Array.from(readmeContent.querySelectorAll("pre > code"));
+          codeBlocks.forEach(function (codeBlock) {
+            const pre = codeBlock.parentElement;
+            const parent = pre?.parentElement;
+            if (!pre || !parent) {
+              return;
+            }
+
+            let wrapper = pre.closest(".markdown-code-block");
+            if (!wrapper) {
+              wrapper = document.createElement("div");
+              wrapper.className = "markdown-code-block";
+              parent.insertBefore(wrapper, pre);
+              wrapper.appendChild(pre);
+            }
+
+            if (wrapper.querySelector(".code-copy-btn")) {
+              return;
+            }
+
+            const copyButton = document.createElement("button");
+            copyButton.type = "button";
+            copyButton.className = "interactive-surface code-copy-btn variant-subtle size-sm";
+            copyButton.textContent = "Copy";
+            copyButton.setAttribute("aria-label", "Copy code block");
+
+            const languageClass = Array.from(codeBlock.classList).find(function (name) {
+              return name.startsWith("language-");
+            });
+            if (languageClass) {
+              const language = languageClass.replace("language-", "");
+              copyButton.setAttribute("aria-label", `Copy ${language} code block`);
+            }
+
+            copyButton.addEventListener("click", async function () {
+              const copied = await copyTextToClipboard(codeBlock.textContent || "");
+              copyButton.textContent = copied ? "Copied" : "Failed";
+              copyButton.setAttribute("aria-live", "polite");
+
+              window.setTimeout(function () {
+                copyButton.textContent = "Copy";
+              }, copied ? 1400 : 1800);
+            });
+
+            wrapper.appendChild(copyButton);
+          });
+        }
+
+        function renderMarkdownContent(markdownSource) {
+          readmeContent.innerHTML = renderMarkdownToHtml(markdownSource);
+          enhanceRenderedMarkdown();
+          assignReadmeHeadingIds();
+          buildReadmeOutline();
+        }
+
         async function readMarkdownFile(markdownPath) {
           const response = await fetch(markdownPath, { cache: "no-store" });
           if (!response.ok) {
@@ -1989,14 +2203,10 @@ Avoid applying additional `transform`, `translate`, `scale`, or `rotate` rules t
 
           try {
             const markdown = await readMarkdownFile(markdownPath);
-            readmeContent.innerHTML = markdownToHtml(markdown);
-            assignReadmeHeadingIds();
-            buildReadmeOutline();
+            renderMarkdownContent(markdown);
           } catch (_error) {
             if (markdownPath === "./README.md" && embeddedReadme?.textContent.trim()) {
-              readmeContent.innerHTML = markdownToHtml(embeddedReadme.textContent);
-              assignReadmeHeadingIds();
-              buildReadmeOutline();
+              renderMarkdownContent(embeddedReadme.textContent);
               return;
             }
 

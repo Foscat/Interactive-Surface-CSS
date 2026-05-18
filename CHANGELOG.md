@@ -2,6 +2,26 @@
 
 All notable changes to this package are documented in this file.
 
+## Unreleased
+
+### Added
+
+- Added robust markdown rendering for embedded docs in `index.html` using `marked` (browser UMD) with graceful fallback to the local parser.
+- Added copy-to-clipboard controls for rendered README code blocks in the demo docs panel.
+- Added expanded SEO and social metadata to the demo page head, including canonical URL, Open Graph, Twitter cards, crawler directives, and JSON-LD structured data.
+
+### Changed
+
+- Moved demo variant color mapping ownership from inline demo CSS into `interactive-surface.css`, so `.variant-*` classes rely on core library token contracts.
+- Updated demo theme token wiring so editable core tokens drive variant palettes more consistently across library examples.
+- Updated icon-role color token flow to prefer `--interactive-surface-*` icon tokens while retaining legacy alias compatibility.
+- Updated demo theme initialization to default to the browser color-scheme preference (`prefers-color-scheme`) when no explicit theme is selected.
+
+### Fixed
+
+- Fixed embedded README rendering for indented fenced code blocks (for example, code fences nested in numbered lists).
+- Fixed docs rendering polish by ensuring generated markdown links are sanitized and external links get safe target/rel attributes.
+
 ## 1.1.1 - 2026-04-24
 
 ### Improved
@@ -13,9 +33,9 @@ All notable changes to this package are documented in this file.
 
 ### Changed
 
+- Touch feedback now uses a tokenized tap highlight instead of fully removing native tap indication
 - Native disabled controls (`:disabled`) and `.is-disabled` now use stricter non-interactive behavior
 - `[aria-disabled="true"]` receives the same visual disabled appearance and sets `pointer-events: none`; keyboard focus is still reachable so the focus ring remains visible
-- Touch feedback now uses a tokenized tap highlight instead of fully removing native tap indication
 
 ### Fixed
 
