@@ -1,25 +1,39 @@
+<!-- markdownlint-configure-file {"MD024": {"siblings_only": true}} -->
+
 # Changelog
 
 All notable changes to this package are documented in this file.
 
 ## Unreleased
 
+### Added
+
+- Added integration docs for using this package with `ui-style-kit-css` and its `interactive-surface-bridge` export.
+
+### Changed
+
+- Expanded dark theme icon-role selectors to also match `data-mode="dark"` and `data-mode="contrast"` containers for broader cross-library theming compatibility.
+
 ## 1.1.5 - 2026-05-18
 
 ### Changed
+
 - Republished the release under `1.1.5` after npm rejected the already-published `1.1.4` version.
 
 ## 1.1.4 - 2026-05-18
 
 ### Fixed
+
 - Corrected reduced-motion behavior so hover/focus/active lift transforms are fully disabled when `prefers-reduced-motion: reduce` is active.
 
 ### Changed
+
 - Bumped package release metadata and docs references to `1.1.4` after the previous publish attempt issues.
 
 ## 1.1.3 - 2026-05-17
 
 ### Changed
+
 - Superseded the failed `1.1.2` release with `1.1.3`.
 - Updated version references across package metadata and release docs to `1.1.3`.
 - Aligned package metadata with the published `1.1.3` release.
