@@ -266,24 +266,24 @@
   }
 }
 
-:where([data-theme="dark"], .theme-dark, .dark-mode, .dark) .interactive-surface.icon-only .light-icon,
-:where([data-theme="dark"], .theme-dark, .dark-mode, .dark)
+:where([data-theme="dark"], [data-mode="dark"], [data-mode="contrast"], .theme-dark, .dark-mode, .dark) .interactive-surface.icon-only .light-icon,
+:where([data-theme="dark"], [data-mode="dark"], [data-mode="contrast"], .theme-dark, .dark-mode, .dark)
   .interactive-surface.icon-only
   [data-icon-role="light"] {
   color: var(--interactive-surface-light-icon-color-dark, var(--icon-light-dark, rgb(255 255 255)));
 }
 
-:where([data-theme="dark"], .theme-dark, .dark-mode, .dark) .interactive-surface.icon-only .dark-icon,
-:where([data-theme="dark"], .theme-dark, .dark-mode, .dark)
+:where([data-theme="dark"], [data-mode="dark"], [data-mode="contrast"], .theme-dark, .dark-mode, .dark) .interactive-surface.icon-only .dark-icon,
+:where([data-theme="dark"], [data-mode="dark"], [data-mode="contrast"], .theme-dark, .dark-mode, .dark)
   .interactive-surface.icon-only
   [data-icon-role="dark"] {
   color: var(--interactive-surface-dark-icon-color-dark, var(--icon-dark-dark, rgb(30 58 138)));
 }
 
-:where([data-theme="dark"], .theme-dark, .dark-mode, .dark)
+:where([data-theme="dark"], [data-mode="dark"], [data-mode="contrast"], .theme-dark, .dark-mode, .dark)
   .interactive-surface.icon-only
   .accessibility-icon,
-:where([data-theme="dark"], .theme-dark, .dark-mode, .dark)
+:where([data-theme="dark"], [data-mode="dark"], [data-mode="contrast"], .theme-dark, .dark-mode, .dark)
   .interactive-surface.icon-only
   [data-icon-role="accessibility"] {
   color: var(
@@ -473,7 +473,6 @@
 
 @media (forced-colors: active) {
   .interactive-surface {
-    forced-color-adjust: auto;
     background-color: ButtonFace;
     color: ButtonText;
     border-color: ButtonText;
