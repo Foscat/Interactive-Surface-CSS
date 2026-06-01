@@ -134,6 +134,9 @@ test.describe("interactive surface package behavior", () => {
   test("data-mode dark and contrast containers apply dark icon-role colors without changing baseline colors", async ({
     page
   }) => {
+    await page.emulateMedia({ colorScheme: "light" });
+    await page.setContent(html);
+
     const getColor = async (selector: string) =>
       page.locator(selector).evaluate((el) => window.getComputedStyle(el).color);
 
