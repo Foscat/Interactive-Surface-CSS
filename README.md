@@ -209,7 +209,7 @@ Release checklist:
 2. Bump `version` in `package.json`.
 3. Update `CHANGELOG.md`.
 4. Push to `main`.
-5. Create and publish a GitHub Release tag (for example `v1.1.5`).
+5. Create and publish a GitHub Release tag (for example `v1.2.0`).
 6. Verify the `Publish to npm` workflow succeeds.
 7. Verify CDN availability:
    - `https://cdn.jsdelivr.net/npm/interactive-surface-css@<version>/interactive-surface.css`

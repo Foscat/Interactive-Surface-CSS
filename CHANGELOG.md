@@ -6,6 +6,8 @@ All notable changes to this package are documented in this file.
 
 ## Unreleased
 
+## 1.2.0 - 2026-06-01
+
 ### Added
 
 - Added integration docs for using this package with `ui-style-kit-css` and its `interactive-surface-bridge` export.
