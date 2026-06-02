@@ -6,6 +6,16 @@ All notable changes to this package are documented in this file.
 
 ## Unreleased
 
+## 1.2.1 - 2026-06-02
+
+### Added
+
+- Added Playwright compatibility coverage for `ui-style-kit-css@1.2.1` bridge behavior across representative UI systems and modes.
+
+### Changed
+
+- Hardened cascade behavior and documentation for complementary use with `ui-style-kit-css@1.2.1` in both combined-build and per-style bridge import orders.
+
 ## 1.2.0 - 2026-06-01
 
 ### Added

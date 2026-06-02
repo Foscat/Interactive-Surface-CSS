@@ -149,6 +149,35 @@ import "interactive-surface-css";
 <button class="interactive-surface variant-primary">Save</button>
 ```
 
+## Using with UI Style Kit CSS
+
+`interactive-surface-css` and `ui-style-kit-css` can be used independently or together.
+
+UI Style Kit owns visual theme tokens. Interactive Surface owns interaction behavior on `.interactive-surface`.
+
+With the combined UI Style Kit build, the bridge is already included:
+
+```js
+import "ui-style-kit-css/dist/ui-style-kit.css";
+import "interactive-surface-css/interactive-surface.css";
+```
+
+With per-style UI Style Kit imports, include the bridge:
+
+```js
+import "ui-style-kit-css/styles/minimal-saas.css";
+import "ui-style-kit-css/interactive-surface-bridge";
+import "interactive-surface-css/interactive-surface.css";
+```
+
+This order is also supported:
+
+```js
+import "interactive-surface-css/interactive-surface.css";
+import "ui-style-kit-css/styles/minimal-saas.css";
+import "ui-style-kit-css/interactive-surface-bridge";
+```
+
 ## Motion guardrail
 
 `interactive-surface` owns transform-based motion on the host element.

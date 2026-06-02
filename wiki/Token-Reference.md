@@ -58,6 +58,12 @@ The stylesheet also recognizes these semantic fallbacks:
 - `--border-color`
 - `--focus-ring`
 
+## UI Style Kit CSS bridge
+
+When used with `ui-style-kit-css@1.2.1`, the UI Style Kit bridge maps active `data-ui`, `data-theme`, and `data-mode` tokens into this package's public `--interactive-surface-*` contract.
+
+Interactive Surface does not depend on UI Style Kit token names directly. It continues to resolve values through its own token contract, so the package remains usable without UI Style Kit.
+
 ## Important implementation detail
 
 The package does **not** define global `:root` tokens.

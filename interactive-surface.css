@@ -129,6 +129,16 @@
   transition: opacity var(--_is-motion-default) var(--_is-ease-standard);
 }
 
+/* 2b) Theme-kit compatibility ownership */
+
+[data-ui] .interactive-surface {
+  border: var(--_is-border-width) solid var(--_is-border-color);
+  border-radius: var(--_is-radius);
+  background-color: var(--_is-bg);
+  color: var(--_is-fg);
+  font: inherit;
+}
+
 /* 3) Keyboard focus visibility */
 
 .interactive-surface:focus {

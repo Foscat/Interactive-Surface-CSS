@@ -158,16 +158,18 @@ The package also supports legacy fallback tokens and semantic fallback tokens. F
 
 ## Integration with UI Style Kit CSS
 
-`interactive-surface-css` works directly with `ui-style-kit-css`.
+`interactive-surface-css` and `ui-style-kit-css` are designed to work separately and complementarily.
 
-If you use the combined UI Style Kit build, no extra bridge import is needed:
+UI Style Kit owns visual theme tokens. Interactive Surface owns interaction behavior on `.interactive-surface`.
+
+If you use the combined UI Style Kit build, the bridge is already included and this import order is supported:
 
 ```js
 import "ui-style-kit-css/dist/ui-style-kit.css";
 import "interactive-surface-css/interactive-surface.css";
 ```
 
-If you use per-style UI Style Kit imports, also include the bridge:
+If you use per-style UI Style Kit imports, include the bridge. This import order is also supported:
 
 ```js
 import "ui-style-kit-css/styles/minimal-saas.css";
@@ -175,7 +177,15 @@ import "ui-style-kit-css/interactive-surface-bridge";
 import "interactive-surface-css/interactive-surface.css";
 ```
 
-The bridge maps active `data-ui`, `data-theme`, and `data-mode` tokens to Interactive Surface tokens, including variant and icon-role hooks.
+So is the order shown in the UI Style Kit docs:
+
+```js
+import "interactive-surface-css/interactive-surface.css";
+import "ui-style-kit-css/styles/minimal-saas.css";
+import "ui-style-kit-css/interactive-surface-bridge";
+```
+
+The bridge maps active `data-ui`, `data-theme`, and `data-mode` tokens to Interactive Surface's public token contract, including variant and icon-role hooks.
 
 ## Accessibility
 
