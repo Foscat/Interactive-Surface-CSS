@@ -15,6 +15,7 @@ All notable changes to this package are documented in this file.
 ### Changed
 
 - Expanded dark theme icon-role selectors to also match `data-mode="dark"` and `data-mode="contrast"` containers for broader cross-library theming compatibility.
+- Removed `forced-color-adjust` from forced-colors styles to improve compatibility and avoid consumer integration warnings.
 
 ## 1.1.5 - 2026-05-18
 

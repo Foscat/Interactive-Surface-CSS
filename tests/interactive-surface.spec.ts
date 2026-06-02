@@ -32,7 +32,25 @@ const html = `
     <button id="target" class="interactive-surface">Target</button>
     <button id="pressed" class="interactive-surface" aria-pressed="true">Pressed</button>
     <button id="disabled" class="interactive-surface" aria-disabled="true">Disabled</button>
-    <button id="icon" class="interactive-surface icon-only" aria-label="Icon">+</button>
+    <button id="icon" class="interactive-surface icon-only" aria-label="Icon">
+      <span id="icon-light-default" data-icon-role="light">☀</span>
+      <span id="icon-dark-default" data-icon-role="dark">☾</span>
+      <span id="icon-accessibility-default" data-icon-role="accessibility">◎</span>
+    </button>
+    <div data-mode="dark">
+      <button id="icon-dark-mode" class="interactive-surface icon-only" aria-label="Dark mode icon">
+        <span id="icon-light-dark-mode" data-icon-role="light">☀</span>
+        <span id="icon-dark-dark-mode" data-icon-role="dark">☾</span>
+        <span id="icon-accessibility-dark-mode" data-icon-role="accessibility">◎</span>
+      </button>
+    </div>
+    <div data-mode="contrast">
+      <button id="icon-contrast-mode" class="interactive-surface icon-only" aria-label="Contrast mode icon">
+        <span id="icon-light-contrast-mode" data-icon-role="light">☀</span>
+        <span id="icon-dark-contrast-mode" data-icon-role="dark">☾</span>
+        <span id="icon-accessibility-contrast-mode" data-icon-role="accessibility">◎</span>
+      </button>
+    </div>
   </body>
 </html>
 `;
@@ -111,5 +129,27 @@ test.describe("interactive surface package behavior", () => {
 
     expect(iconStyles.minWidth).toBe("44px");
     expect(iconStyles.minHeight).toBe("44px");
+  });
+
+  test("data-mode dark and contrast containers apply dark icon-role colors without changing baseline colors", async ({
+    page
+  }) => {
+    await page.emulateMedia({ colorScheme: "light" });
+    await page.setContent(html);
+
+    const getColor = async (selector: string) =>
+      page.locator(selector).evaluate((el) => window.getComputedStyle(el).color);
+
+    expect(await getColor("#icon-light-default")).toBe("rgb(212, 175, 55)");
+    expect(await getColor("#icon-dark-default")).toBe("rgb(0, 0, 0)");
+    expect(await getColor("#icon-accessibility-default")).toBe("rgb(59, 130, 246)");
+
+    expect(await getColor("#icon-light-dark-mode")).toBe("rgb(255, 255, 255)");
+    expect(await getColor("#icon-dark-dark-mode")).toBe("rgb(30, 58, 138)");
+    expect(await getColor("#icon-accessibility-dark-mode")).toBe("rgb(156, 163, 175)");
+
+    expect(await getColor("#icon-light-contrast-mode")).toBe("rgb(255, 255, 255)");
+    expect(await getColor("#icon-dark-contrast-mode")).toBe("rgb(30, 58, 138)");
+    expect(await getColor("#icon-accessibility-contrast-mode")).toBe("rgb(156, 163, 175)");
   });
 });
