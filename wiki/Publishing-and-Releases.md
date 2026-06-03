@@ -28,7 +28,7 @@ npm run validate
 ```
 
 5. Push changes to `main`.
-6. Create and publish a GitHub Release for that version tag (for example `v1.2.2`).
+6. Create and publish a GitHub Release for that version tag (for example `v1.2.3`).
 7. Confirm `Publish to npm` workflow succeeds.
 8. Verify distribution:
 
