@@ -26,7 +26,7 @@ Runs Stylelint against `interactive-surface.css`.
 
 ### `npm run test:install`
 
-Installs the Chromium, Firefox, and WebKit browser binaries required by the Playwright projects. Run this before the browser tests on a fresh machine or cache.
+Installs the Chromium, Firefox, and WebKit browser binaries (and their OS-level dependencies) required by the Playwright projects. Run this before the browser tests on a fresh machine or CI environment.
 
 ### `npm test`
 

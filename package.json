@@ -64,7 +64,7 @@
   "scripts": {
     "check:no-hex-colors": "node ./scripts/check-no-hex-colors.mjs",
     "lint:css": "stylelint interactive-surface.css",
-    "test:install": "playwright install chromium firefox webkit",
+    "test:install": "playwright install --with-deps chromium firefox webkit",
     "test": "playwright test --config=./playwright.config.mjs",
     "test:chromium": "playwright test --config=./playwright.config.mjs --project=chromium",
     "pack:dry": "npm pack --dry-run --cache ./.npm-cache",
