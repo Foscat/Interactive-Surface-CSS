@@ -16,6 +16,7 @@ List commands you ran and results.
 
 ```bash
 npm run lint:css
+npm run test:install
 npm test
 npm run pack:dry
 ```

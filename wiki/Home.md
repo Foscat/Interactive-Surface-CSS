@@ -33,8 +33,8 @@ Interactive Surface CSS centralizes that logic into a single reusable primitive:
 - **JS entry:** `index.js` (imports the stylesheet)
 - **Demo/customization page:** `index.html`
 - **License:** MIT
-- **Current version in repo:** `1.2.0`
-- **Release tag:** `v1.2.0`
+- **Current version in repo:** `1.2.2`
+- **Release tag:** `v1.2.2`
 
 ## Documentation map
 

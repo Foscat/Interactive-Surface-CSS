@@ -6,6 +6,14 @@ All notable changes to this package are documented in this file.
 
 ## Unreleased
 
+## 1.2.2 - 2026-06-03
+
+### Changed
+
+- Separated full Playwright validation from the `prepublishOnly` publish guard so manual npm publishes do not block on fresh or unavailable browser caches.
+- Added explicit Playwright browser installation and release validation scripts for local and CI release checks.
+- Updated release, testing, contributing, and pull request docs to include the new Playwright browser installation step.
+
 ## 1.2.1 - 2026-06-02
 
 ### Added

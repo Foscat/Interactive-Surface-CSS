@@ -7,9 +7,11 @@ The repository includes both CSS linting and Playwright-based behavioral tests.
 ```bash
 npm run check:no-hex-colors
 npm run lint:css
+npm run test:install
 npm test
 npm run test:chromium
 npm run pack:dry
+npm run validate
 ```
 
 ## What each script does
@@ -22,6 +24,10 @@ Runs a guard script that fails if hex color literals are present in `interactive
 
 Runs Stylelint against `interactive-surface.css`.
 
+### `npm run test:install`
+
+Installs the Chromium, Firefox, and WebKit browser binaries required by the Playwright projects. Run this before the browser tests on a fresh machine or cache.
+
 ### `npm test`
 
 Runs the Playwright suite using the project config.
@@ -33,6 +39,10 @@ Runs the Playwright suite in Chromium only. Useful for quick local verification.
 ### `npm run pack:dry`
 
 Runs `npm pack --dry-run` using the local npm cache folder so the final published package contents can be inspected before release.
+
+### `npm run validate`
+
+Runs the full release validation sequence: color guard, CSS linting, Playwright browser installation, Playwright tests, and the dry package check.
 
 ## Behavioral test coverage in the repo
 
@@ -60,10 +70,7 @@ This library is visual and state-driven. Browser-level validation is more useful
 Run this sequence before publishing:
 
 ```bash
-npm run check:no-hex-colors
-npm run lint:css
-npm test
-npm run pack:dry
+npm run validate
 ```
 
 ## Package contents check

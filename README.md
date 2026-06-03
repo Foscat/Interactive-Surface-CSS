@@ -204,9 +204,11 @@ See [Accessibility](./wiki/Accessibility.md) for implementation guidance.
 ```bash
 npm run check:no-hex-colors
 npm run lint:css
+npm run test:install
 npm test
 npm run test:chromium
 npm run pack:dry
+npm run validate
 ```
 
 ## Publishing
@@ -219,7 +221,7 @@ Release checklist:
 2. Bump `version` in `package.json`.
 3. Update `CHANGELOG.md`.
 4. Push to `main`.
-5. Create and publish a GitHub Release tag (for example `v1.2.0`).
+5. Create and publish a GitHub Release tag (for example `v1.2.2`).
 6. Verify the `Publish to npm` workflow succeeds.
 7. Verify CDN availability:
    - `https://cdn.jsdelivr.net/npm/interactive-surface-css@<version>/interactive-surface.css`
@@ -231,6 +233,8 @@ Manual fallback:
 npm adduser
 npm publish --access public
 ```
+
+The `prepublishOnly` guard intentionally avoids browser downloads so `npm publish` does not stall on a fresh Playwright cache. Run `npm run validate` before publishing when you want the full local release check, including Playwright browser installation and tests.
 
 ## Guardrail
 

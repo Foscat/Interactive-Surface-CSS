@@ -1,6 +1,6 @@
 {
   "name": "interactive-surface-css",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "A framework-agnostic, accessible CSS interaction primitive for buttons, cards, and icon controls with token-driven theming.",
   "keywords": [
     "css",
@@ -64,10 +64,12 @@
   "scripts": {
     "check:no-hex-colors": "node ./scripts/check-no-hex-colors.mjs",
     "lint:css": "stylelint interactive-surface.css",
+    "test:install": "playwright install chromium firefox webkit",
     "test": "playwright test --config=./playwright.config.mjs",
     "test:chromium": "playwright test --config=./playwright.config.mjs --project=chromium",
     "pack:dry": "npm pack --dry-run --cache ./.npm-cache",
-    "prepublishOnly": "npm run check:no-hex-colors && npm run lint:css && npm test && npm run pack:dry"
+    "validate": "npm run check:no-hex-colors && npm run lint:css && npm run test:install && npm test && npm run pack:dry",
+    "prepublishOnly": "npm run check:no-hex-colors && npm run lint:css && npm run pack:dry"
   },
   "devDependencies": {
     "@playwright/test": "^1.57.0",
