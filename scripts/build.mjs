@@ -10,16 +10,16 @@ async function bundle() {
   await copyFile(sourceFile, bundleFile);
 }
 
-function minify() {
-  return readFile(bundleFile, "utf8").then((source) => {
-    const result = new CleanCSS({ level: 2 }).minify(source);
+async function minify() {
+  await mkdir("dist", { recursive: true });
+  const source = await readFile(bundleFile, "utf8");
+  const result = new CleanCSS({ level: 2 }).minify(source);
 
-    if (result.errors.length > 0) {
-      throw new Error(result.errors.join("\n"));
-    }
+  if (result.errors.length > 0) {
+    throw new Error(result.errors.join("\n"));
+  }
 
-    return writeFile(minifiedFile, result.styles);
-  });
+  await writeFile(minifiedFile, result.styles);
 }
 
 const step = process.argv[2] ?? "build";
