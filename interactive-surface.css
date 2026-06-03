@@ -129,7 +129,7 @@
   transition: opacity var(--_is-motion-default) var(--_is-ease-standard);
 }
 
-/* 2b) Theme-kit compatibility ownership */
+/* 2b) UI Style Kit compatibility ownership */
 
 [data-ui] .interactive-surface {
   border: var(--_is-border-width) solid var(--_is-border-color);
