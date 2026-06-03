@@ -1,4 +1,4 @@
-﻿# Contributing
+# Contributing
 
 Contributions should preserve the package goal: a small, stable, framework-agnostic interaction primitive.
 
@@ -19,6 +19,7 @@ For the full policy and expectations, see:
 ```bash
 npm run check:no-hex-colors
 npm run lint:css
+npm run test:install
 npm test
 npm run pack:dry
 ```

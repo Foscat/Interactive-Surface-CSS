@@ -25,11 +25,8 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Install Playwright browsers
-        run: npx playwright install --with-deps
-
       - name: Validate package
-        run: npm run prepublishOnly
+        run: npm run validate
 
       - name: Publish to npm
         run: npm publish --provenance --access public --ignore-scripts
