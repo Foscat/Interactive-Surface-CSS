@@ -1,4 +1,4 @@
-﻿# Publishing and Releases
+# Publishing and Releases
 
 This page documents the release workflow for Interactive Surface CSS.
 
@@ -24,14 +24,11 @@ Add this secret in GitHub repository settings:
 4. Run local checks:
 
 ```bash
-npm run check:no-hex-colors
-npm run lint:css
-npm test
-npm run pack:dry
+npm run validate
 ```
 
 5. Push changes to `main`.
-6. Create and publish a GitHub Release for that version tag (for example `v1.2.0`).
+6. Create and publish a GitHub Release for that version tag (for example `v1.2.2`).
 7. Confirm `Publish to npm` workflow succeeds.
 8. Verify distribution:
 
@@ -47,6 +44,8 @@ If GitHub Actions is unavailable, publish from a trusted local machine:
 npm adduser
 npm publish --access public
 ```
+
+The `prepublishOnly` guard intentionally avoids browser downloads so `npm publish` does not stall on a fresh Playwright cache. Use `npm run validate` for the full local release check, including Playwright browser installation and tests.
 
 ## Versioning Guidance
 
