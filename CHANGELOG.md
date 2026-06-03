@@ -6,6 +6,17 @@ All notable changes to this package are documented in this file.
 
 ## Unreleased
 
+## 1.2.3 - 2026-06-03
+
+### Fixed
+
+- Replaced the broken shell-based build pipeline with a cross-platform Node build script that copies `interactive-surface.css` into `dist/` and minifies it reliably in deployment environments.
+- Added `dist/` to source control ignore rules so generated build artifacts do not dirty the working tree.
+
+### Changed
+
+- Bumped the package release metadata to `1.2.3`.
+
 ## 1.2.2 - 2026-06-03
 
 ### Changed
