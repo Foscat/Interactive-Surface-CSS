@@ -32,7 +32,8 @@
   --_is-lift-hover: var(--interactive-surface-lift-hover, var(--lift-hover, -4px));
   --_is-lift-active: var(--interactive-surface-lift-active, var(--lift-active, -2px));
 
-  --_is-shadow-base: var(--interactive-surface-shadow-base, var(--shadow-base, 0 0 0 rgba(0, 0, 0, 0)));
+  --_is-base-shadow: var(--interactive-surface-shadow-base, var(--shadow-base, 0 0 0 rgba(0, 0, 0, 0)));
+  --_is-shadow-base: var(--_is-base-shadow);
   --_is-shadow-hover: var(
     --interactive-surface-shadow-hover,
     var(--shadow-hover, 0 10px 28px rgba(0, 0, 0, 0.35), 0 2px 8px rgba(0, 0, 0, 0.25))
@@ -52,13 +53,18 @@
    */
   --_is-darken-hover: var(--interactive-surface-darken-hover, var(--surface-darken-hover, 0.96));
   --_is-darken-active: var(--interactive-surface-darken-active, var(--surface-darken-active, 0.98));
+  --_is-state-layer-base-opacity: var(--interactive-surface-state-layer-opacity, 0);
   --_is-state-layer-hover-opacity: var(
     --interactive-surface-state-layer-hover-opacity,
-    calc(1 - var(--_is-darken-hover))
+    var(--interactive-surface-state-layer-opacity-hover, calc(1 - var(--_is-darken-hover)))
   );
   --_is-state-layer-active-opacity: var(
     --interactive-surface-state-layer-active-opacity,
-    calc(1 - var(--_is-darken-active))
+    var(--interactive-surface-state-layer-opacity-active, calc(1 - var(--_is-darken-active)))
+  );
+  --_is-state-layer-focus-opacity: var(
+    --interactive-surface-state-layer-focus-opacity,
+    var(--interactive-surface-state-layer-opacity-focus, var(--_is-state-layer-hover-opacity))
   );
   --_is-state-layer-color: var(--interactive-surface-state-layer-color, rgb(0 0 0));
 
@@ -73,12 +79,14 @@
     var(--ease-press, cubic-bezier(0.4, 0, 0.6, 1))
   );
 
-  --_is-bg: var(--interactive-surface-bg, var(--surface-bg, var(--bg-surface, rgb(248 250 252))));
+  --_is-base-bg: var(--interactive-surface-bg, var(--surface-bg, var(--bg-surface, rgb(248 250 252))));
+  --_is-bg: var(--_is-base-bg);
   --_is-fg: var(--interactive-surface-fg, var(--surface-fg, var(--text-primary, rgb(17 24 39))));
-  --_is-border-color: var(
+  --_is-base-border-color: var(
     --interactive-surface-border-color,
     var(--surface-border, var(--border-color, rgba(15, 23, 42, 0.2)))
   );
+  --_is-border-color: var(--_is-base-border-color);
   --_is-border-width: var(--interactive-surface-border-width, 1px);
   --_is-radius: var(--interactive-surface-radius, 0.75rem);
 
@@ -115,6 +123,16 @@
   will-change: auto;
 }
 
+/*
+ * UI Style Kit 2.x exposes surface depth through bridge level tokens.
+ * The attribute gate keeps default surfaces on the existing base contract.
+ */
+.interactive-surface[data-surface-level] {
+  --_is-bg: var(--interactive-surface-level-bg, var(--_is-base-bg));
+  --_is-border-color: var(--interactive-surface-level-border-color, var(--_is-base-border-color));
+  --_is-shadow-base: var(--interactive-surface-level-shadow, var(--_is-base-shadow));
+}
+
 /* 2a) State-layer pseudo-element */
 
 .interactive-surface::before {
@@ -123,7 +141,7 @@
   inset: 0;
   border-radius: inherit;
   background-color: var(--_is-state-layer-color);
-  opacity: 0;
+  opacity: var(--_is-state-layer-base-opacity);
   pointer-events: none;
   z-index: -1;
   transition: opacity var(--_is-motion-default) var(--_is-ease-standard);
@@ -160,7 +178,7 @@
 }
 
 .interactive-surface:not(.is-disabled, :disabled, [aria-disabled="true"]):focus-visible::before {
-  opacity: var(--_is-state-layer-hover-opacity);
+  opacity: var(--_is-state-layer-focus-opacity);
 }
 
 .interactive-surface[aria-disabled="true"]:focus-visible {
@@ -171,13 +189,15 @@
 /* 4) Active and toggled states */
 
 .interactive-surface.is-active:not(.is-disabled, [aria-disabled="true"]),
-.interactive-surface[aria-pressed="true"]:not(.is-disabled, :disabled, [aria-disabled="true"]) {
+.interactive-surface[aria-pressed="true"]:not(.is-disabled, :disabled, [aria-disabled="true"]),
+.interactive-surface[aria-current="page"]:not(.is-disabled, :disabled, [aria-disabled="true"]) {
   transform: translateY(var(--_is-lift-active)) translateZ(0) !important;
   box-shadow: var(--_is-shadow-active);
 }
 
 .interactive-surface.is-active:not(.is-disabled, [aria-disabled="true"])::before,
-.interactive-surface[aria-pressed="true"]:not(.is-disabled, :disabled, [aria-disabled="true"])::before {
+.interactive-surface[aria-pressed="true"]:not(.is-disabled, :disabled, [aria-disabled="true"])::before,
+.interactive-surface[aria-current="page"]:not(.is-disabled, :disabled, [aria-disabled="true"])::before {
   opacity: var(--_is-state-layer-active-opacity);
 }
 
@@ -431,7 +451,8 @@
 .interactive-surface:hover,
 .interactive-surface:focus-visible,
 .interactive-surface:active,
-.interactive-surface.is-active {
+.interactive-surface.is-active,
+.interactive-surface[aria-current="page"] {
   scale: 1 !important;
   rotate: 0deg !important;
   translate: 0 0 !important;
@@ -453,7 +474,8 @@
   .interactive-surface:not(.is-disabled, :disabled, [aria-disabled="true"]):focus-visible,
   .interactive-surface:not(.is-disabled, :disabled, [aria-disabled="true"]):active,
   .interactive-surface.is-active:not(.is-disabled, [aria-disabled="true"]),
-  .interactive-surface[aria-pressed="true"]:not(.is-disabled, :disabled, [aria-disabled="true"]) {
+  .interactive-surface[aria-pressed="true"]:not(.is-disabled, :disabled, [aria-disabled="true"]),
+  .interactive-surface[aria-current="page"]:not(.is-disabled, :disabled, [aria-disabled="true"]) {
     transform: none !important;
     box-shadow: none;
   }
@@ -462,7 +484,8 @@
   .interactive-surface:focus-visible::before,
   .interactive-surface:active::before,
   .interactive-surface.is-active::before,
-  .interactive-surface[aria-pressed="true"]::before {
+  .interactive-surface[aria-pressed="true"]::before,
+  .interactive-surface[aria-current="page"]::before {
     opacity: 0;
   }
 }
@@ -497,6 +520,7 @@
   .interactive-surface:focus-visible,
   .interactive-surface.is-active,
   .interactive-surface[aria-pressed="true"],
+  .interactive-surface[aria-current="page"],
   .interactive-surface:active {
     transform: none !important;
     box-shadow: none;

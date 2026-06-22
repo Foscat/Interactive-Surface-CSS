@@ -155,10 +155,10 @@ import "interactive-surface-css";
 
 UI Style Kit owns visual theme tokens. Interactive Surface owns interaction behavior on `.interactive-surface`.
 
-With the combined UI Style Kit build, the bridge is already included:
+With `ui-style-kit-css@2.0.1`, the default full bundle does not include the bridge. Use the opt-in bridge bundle when you want runtime UI switching and Interactive Surface token mapping in one import:
 
 ```js
-import "ui-style-kit-css/dist/ui-style-kit.css";
+import "ui-style-kit-css/with-bridge.css";
 import "interactive-surface-css/interactive-surface.css";
 ```
 
@@ -177,6 +177,8 @@ import "interactive-surface-css/interactive-surface.css";
 import "ui-style-kit-css/styles/minimal-saas.css";
 import "ui-style-kit-css/interactive-surface-bridge";
 ```
+
+The bridge maps UI Style Kit theme roles into Interactive Surface tokens. UI Style Kit owns those visual token values; Interactive Surface owns the hover, focus, pressed, selected, disabled, and reduced-motion behavior on `.interactive-surface`.
 
 ## Motion guardrail
 
