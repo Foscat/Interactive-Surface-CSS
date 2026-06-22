@@ -64,12 +64,21 @@
   "scripts": {
     "check:no-hex-colors": "node ./scripts/check-no-hex-colors.mjs",
     "lint:css": "stylelint interactive-surface.css",
+
     "test:install": "playwright install --with-deps chromium firefox webkit",
+    "test:install:chromium": "playwright install chromium --with-deps --only-shell",
     "test": "playwright test --config=./playwright.config.mjs",
     "test:chromium": "playwright test --config=./playwright.config.mjs --project=chromium",
+
     "pack:dry": "npm pack --dry-run --cache ./.npm-cache",
-    "validate": "npm run check:no-hex-colors && npm run lint:css && npm run test:install && npm test && npm run pack:dry",
-    "prepublishOnly": "npm run check:no-hex-colors && npm run lint:css && npm run pack:dry",
+
+    "validate:publish": "npm run check:no-hex-colors && npm run lint:css && npm run build && npm run pack:dry",
+    "validate:ci": "npm run validate:publish && npm run test:install:chromium && npm run test:chromium",
+    "validate:full": "npm run validate:publish && npm run test:install && npm test",
+    "validate": "npm run validate:ci",
+
+    "prepublishOnly": "npm run validate:publish",
+
     "bundle": "node ./scripts/build.mjs bundle",
     "minify": "node ./scripts/build.mjs minify",
     "build": "node ./scripts/build.mjs"
