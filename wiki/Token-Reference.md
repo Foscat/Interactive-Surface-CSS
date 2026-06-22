@@ -60,9 +60,21 @@ The stylesheet also recognizes these semantic fallbacks:
 
 ## UI Style Kit CSS bridge
 
-When used with `ui-style-kit-css@1.2.1`, the UI Style Kit bridge maps active `data-ui`, `data-theme`, and `data-mode` tokens into this package's public `--interactive-surface-*` contract.
+When used with `ui-style-kit-css@2.0.1`, the UI Style Kit bridge maps active `data-ui`, `data-theme`, and `data-mode` roles into this package's public `--interactive-surface-*` contract.
 
 Interactive Surface does not depend on UI Style Kit token names directly. It continues to resolve values through its own token contract, so the package remains usable without UI Style Kit.
+
+The bridge can also provide state-layer aliases for visible hover, focus, and active feedback:
+
+- `--interactive-surface-state-layer-opacity-hover`
+- `--interactive-surface-state-layer-opacity-focus`
+- `--interactive-surface-state-layer-opacity-active`
+
+When a bridged surface includes `data-surface-level`, Interactive Surface also reads these optional depth tokens:
+
+- `--interactive-surface-level-bg`
+- `--interactive-surface-level-border-color`
+- `--interactive-surface-level-shadow`
 
 ## Important implementation detail
 
