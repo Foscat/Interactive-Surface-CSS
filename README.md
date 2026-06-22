@@ -162,14 +162,14 @@ The package also supports legacy fallback tokens and semantic fallback tokens. F
 
 UI Style Kit owns visual theme tokens. Interactive Surface owns interaction behavior on `.interactive-surface`.
 
-If you use the combined UI Style Kit build, the bridge is already included and this import order is supported:
+With `ui-style-kit-css@2.0.1`, the default full bundle does not include the bridge. Use the opt-in bridge bundle when you want UI Style Kit's runtime style switcher and Interactive Surface token mapping in one import:
 
 ```js
-import "ui-style-kit-css/dist/ui-style-kit.css";
+import "ui-style-kit-css/with-bridge.css";
 import "interactive-surface-css/interactive-surface.css";
 ```
 
-If you use per-style UI Style Kit imports, include the bridge. This import order is also supported:
+If you use per-style UI Style Kit imports, include the bridge. This order is supported:
 
 ```js
 import "ui-style-kit-css/styles/minimal-saas.css";
@@ -185,7 +185,7 @@ import "ui-style-kit-css/styles/minimal-saas.css";
 import "ui-style-kit-css/interactive-surface-bridge";
 ```
 
-The bridge maps active `data-ui`, `data-theme`, and `data-mode` tokens to Interactive Surface's public token contract, including variant and icon-role hooks.
+The bridge maps active `data-ui`, `data-theme`, and `data-mode` tokens to Interactive Surface's public token contract, including variant, icon-role, state-layer, and optional surface-level hooks. UI Style Kit owns the bridge token mapping; Interactive Surface keeps ownership of `.interactive-surface` interaction behavior.
 
 ## Accessibility
 
@@ -221,7 +221,7 @@ Release checklist:
 2. Bump `version` in `package.json`.
 3. Update `CHANGELOG.md`.
 4. Push to `main`.
-5. Create and publish a GitHub Release tag (for example `v1.2.3`).
+5. Create and publish a GitHub Release tag (for example `v1.2.4`).
 6. Verify the `Publish to npm` workflow succeeds.
 7. Verify CDN availability:
    - `https://cdn.jsdelivr.net/npm/interactive-surface-css@<version>/interactive-surface.css`

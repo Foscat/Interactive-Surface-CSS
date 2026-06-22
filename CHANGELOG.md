@@ -6,6 +6,18 @@ All notable changes to this package are documented in this file.
 
 ## Unreleased
 
+## 1.2.4 - 2026-06-22
+
+### Added
+
+- Added Playwright compatibility coverage for `ui-style-kit-css@2.0.1`, including the opt-in `with-bridge` bundle, standalone bridge imports, surface-level tokens, state-layer aliases, and `aria-current="page"` selected state behavior.
+
+### Changed
+
+- Updated the UI Style Kit dev fixture to `ui-style-kit-css@2.0.1`.
+- Refined bridge token resolution so Interactive Surface can consume UI Style Kit 2.0.1 state-layer and surface-level aliases without changing the existing class API.
+- Updated README and wiki guidance to clarify that UI Style Kit 2.0.1 keeps the bridge opt-in through `ui-style-kit-css/with-bridge.css` or `ui-style-kit-css/interactive-surface-bridge`.
+
 ## 1.2.3 - 2026-06-03
 
 ### Fixed

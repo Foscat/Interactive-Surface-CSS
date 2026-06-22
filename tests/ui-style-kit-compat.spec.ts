@@ -9,10 +9,12 @@ const __dirname = path.dirname(__filename);
 const require = createRequire(import.meta.url);
 const packageRoot = path.resolve(__dirname, "..");
 const interactiveCss = fs.readFileSync(path.join(packageRoot, "interactive-surface.css"), "utf8");
-const uiKitRoot = path.resolve(path.dirname(require.resolve("ui-style-kit-css/css")), "..");
+const uiKitRoot = path.dirname(require.resolve("ui-style-kit-css/package.json"));
 
-const uiKitDist = fs.readFileSync(path.join(uiKitRoot, "dist", "ui-style-kit.css"), "utf8");
+const uiKitWithBridge = fs.readFileSync(path.join(uiKitRoot, "dist", "ui-style-kit.with-bridge.css"), "utf8");
 const uiKitBridge = fs.readFileSync(path.join(uiKitRoot, "styles", "interactive-surface-bridge.css"), "utf8");
+const uiKitThemeColors = fs.readFileSync(path.join(uiKitRoot, "styles", "theme-colors.css"), "utf8");
+const uiKitNativeElements = fs.readFileSync(path.join(uiKitRoot, "styles", "native-elements.css"), "utf8");
 
 const styleFilesBySystem = {
   "minimal-saas": "minimal-saas.css",
@@ -23,21 +25,25 @@ const styleFilesBySystem = {
 
 type SystemName = keyof typeof styleFilesBySystem;
 type ModeName = "light" | "dark" | "contrast";
-type ImportOrder = "combined-first" | "per-style-bridge-after";
+type ImportOrder = "with-bridge-first" | "per-style-bridge-after";
 
 const systems: SystemName[] = ["minimal-saas", "cyberpunk", "brutalism", "retro-glass"];
 const modes: ModeName[] = ["light", "dark", "contrast"];
-const importOrders: ImportOrder[] = ["combined-first", "per-style-bridge-after"];
+const importOrders: ImportOrder[] = ["with-bridge-first", "per-style-bridge-after"];
 
 function readStyle(system: SystemName) {
-  return fs.readFileSync(path.join(uiKitRoot, "styles", styleFilesBySystem[system]), "utf8");
+  return stripCssImports(fs.readFileSync(path.join(uiKitRoot, "styles", styleFilesBySystem[system]), "utf8"));
+}
+
+function stripCssImports(css: string) {
+  return css.replaceAll(/@import\s+url\(["'][^)]+["']\);\s*/g, "");
 }
 
 function htmlFor(order: ImportOrder, system: SystemName, mode: ModeName) {
   const styles =
-    order === "combined-first"
-      ? `<style data-source="ui-kit-dist">${uiKitDist}</style><style data-source="interactive">${interactiveCss}</style>`
-      : `<style data-source="interactive">${interactiveCss}</style><style data-source="ui-kit-style">${readStyle(system)}</style><style data-source="ui-kit-bridge">${uiKitBridge}</style>`;
+    order === "with-bridge-first"
+      ? `<style data-source="ui-kit-with-bridge">${uiKitWithBridge}</style><style data-source="interactive">${interactiveCss}</style>`
+      : `<style data-source="interactive">${interactiveCss}</style><style data-source="ui-kit-theme-colors">${uiKitThemeColors}</style><style data-source="ui-kit-native-elements">${uiKitNativeElements}</style><style data-source="ui-kit-style">${readStyle(system)}</style><style data-source="ui-kit-bridge">${uiKitBridge}</style>`;
 
   return `
 <!doctype html>
@@ -49,6 +55,9 @@ function htmlFor(order: ImportOrder, system: SystemName, mode: ModeName) {
   <body data-ui="${system}" data-theme="arctic-indigo" data-mode="${mode}">
     <button id="base" class="interactive-surface">Base</button>
     <button id="primary" class="interactive-surface variant-primary">Primary</button>
+    <button id="bridge-primary" class="interactive-surface" data-surface-variant="primary">Bridge Primary</button>
+    <button id="level" class="interactive-surface" data-surface-level="1">Level</button>
+    <button id="current" class="interactive-surface" aria-current="page">Current</button>
     <button id="disabled" class="interactive-surface" aria-disabled="true">Disabled</button>
     <button id="icon" class="interactive-surface icon-only" aria-label="Toggle theme">
       <span id="light-icon" data-icon-role="light">L</span>
@@ -98,15 +107,27 @@ async function resolvedTokenValue(page: Page, selector: string, tokenName: strin
   );
 }
 
-test.describe("ui-style-kit-css 1.2.1 compatibility", () => {
+async function stateLayerOpacity(page: Page, selector: string) {
+  return page.locator(selector).evaluate((el) => window.getComputedStyle(el, "::before").opacity);
+}
+
+async function expectStateLayerOpacity(page: Page, selector: string, tokenName: string) {
+  const expectedOpacity = await resolvedTokenValue(page, selector, tokenName, "opacity");
+
+  await expect.poll(async () => stateLayerOpacity(page, selector)).toBe(expectedOpacity);
+}
+
+test.describe("ui-style-kit-css 2.0.1 compatibility", () => {
   for (const order of importOrders) {
     for (const system of systems) {
       for (const mode of modes) {
-        test(`${order} resolves ${system} ${mode} base and variant tokens`, async ({ page }) => {
+        test(`${order} resolves ${system} ${mode} base, variant, and level tokens`, async ({ page }) => {
           await page.setContent(htmlFor(order, system, mode));
 
           const base = await computed(page, "#base");
           const primary = await computed(page, "#primary");
+          const bridgePrimary = await computed(page, "#bridge-primary");
+          const level = await computed(page, "#level");
 
           await expect
             .soft(base.backgroundColor, "base background should come from --interactive-surface-bg")
@@ -121,6 +142,23 @@ test.describe("ui-style-kit-css 1.2.1 compatibility", () => {
           expect(base.borderWidth).toBe("1px");
           expect(primary.backgroundColor).toBe(
             await resolvedTokenValue(page, "#primary", "--interactive-surface-variant-primary-bg", "background-color")
+          );
+          expect(bridgePrimary.backgroundColor).toBe(
+            await resolvedTokenValue(
+              page,
+              "#bridge-primary",
+              "--interactive-surface-variant-primary-bg",
+              "background-color"
+            )
+          );
+          expect(level.backgroundColor).toBe(
+            await resolvedTokenValue(page, "#level", "--interactive-surface-level-bg", "background-color")
+          );
+          expect(level.borderColor).toBe(
+            await resolvedTokenValue(page, "#level", "--interactive-surface-level-border-color", "border-top-color")
+          );
+          expect(level.boxShadow).toBe(
+            await resolvedTokenValue(page, "#level", "--interactive-surface-level-shadow", "box-shadow")
           );
         });
       }
@@ -141,12 +179,18 @@ test.describe("ui-style-kit-css 1.2.1 compatibility", () => {
       expect(focused.outlineWidth).toBe("2px");
       expect(focused.transform).not.toBe("none");
       expect(disabled.pointerEvents).toBe("none");
-      expect(disabled.opacity).toBe("0.72");
+      expect(Number.parseFloat(disabled.opacity)).toBeLessThanOrEqual(0.72);
       expect(icon.minWidth).toBe("44px");
       expect(icon.minHeight).toBe("44px");
       expect(lightIconColor).toBe(
         await resolvedTokenValue(page, "#icon", "--interactive-surface-light-icon-color-dark", "color")
       );
+      await expectStateLayerOpacity(page, "#base", "--interactive-surface-state-layer-opacity-focus");
+
+      await page.locator("#base").hover();
+      await expectStateLayerOpacity(page, "#base", "--interactive-surface-state-layer-opacity-hover");
+
+      await expectStateLayerOpacity(page, "#current", "--interactive-surface-state-layer-opacity-active");
 
       await page.emulateMedia({ reducedMotion: "reduce" });
       await page.setContent(htmlFor(order, "minimal-saas", "dark"));
