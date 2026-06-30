@@ -241,3 +241,4 @@ The `prepublishOnly` guard intentionally avoids browser downloads so `npm publis
 `interactive-surface` should be the only transform-based motion owner on its host element.
 
 Avoid applying additional `transform`, `translate`, `scale`, or `rotate` rules to the same node. If you need extra animation, apply it to a child element.
+](https://github.com/Foscat/Interactive-Surface-CSS)
