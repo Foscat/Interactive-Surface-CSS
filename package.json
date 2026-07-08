@@ -64,30 +64,25 @@
   "scripts": {
     "check:no-hex-colors": "node ./scripts/check-no-hex-colors.mjs",
     "lint:css": "stylelint interactive-surface.css",
-
     "pack:dry": "npm pack --dry-run --cache ./.npm-cache",
-
     "bundle": "node ./scripts/build.mjs bundle",
     "minify": "node ./scripts/build.mjs minify",
     "build": "node ./scripts/build.mjs",
-
     "test": "playwright test --config=./playwright.config.mjs",
     "test:chromium": "playwright test --config=./playwright.config.mjs --project=chromium",
     "test:install": "playwright install --with-deps chromium firefox webkit",
     "test:install:chromium": "playwright install chromium --with-deps --only-shell",
-
     "validate:publish": "npm run check:no-hex-colors && npm run lint:css && npm run build && npm run pack:dry",
     "validate:ci": "npm run validate:publish",
     "validate:browsers": "npm run validate:publish && npm run test:install:chromium && npm run test:chromium",
     "validate:full": "npm run validate:publish && npm run test:install && npm test",
     "validate": "npm run validate:ci",
-
     "prepublishOnly": "npm run validate:publish"
   },
   "devDependencies": {
     "@playwright/test": "^1.57.0",
     "clean-css": "~5.3.3",
-    "stylelint": "^17.1.0",
+    "stylelint": "^17.14.0",
     "stylelint-config-standard": "^40.0.0",
     "ui-style-kit-css": "2.0.1"
   },

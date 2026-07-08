@@ -161,12 +161,21 @@ test.describe("interactive surface package behavior", () => {
       elements.map((el) => {
         const computed = window.getComputedStyle(el);
 
+        const resolveOpacity = (varName: string) => {
+          const probe = document.createElement("span");
+          el.appendChild(probe);
+          (probe as HTMLSpanElement).style.opacity = `var(${varName})`;
+          const val = parseFloat(window.getComputedStyle(probe).opacity).toFixed(2);
+          probe.remove();
+          return val;
+        };
+
         return {
           level: el.getAttribute("data-surface-level"),
           boxShadow: computed.boxShadow,
-          hoverOpacity: computed.getPropertyValue("--interactive-surface-state-layer-hover-opacity").trim(),
-          activeOpacity: computed.getPropertyValue("--interactive-surface-state-layer-active-opacity").trim(),
-          focusOpacity: computed.getPropertyValue("--interactive-surface-state-layer-focus-opacity").trim()
+          hoverOpacity: resolveOpacity("--_is-state-layer-hover-opacity"),
+          activeOpacity: resolveOpacity("--_is-state-layer-active-opacity"),
+          focusOpacity: resolveOpacity("--_is-state-layer-focus-opacity")
         };
       })
     );

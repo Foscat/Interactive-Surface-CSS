@@ -135,36 +135,36 @@
 }
 
 .interactive-surface[data-surface-level="1"] {
-  --interactive-surface-level-bg: var(--interactive-surface-level-1-bg, var(--_is-base-bg));
-  --interactive-surface-level-border-color: var(--interactive-surface-level-1-border-color, var(--_is-base-border-color));
-  --interactive-surface-level-shadow: var(--interactive-surface-level-1-shadow, var(--_is-base-shadow));
-  --interactive-surface-state-layer-hover-opacity: var(--interactive-surface-level-1-hover-opacity, 0.08);
-  --interactive-surface-state-layer-active-opacity: var(--interactive-surface-level-1-active-opacity, 0.14);
-  --interactive-surface-state-layer-focus-opacity: var(--interactive-surface-level-1-focus-opacity, 0.18);
+  --_is-bg: var(--interactive-surface-level-bg, var(--interactive-surface-level-1-bg, var(--_is-base-bg)));
+  --_is-border-color: var(--interactive-surface-level-border-color, var(--interactive-surface-level-1-border-color, var(--_is-base-border-color)));
+  --_is-shadow-base: var(--interactive-surface-level-shadow, var(--interactive-surface-level-1-shadow, var(--_is-base-shadow)));
+  --_is-state-layer-hover-opacity: var(--interactive-surface-state-layer-hover-opacity, var(--interactive-surface-level-1-hover-opacity, 0.08));
+  --_is-state-layer-active-opacity: var(--interactive-surface-state-layer-active-opacity, var(--interactive-surface-level-1-active-opacity, 0.14));
+  --_is-state-layer-focus-opacity: var(--interactive-surface-state-layer-focus-opacity, var(--interactive-surface-level-1-focus-opacity, 0.18));
 }
 
 .interactive-surface[data-surface-level="2"] {
-  --interactive-surface-level-bg: var(--interactive-surface-level-2-bg, var(--_is-base-bg));
-  --interactive-surface-level-border-color: var(--interactive-surface-level-2-border-color, var(--_is-base-border-color));
-  --interactive-surface-level-shadow: var(
+  --_is-bg: var(--interactive-surface-level-bg, var(--interactive-surface-level-2-bg, var(--_is-base-bg)));
+  --_is-border-color: var(--interactive-surface-level-border-color, var(--interactive-surface-level-2-border-color, var(--_is-base-border-color)));
+  --_is-shadow-base: var(--interactive-surface-level-shadow, var(
     --interactive-surface-level-2-shadow,
     0 8px 20px rgb(0 0 0 / 0.22)
-  );
-  --interactive-surface-state-layer-hover-opacity: var(--interactive-surface-level-2-hover-opacity, 0.11);
-  --interactive-surface-state-layer-active-opacity: var(--interactive-surface-level-2-active-opacity, 0.18);
-  --interactive-surface-state-layer-focus-opacity: var(--interactive-surface-level-2-focus-opacity, 0.22);
+  ));
+  --_is-state-layer-hover-opacity: var(--interactive-surface-state-layer-hover-opacity, var(--interactive-surface-level-2-hover-opacity, 0.11));
+  --_is-state-layer-active-opacity: var(--interactive-surface-state-layer-active-opacity, var(--interactive-surface-level-2-active-opacity, 0.18));
+  --_is-state-layer-focus-opacity: var(--interactive-surface-state-layer-focus-opacity, var(--interactive-surface-level-2-focus-opacity, 0.22));
 }
 
 .interactive-surface[data-surface-level="3"] {
-  --interactive-surface-level-bg: var(--interactive-surface-level-3-bg, var(--_is-base-bg));
-  --interactive-surface-level-border-color: var(--interactive-surface-level-3-border-color, var(--_is-base-border-color));
-  --interactive-surface-level-shadow: var(
+  --_is-bg: var(--interactive-surface-level-bg, var(--interactive-surface-level-3-bg, var(--_is-base-bg)));
+  --_is-border-color: var(--interactive-surface-level-border-color, var(--interactive-surface-level-3-border-color, var(--_is-base-border-color)));
+  --_is-shadow-base: var(--interactive-surface-level-shadow, var(
     --interactive-surface-level-3-shadow,
     0 14px 34px rgb(0 0 0 / 0.3)
-  );
-  --interactive-surface-state-layer-hover-opacity: var(--interactive-surface-level-3-hover-opacity, 0.14);
-  --interactive-surface-state-layer-active-opacity: var(--interactive-surface-level-3-active-opacity, 0.24);
-  --interactive-surface-state-layer-focus-opacity: var(--interactive-surface-level-3-focus-opacity, 0.28);
+  ));
+  --_is-state-layer-hover-opacity: var(--interactive-surface-state-layer-hover-opacity, var(--interactive-surface-level-3-hover-opacity, 0.14));
+  --_is-state-layer-active-opacity: var(--interactive-surface-state-layer-active-opacity, var(--interactive-surface-level-3-active-opacity, 0.24));
+  --_is-state-layer-focus-opacity: var(--interactive-surface-state-layer-focus-opacity, var(--interactive-surface-level-3-focus-opacity, 0.28));
 }
 
 /* 2a) State-layer pseudo-element */
