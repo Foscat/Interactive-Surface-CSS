@@ -57,7 +57,7 @@ Native disabled controls also receive disabled styling.
 
 ## Visual variants
 
-These classes only tune brightness behavior. They do not define complete color themes by themselves.
+These classes and matching data attributes tune variant color and state behavior. They do not define complete color themes by themselves.
 
 - `.variant-primary`
 - `.variant-secondary`
@@ -66,7 +66,23 @@ These classes only tune brightness behavior. They do not define complete color t
 - `.variant-warning`
 - `.variant-danger`
 
+The equivalent data attribute API is available for bridge-generated or runtime-assigned markup:
+
+```html
+<button class="interactive-surface" data-surface-variant="primary">Save</button>
+```
+
+Supported values are `primary`, `secondary`, `accent`, `subtle`, `warning`, and `danger`.
+
 These are best understood as behavioral modifiers layered on top of your own theme tokens.
+
+## Surface levels
+
+### `data-surface-level="1|2|3"`
+
+Applies semantic depth without requiring a layout or theme library. Level `1` keeps a quiet default surface, level `2` adds a raised state, and level `3` adds the strongest default depth.
+
+Bridge styles can override these defaults through the public level tokens while Interactive Surface keeps the interaction behavior.
 
 ## Icon micro pattern
 

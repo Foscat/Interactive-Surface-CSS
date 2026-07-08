@@ -125,12 +125,46 @@
 
 /*
  * UI Style Kit 2.x exposes surface depth through bridge level tokens.
- * The attribute gate keeps default surfaces on the existing base contract.
+ * The attribute gates keep default surfaces on the existing base contract while
+ * letting bridge or standalone markup opt into semantic depth.
  */
 .interactive-surface[data-surface-level] {
   --_is-bg: var(--interactive-surface-level-bg, var(--_is-base-bg));
   --_is-border-color: var(--interactive-surface-level-border-color, var(--_is-base-border-color));
   --_is-shadow-base: var(--interactive-surface-level-shadow, var(--_is-base-shadow));
+}
+
+.interactive-surface[data-surface-level="1"] {
+  --_is-bg: var(--interactive-surface-level-bg, var(--interactive-surface-level-1-bg, var(--_is-base-bg)));
+  --_is-border-color: var(--interactive-surface-level-border-color, var(--interactive-surface-level-1-border-color, var(--_is-base-border-color)));
+  --_is-shadow-base: var(--interactive-surface-level-shadow, var(--interactive-surface-level-1-shadow, var(--_is-base-shadow)));
+  --_is-state-layer-hover-opacity: var(--interactive-surface-state-layer-hover-opacity, var(--interactive-surface-level-1-hover-opacity, 0.08));
+  --_is-state-layer-active-opacity: var(--interactive-surface-state-layer-active-opacity, var(--interactive-surface-level-1-active-opacity, 0.14));
+  --_is-state-layer-focus-opacity: var(--interactive-surface-state-layer-focus-opacity, var(--interactive-surface-level-1-focus-opacity, 0.18));
+}
+
+.interactive-surface[data-surface-level="2"] {
+  --_is-bg: var(--interactive-surface-level-bg, var(--interactive-surface-level-2-bg, var(--_is-base-bg)));
+  --_is-border-color: var(--interactive-surface-level-border-color, var(--interactive-surface-level-2-border-color, var(--_is-base-border-color)));
+  --_is-shadow-base: var(--interactive-surface-level-shadow, var(
+    --interactive-surface-level-2-shadow,
+    0 8px 20px rgb(0 0 0 / 0.22)
+  ));
+  --_is-state-layer-hover-opacity: var(--interactive-surface-state-layer-hover-opacity, var(--interactive-surface-level-2-hover-opacity, 0.11));
+  --_is-state-layer-active-opacity: var(--interactive-surface-state-layer-active-opacity, var(--interactive-surface-level-2-active-opacity, 0.18));
+  --_is-state-layer-focus-opacity: var(--interactive-surface-state-layer-focus-opacity, var(--interactive-surface-level-2-focus-opacity, 0.22));
+}
+
+.interactive-surface[data-surface-level="3"] {
+  --_is-bg: var(--interactive-surface-level-bg, var(--interactive-surface-level-3-bg, var(--_is-base-bg)));
+  --_is-border-color: var(--interactive-surface-level-border-color, var(--interactive-surface-level-3-border-color, var(--_is-base-border-color)));
+  --_is-shadow-base: var(--interactive-surface-level-shadow, var(
+    --interactive-surface-level-3-shadow,
+    0 14px 34px rgb(0 0 0 / 0.3)
+  ));
+  --_is-state-layer-hover-opacity: var(--interactive-surface-state-layer-hover-opacity, var(--interactive-surface-level-3-hover-opacity, 0.14));
+  --_is-state-layer-active-opacity: var(--interactive-surface-state-layer-active-opacity, var(--interactive-surface-level-3-active-opacity, 0.24));
+  --_is-state-layer-focus-opacity: var(--interactive-surface-state-layer-focus-opacity, var(--interactive-surface-level-3-focus-opacity, 0.28));
 }
 
 /* 2a) State-layer pseudo-element */
@@ -324,7 +358,8 @@
 
 /* 8) Visual variant token modifiers */
 
-.interactive-surface.variant-primary {
+.interactive-surface.variant-primary,
+.interactive-surface[data-surface-variant="primary"] {
   --interactive-surface-bg: var(
     --interactive-surface-variant-primary-bg,
     var(--variant-primary-bg, rgb(15 79 127))
@@ -341,7 +376,8 @@
   --interactive-surface-darken-active: 0.97;
 }
 
-.interactive-surface.variant-secondary {
+.interactive-surface.variant-secondary,
+.interactive-surface[data-surface-variant="secondary"] {
   --interactive-surface-bg: var(
     --interactive-surface-variant-secondary-bg,
     var(--variant-secondary-bg, rgb(198 220 237))
@@ -358,7 +394,8 @@
   --interactive-surface-darken-active: 0.99;
 }
 
-.interactive-surface.variant-accent {
+.interactive-surface.variant-accent,
+.interactive-surface[data-surface-variant="accent"] {
   --interactive-surface-bg: var(
     --interactive-surface-variant-accent-bg,
     var(--variant-accent-bg, rgb(201 240 237))
@@ -375,7 +412,8 @@
   --interactive-surface-darken-active: 0.96;
 }
 
-.interactive-surface.variant-subtle {
+.interactive-surface.variant-subtle,
+.interactive-surface[data-surface-variant="subtle"] {
   --interactive-surface-bg: var(
     --interactive-surface-variant-subtle-bg,
     var(--variant-subtle-bg, rgb(219 231 243))
@@ -392,7 +430,8 @@
   --interactive-surface-darken-active: 1;
 }
 
-.interactive-surface.variant-warning {
+.interactive-surface.variant-warning,
+.interactive-surface[data-surface-variant="warning"] {
   --interactive-surface-bg: var(
     --interactive-surface-variant-warning-bg,
     var(--variant-warning-bg, rgb(255 227 186))
@@ -409,7 +448,8 @@
   --interactive-surface-darken-active: 0.95;
 }
 
-.interactive-surface.variant-danger {
+.interactive-surface.variant-danger,
+.interactive-surface[data-surface-variant="danger"] {
   --interactive-surface-bg: var(
     --interactive-surface-variant-danger-bg,
     var(--variant-danger-bg, rgb(255 211 213))

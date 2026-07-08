@@ -6,6 +6,19 @@ All notable changes to this package are documented in this file.
 
 ## Unreleased
 
+## 1.3.0 - 2026-07-08
+
+### Added
+
+- Added first-class `data-surface-variant` support for `primary`, `secondary`, `accent`, `subtle`, `warning`, and `danger` so runtime-assigned surface hooks match the existing `.variant-*` class API.
+- Added standalone `data-surface-level="1"`, `"2"`, and `"3"` depth defaults with matching hover, active, and focus state-opacity hooks.
+- Added Playwright coverage for data-variant parity and data-level depth defaults.
+
+### Changed
+
+- Updated README, wiki, and demo guidance to document standalone interaction hooks, UI Style Kit 2.x bridge usage, and the ecosystem boundary between layout, visual paint, and interaction states.
+- Updated embedded demo docs to avoid stale version-pinned CDN examples.
+
 ## 1.2.4 - 2026-06-22
 
 ### Added

@@ -33,8 +33,8 @@ Interactive Surface CSS centralizes that logic into a single reusable primitive:
 - **JS entry:** `index.js` (imports the stylesheet)
 - **Demo/customization page:** `index.html`
 - **License:** MIT
-- **Current version in repo:** `1.2.3`
-- **Release tag:** `v1.2.3`
+- **Current version in repo:** `1.3.0`
+- **Release tag:** `v1.3.0`
 
 ## Documentation map
 
@@ -62,6 +62,12 @@ Interactive Surface CSS centralizes that logic into a single reusable primitive:
 ```
 
 ```html
+<button class="interactive-surface" data-surface-variant="primary" data-surface-level="2">
+  Continue
+</button>
+```
+
+```html
 <button class="interactive-surface icon-only" aria-label="Settings">
   <svg aria-hidden="true" viewBox="0 0 24 24">...</svg>
 </button>
@@ -72,3 +78,5 @@ Interactive Surface CSS centralizes that logic into a single reusable primitive:
 This library is not trying to be a full component system.
 
 It is a lower-level interaction primitive intended to sit underneath a design system or application UI layer. That makes it useful when you want consistency and accessibility without taking on the API surface of a large framework-specific component library.
+
+In the companion CSS ecosystem, `layout-style-css` owns structure, `ui-style-kit-css` owns visual paint and themes, and Interactive Surface CSS owns interaction states.

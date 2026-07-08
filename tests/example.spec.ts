@@ -29,4 +29,18 @@ test.describe("example page", () => {
     const controls = page.locator(".interactive-surface");
     await expect(await controls.count()).toBeGreaterThanOrEqual(27);
   });
+
+  test("token editor dialog semantics are active only while open", async ({ page }) => {
+    const modalDialog = page.locator('[role="dialog"][aria-modal="true"]');
+    const editTriggers = page.locator("[data-token-edit]");
+
+    await expect(modalDialog).toHaveCount(0);
+    expect(await editTriggers.count()).toBeGreaterThan(0);
+
+    await editTriggers.nth(0).click();
+    await expect(modalDialog).toHaveCount(1);
+
+    await page.keyboard.press("Escape");
+    await expect(modalDialog).toHaveCount(0);
+  });
 });

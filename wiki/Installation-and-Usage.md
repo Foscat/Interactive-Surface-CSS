@@ -80,6 +80,16 @@ import "interactive-surface-css";
 <button class="interactive-surface variant-accent">Learn more</button>
 ```
 
+### Data attribute surface hooks
+
+```html
+<button class="interactive-surface" data-surface-variant="accent" data-surface-level="2">
+  Learn more
+</button>
+```
+
+Use data attributes when another library, renderer, or design-system adapter assigns semantic surface intent.
+
 ### Large surface card
 
 ```html
@@ -155,7 +165,7 @@ import "interactive-surface-css";
 
 UI Style Kit owns visual theme tokens. Interactive Surface owns interaction behavior on `.interactive-surface`.
 
-With `ui-style-kit-css@2.0.1`, the default full bundle does not include the bridge. Use the opt-in bridge bundle when you want runtime UI switching and Interactive Surface token mapping in one import:
+With `ui-style-kit-css` 2.x, the default full bundle does not include the bridge. Use the opt-in bridge bundle when you want runtime UI switching and Interactive Surface token mapping in one import:
 
 ```js
 import "ui-style-kit-css/with-bridge.css";
@@ -178,7 +188,7 @@ import "ui-style-kit-css/styles/minimal-saas.css";
 import "ui-style-kit-css/interactive-surface-bridge";
 ```
 
-The bridge maps UI Style Kit theme roles into Interactive Surface tokens. UI Style Kit owns those visual token values; Interactive Surface owns the hover, focus, pressed, selected, disabled, and reduced-motion behavior on `.interactive-surface`.
+The bridge maps UI Style Kit theme roles into Interactive Surface tokens. UI Style Kit owns those visual token values; Interactive Surface owns the hover, focus, pressed, selected, disabled, and reduced-motion behavior on `.interactive-surface`. `data-surface-variant` and `data-surface-level` are safe standalone hooks, so bridge-generated markup keeps meaningful interaction behavior without requiring companion class names.
 
 ## Motion guardrail
 

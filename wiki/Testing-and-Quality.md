@@ -52,6 +52,8 @@ Current Playwright tests validate:
 - keyboard focus visibility
 - `aria-pressed` active styling
 - `aria-disabled` non-interactivity
+- `data-surface-variant` parity with `.variant-*` classes
+- `data-surface-level` standalone depth and state defaults
 - reduced-motion transform removal
 - icon-only minimum target size
 - index demo page rendering and control count

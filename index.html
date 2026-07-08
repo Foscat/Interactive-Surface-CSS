@@ -1164,6 +1164,9 @@
         <div class="button-grid">
           <button class="interactive-surface surface-btn variant-primary">Primary CTA</button>
           <button class="interactive-surface surface-btn variant-secondary">Secondary</button>
+          <button class="interactive-surface surface-btn" data-surface-variant="primary" data-surface-level="2">
+            Data hook CTA
+          </button>
           <button class="interactive-surface surface-btn variant-accent is-active">Selected (.is-active)</button>
           <button class="interactive-surface surface-btn variant-warning">Warning</button>
           <button class="interactive-surface surface-btn variant-danger">Danger</button>
@@ -1190,7 +1193,7 @@
             <strong>ARIA-aware state</strong>
             <p>Pressed style can come from semantic attributes instead of custom state classes.</p>
           </button>
-          <button class="interactive-surface surface-card variant-secondary">
+          <button class="interactive-surface surface-card variant-secondary" data-surface-level="3">
             <strong>Content-rich cards</strong>
             <p>Compose text, metadata, and icons while preserving a single interaction model.</p>
           </button>
@@ -1338,9 +1341,9 @@
         </div>
       </section>
     </main>
-    <div id="tokenModal" class="token-modal" hidden>
+    <div id="tokenModal" class="token-modal" hidden aria-hidden="true">
       <button id="tokenModalBackdrop" type="button" class="token-modal-backdrop" aria-label="Close token editor"></button>
-      <div class="token-modal-panel" role="dialog" aria-modal="true" aria-labelledby="tokenEditorTitle">
+      <div class="token-modal-panel">
         <form id="tokenEditor" class="token-editor">
           <div class="token-editor-head">
             <strong id="tokenEditorTitle">Edit token</strong>
@@ -1447,11 +1450,11 @@ Webpack:
     import "interactive-surface-css";
     ```
 
-CDN:
+CDN (replace `<version>` with the desired release, e.g. `1.3.0`):
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/interactive-surface-css@1.2.0/interactive-surface.css" />
-<link rel="stylesheet" href="https://unpkg.com/interactive-surface-css@1.2.0/interactive-surface.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/interactive-surface-css@<version>/interactive-surface.css" />
+<link rel="stylesheet" href="https://unpkg.com/interactive-surface-css@<version>/interactive-surface.css" />
 ```
 
 ## Quick Start
@@ -1462,6 +1465,12 @@ CDN:
 
 ```html
 <button class="interactive-surface size-lg variant-primary">Continue</button>
+```
+
+```html
+<button class="interactive-surface" data-surface-variant="primary" data-surface-level="2">
+  Continue
+</button>
 ```
 
 ```html
@@ -1503,6 +1512,13 @@ Visual variants:
 - `.variant-subtle`
 - `.variant-warning`
 - `.variant-danger`
+
+Data attribute aliases:
+
+- `data-surface-variant="primary|secondary|accent|subtle|warning|danger"`
+- `data-surface-level="1|2|3"`
+
+Use the class API for compact standalone markup and the data attributes when another library or runtime assigns semantic surface hooks.
 
 Icon pattern:
 
@@ -1548,11 +1564,11 @@ Release checklist:
 2. Bump `version` in `package.json`.
 3. Update `CHANGELOG.md`.
 4. Push to `main`.
-5. Create and publish a GitHub Release tag (for example `v1.2.0`).
+5. Create and publish a GitHub Release tag (for example `v1.3.0`).
 6. Verify the `Publish to npm` workflow succeeds.
 7. Verify CDN availability:
-    - `https://cdn.jsdelivr.net/npm/interactive-surface-css@1.2.0/interactive-surface.css`
-    - `https://unpkg.com/interactive-surface-css@1.2.0/interactive-surface.css`
+    - `https://cdn.jsdelivr.net/npm/interactive-surface-css@<version>/interactive-surface.css`
+    - `https://unpkg.com/interactive-surface-css@<version>/interactive-surface.css`
 
 Manual fallback:
 
@@ -1589,6 +1605,7 @@ Avoid applying additional `transform`, `translate`, `scale`, or `rotate` rules t
         const tokenCards = Array.from(document.querySelectorAll(".token-card[data-token]"));
         const tokenGrid = document.querySelector(".token-grid");
         const tokenModal = document.getElementById("tokenModal");
+        const tokenModalPanel = tokenModal?.querySelector(".token-modal-panel");
         const tokenModalBackdrop = document.getElementById("tokenModalBackdrop");
         const tokenEditor = document.getElementById("tokenEditor");
         const tokenEditorTitle = document.getElementById("tokenEditorTitle");
@@ -1716,6 +1733,30 @@ Avoid applying additional `transform`, `translate`, `scale`, or `rotate` rules t
           userTokenOverrides.textContent = blocks.join("\n\n");
         }
 
+        /*
+         * Dialog semantics are applied only while visible so hidden demo markup
+         * is not exposed as an active modal to assistive technology or tests.
+         */
+        function setTokenEditorModalState(isOpen) {
+          if (!tokenModal || !tokenModalPanel) {
+            return;
+          }
+
+          tokenModal.hidden = !isOpen;
+          tokenModal.setAttribute("aria-hidden", String(!isOpen));
+
+          if (isOpen) {
+            tokenModalPanel.setAttribute("role", "dialog");
+            tokenModalPanel.setAttribute("aria-modal", "true");
+            tokenModalPanel.setAttribute("aria-labelledby", "tokenEditorTitle");
+            return;
+          }
+
+          tokenModalPanel.removeAttribute("role");
+          tokenModalPanel.removeAttribute("aria-modal");
+          tokenModalPanel.removeAttribute("aria-labelledby");
+        }
+
         function openTokenEditor(tokenName) {
           if (!tokenEditor || !tokenEditorName || !tokenEditorValue || !tokenModal) {
             return;
@@ -1724,7 +1765,7 @@ Avoid applying additional `transform`, `translate`, `scale`, or `rotate` rules t
           tokenEditor.dataset.token = tokenName;
           tokenEditorName.value = tokenName;
           tokenEditorValue.value = readCssVariable(tokenName);
-          tokenModal.hidden = false;
+          setTokenEditorModalState(true);
 
           if (tokenEditorTitle) {
             tokenEditorTitle.textContent = `Edit ${tokenName}`;
@@ -1739,7 +1780,7 @@ Avoid applying additional `transform`, `translate`, `scale`, or `rotate` rules t
             return;
           }
 
-          tokenModal.hidden = true;
+          setTokenEditorModalState(false);
           tokenEditor.dataset.token = "";
         }
 
