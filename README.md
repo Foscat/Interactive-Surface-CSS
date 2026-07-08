@@ -99,6 +99,12 @@ CDN:
 ```
 
 ```html
+<button class="interactive-surface" data-surface-variant="primary" data-surface-level="2">
+  Continue
+</button>
+```
+
+```html
 <button class="interactive-surface icon-only" aria-label="Settings">
   <svg aria-hidden="true" viewBox="0 0 24 24">...</svg>
 </button>
@@ -144,6 +150,13 @@ Visual variants:
 - `.variant-warning`
 - `.variant-danger`
 
+Data attribute aliases:
+
+- `data-surface-variant="primary|secondary|accent|subtle|warning|danger"`
+- `data-surface-level="1|2|3"`
+
+Use the class API when you prefer compact standalone markup. Use the data attributes when another library or runtime assigns semantic surface hooks.
+
 Icon pattern:
 
 - `.icon-only`
@@ -156,13 +169,23 @@ Preferred token namespace:
 
 The package also supports legacy fallback tokens and semantic fallback tokens. Full details and examples are in [Token Reference](./wiki/Token-Reference.md).
 
+## Ecosystem Integration
+
+The three CSS libraries have separate ownership boundaries:
+
+- `layout-style-css` owns structural layout recipes and page geometry.
+- `ui-style-kit-css` owns visual themes, style systems, and mode-aware paint.
+- `interactive-surface-css` owns interaction behavior on `.interactive-surface`.
+
+Use one, two, or all three packages based on the layer you need. Interactive Surface does not require either companion library.
+
 ## Integration with UI Style Kit CSS
 
 `interactive-surface-css` and `ui-style-kit-css` are designed to work separately and complementarily.
 
 UI Style Kit owns visual theme tokens. Interactive Surface owns interaction behavior on `.interactive-surface`.
 
-With `ui-style-kit-css@2.0.1`, the default full bundle does not include the bridge. Use the opt-in bridge bundle when you want UI Style Kit's runtime style switcher and Interactive Surface token mapping in one import:
+With `ui-style-kit-css` 2.x, the default full bundle does not include the bridge. Use the opt-in bridge bundle when you want UI Style Kit's runtime style switcher and Interactive Surface token mapping in one import:
 
 ```js
 import "ui-style-kit-css/with-bridge.css";
@@ -185,7 +208,7 @@ import "ui-style-kit-css/styles/minimal-saas.css";
 import "ui-style-kit-css/interactive-surface-bridge";
 ```
 
-The bridge maps active `data-ui`, `data-theme`, and `data-mode` tokens to Interactive Surface's public token contract, including variant, icon-role, state-layer, and optional surface-level hooks. UI Style Kit owns the bridge token mapping; Interactive Surface keeps ownership of `.interactive-surface` interaction behavior.
+The bridge maps active `data-ui`, `data-theme`, and `data-mode` tokens to Interactive Surface's public token contract, including variant, icon-role, state-layer, and optional surface-level hooks. Interactive Surface now also treats `data-surface-variant` and `data-surface-level` as standalone public hooks, so bridge-generated markup keeps useful behavior even without style-specific class names. UI Style Kit owns the bridge token mapping; Interactive Surface keeps ownership of `.interactive-surface` interaction behavior.
 
 ## Accessibility
 
@@ -221,7 +244,7 @@ Release checklist:
 2. Bump `version` in `package.json`.
 3. Update `CHANGELOG.md`.
 4. Push to `main`.
-5. Create and publish a GitHub Release tag (for example `v1.2.4`).
+5. Create and publish a GitHub Release tag (for example `v1.3.0`).
 6. Verify the `Publish to npm` workflow succeeds.
 7. Verify CDN availability:
    - `https://cdn.jsdelivr.net/npm/interactive-surface-css@<version>/interactive-surface.css`
@@ -241,4 +264,3 @@ The `prepublishOnly` guard intentionally avoids browser downloads so `npm publis
 `interactive-surface` should be the only transform-based motion owner on its host element.
 
 Avoid applying additional `transform`, `translate`, `scale`, or `rotate` rules to the same node. If you need extra animation, apply it to a child element.
-](https://github.com/Foscat/Interactive-Surface-CSS)

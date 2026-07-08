@@ -60,7 +60,7 @@ The stylesheet also recognizes these semantic fallbacks:
 
 ## UI Style Kit CSS bridge
 
-When used with `ui-style-kit-css@2.0.1`, the UI Style Kit bridge maps active `data-ui`, `data-theme`, and `data-mode` roles into this package's public `--interactive-surface-*` contract.
+When used with `ui-style-kit-css` 2.x, the UI Style Kit bridge maps active `data-ui`, `data-theme`, and `data-mode` roles into this package's public `--interactive-surface-*` contract.
 
 Interactive Surface does not depend on UI Style Kit token names directly. It continues to resolve values through its own token contract, so the package remains usable without UI Style Kit.
 
@@ -70,11 +70,25 @@ The bridge can also provide state-layer aliases for visible hover, focus, and ac
 - `--interactive-surface-state-layer-opacity-focus`
 - `--interactive-surface-state-layer-opacity-active`
 
-When a bridged surface includes `data-surface-level`, Interactive Surface also reads these optional depth tokens:
+When a surface includes `data-surface-level`, Interactive Surface reads these optional depth tokens:
 
 - `--interactive-surface-level-bg`
 - `--interactive-surface-level-border-color`
 - `--interactive-surface-level-shadow`
+
+The package also exposes per-level defaults that bridge styles or app themes can override:
+
+- `--interactive-surface-level-1-bg`
+- `--interactive-surface-level-1-border-color`
+- `--interactive-surface-level-1-shadow`
+- `--interactive-surface-level-2-bg`
+- `--interactive-surface-level-2-border-color`
+- `--interactive-surface-level-2-shadow`
+- `--interactive-surface-level-3-bg`
+- `--interactive-surface-level-3-border-color`
+- `--interactive-surface-level-3-shadow`
+
+The matching state-opacity hooks are `--interactive-surface-level-<n>-hover-opacity`, `--interactive-surface-level-<n>-active-opacity`, and `--interactive-surface-level-<n>-focus-opacity`.
 
 ## Important implementation detail
 

@@ -73,6 +73,14 @@ That one class gives the element:
 <button class="interactive-surface size-lg variant-primary">Continue</button>
 ```
 
+### Runtime-assigned surface intent
+
+```html
+<button class="interactive-surface" data-surface-variant="primary" data-surface-level="2">
+  Continue
+</button>
+```
+
 ### Icon-only control
 
 ```html
