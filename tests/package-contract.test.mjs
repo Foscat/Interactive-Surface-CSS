@@ -229,6 +229,12 @@ test("the packed tarball contains only public files and resolves every export", 
     ]);
   });
 
+  // Give nested repository-local temp directories their own package scope so Node cannot self-resolve the source checkout.
+  await writeFile(
+    path.join(consumerDirectory, "package.json"),
+    `${JSON.stringify({ name: "interactive-surface-contract-consumer", private: true, type: "module" }, null, 2)}\n`
+  );
+
   const packOutput = runNpm(
     [
       "pack",
