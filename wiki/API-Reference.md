@@ -21,20 +21,20 @@ The following table is contract-tested against `package.json`; it includes every
 
 <!-- package-resolution-contract:start -->
 
-| Manifest key                           | Exact value                                                                                                  |
-| -------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
-| `main`                                 | `./index.cjs`                                                                                                |
-| `module`                               | `./index.js`                                                                                                 |
-| `style`                                | `./interactive-surface.css`                                                                                  |
-| `unpkg`                                | `./interactive-surface.css`                                                                                  |
-| `jsdelivr`                             | `./interactive-surface.css`                                                                                  |
-| `exports["."]`                         | `{"require":"./index.cjs","import":"./index.js","default":"./index.js","style":"./interactive-surface.css"}` |
-| `exports["./interactive-surface.css"]` | `./interactive-surface.css`                                                                                  |
-| `exports["./state-core.css"]`          | `./state-core.css`                                                                                           |
-| `exports["./standalone-preset.css"]`   | `./standalone-preset.css`                                                                                    |
-| `exports["./index.html"]`              | `./index.html`                                                                                               |
-| `exports["./index.cjs"]`               | `./index.cjs`                                                                                                |
-| `exports["./package.json"]`            | `./package.json`                                                                                             |
+| Manifest key | Exact value |
+| --- | --- |
+| `main` | `./index.cjs` |
+| `module` | `./index.js` |
+| `style` | `./interactive-surface.css` |
+| `unpkg` | `./interactive-surface.css` |
+| `jsdelivr` | `./interactive-surface.css` |
+| `exports["."]` | `{"require":"./index.cjs","import":"./index.js","default":"./index.js","style":"./interactive-surface.css"}` |
+| `exports["./interactive-surface.css"]` | `./interactive-surface.css` |
+| `exports["./state-core.css"]` | `./state-core.css` |
+| `exports["./standalone-preset.css"]` | `./standalone-preset.css` |
+| `exports["./index.html"]` | `./index.html` |
+| `exports["./index.cjs"]` | `./index.cjs` |
+| `exports["./package.json"]` | `./package.json` |
 
 <!-- package-resolution-contract:end -->
 
