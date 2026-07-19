@@ -10,6 +10,8 @@ The deterministic release gate covers static checks, generated-bundle parity, CS
 
 Use this tier for normal CI and before requesting review.
 
+The CI workflow runs this deterministic tier on both the declared minimum Node.js 18 runtime and Node.js 24. Official workflow actions are pinned to reviewed commit revisions.
+
 ### `npm run validate:browsers`
 
 This runs the deterministic validation tier plus browser installation and the Chromium Playwright project. It is the focused rendered-behavior gate.

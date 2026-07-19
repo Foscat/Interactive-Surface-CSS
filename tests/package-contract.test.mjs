@@ -9,6 +9,9 @@ import test from "node:test";
 
 const EXPECTED_NAME = "interactive-surface-css";
 const EXPECTED_VERSION = "1.4.0";
+const CHECKOUT_V4_SHA = "34e114876b0b11c390a56381ad16ebd13914f8d5";
+const CHECKOUT_V5_SHA = "93cb6efe18208431cddfb8368fd83d5badbf9bfd";
+const SETUP_NODE_V5_SHA = "a0853c24544627f65ddf259abe73b1d18a591444";
 const repositoryRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const manifestPath = path.join(repositoryRoot, "package.json");
 const manifest = JSON.parse(await readFile(manifestPath, "utf8"));
@@ -201,7 +204,10 @@ test("the npm publishing workflow only accepts a matching published release", as
   assert.doesNotMatch(workflow, /workflow_dispatch/);
   assert.match(
     workflow,
-    /uses: actions\/checkout@v5\r?\n\s+with:\r?\n\s+ref: \$\{\{ github\.event\.release\.tag_name \}\}/
+    new RegExp(
+      `uses: actions/checkout@${CHECKOUT_V5_SHA} # v5\\r?\\n` +
+        String.raw`\s+with:\r?\n\s+ref: \$\{\{ github\.event\.release\.tag_name \}\}`
+    )
   );
   assert.match(workflow, /RELEASE_TAG: \$\{\{ github\.event\.release\.tag_name \}\}/);
   assert.match(workflow, /process\.env\.RELEASE_TAG/);
@@ -215,6 +221,32 @@ test("the npm publishing workflow only accepts a matching published release", as
   assert.match(workflow, /run: npm publish --provenance --access public --ignore-scripts/);
   assert.ok(releaseGuard !== -1 && releaseGuard < dependencyInstall, "Release metadata must be checked before npm ci");
   assert.ok(dependencyInstall < packageValidation && packageValidation < packagePublish);
+});
+
+test("GitHub workflows pin actions and continuously prove the minimum Node version", async () => {
+  const workflowDirectory = path.join(repositoryRoot, ".github", "workflows");
+  const workflows = {
+    ci: await readFile(path.join(workflowDirectory, "ci.yaml"), "utf8"),
+    browsers: await readFile(path.join(workflowDirectory, "browser-tests.yml"), "utf8"),
+    publish: await readFile(path.join(workflowDirectory, "npm-publish.yml"), "utf8"),
+    wiki: await readFile(path.join(workflowDirectory, "wiki-sync.yml"), "utf8")
+  };
+
+  for (const workflow of Object.values(workflows)) {
+    assert.doesNotMatch(workflow, /uses: actions\/(?:checkout|setup-node)@v\d+/);
+  }
+
+  for (const workflow of [workflows.ci, workflows.browsers, workflows.publish]) {
+    assert.match(workflow, new RegExp(`uses: actions/checkout@${CHECKOUT_V5_SHA} # v5`));
+    assert.match(workflow, new RegExp(`uses: actions/setup-node@${SETUP_NODE_V5_SHA} # v5`));
+  }
+
+  assert.equal(
+    (workflows.wiki.match(new RegExp(`uses: actions/checkout@${CHECKOUT_V4_SHA} # v4`, "g")) ?? []).length,
+    2
+  );
+  assert.match(workflows.ci, /matrix:\r?\n\s+node-version: \[18, 24\]/);
+  assert.match(workflows.ci, /node-version: \$\{\{ matrix\.node-version \}\}/);
 });
 
 test("the packed tarball contains only public files and resolves every export", async (t) => {
