@@ -134,9 +134,15 @@ test.describe("state-first example page", () => {
     await expect(page.locator('#state-tabs [role="tab"]').first()).toHaveAttribute("aria-selected", "false");
 
     const loading = stateLab.locator('[data-example="loading"]');
-    await loading.click();
-    await expect(loading).toHaveAttribute("aria-busy", "true");
-    await expect(loading).toHaveText("Loading proof…");
+    const initialLoadingState = await loading.evaluate((element: HTMLButtonElement) => {
+      // Capture transient state in the click task so its completion timer cannot race protocol round trips.
+      element.click();
+      return {
+        busy: element.getAttribute("aria-busy"),
+        text: element.textContent
+      };
+    });
+    expect(initialLoadingState).toEqual({ busy: "true", text: "Loading proof…" });
     await expect(loading).toHaveAttribute("aria-busy", "false", { timeout: 2_000 });
     await expect(loading).toHaveText("Run loading proof");
 
