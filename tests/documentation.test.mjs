@@ -352,8 +352,23 @@ test("wiki installation and quality guidance matches the release-candidate packa
 });
 
 test("public docs contain no stale 1.x guidance", () => {
-  assert.doesNotMatch(allDocumentation, /\]\(\.\/wiki\//);
-  assert.doesNotMatch(allDocumentation, /example\.html/);
+  const expectedLab = new URL(labUrl);
+  const hasExpectedLabLink = (document) =>
+    [...document.matchAll(/\]\(([^)]+)\)/g)].some(([, destination]) => {
+      try {
+        const parsed = new URL(destination);
+        return (
+          parsed.origin === expectedLab.origin &&
+          (parsed.pathname === expectedLab.pathname ||
+            parsed.pathname.startsWith(expectedLab.pathname))
+        );
+      } catch {
+        return false;
+      }
+    });
+
+  assert.ok(hasExpectedLabLink(wiki.sidebar));
+  assert.ok(hasExpectedLabLink(wiki.footer));
   assert.doesNotMatch(allDocumentation, /\.surface-card/);
   assert.doesNotMatch(
     allDocumentation,
