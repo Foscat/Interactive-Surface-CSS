@@ -30,6 +30,8 @@
   const tokenOverrides = new Map();
   let activeOpener = null;
   let activeTokenName = "";
+  let dialogSessionActive = false;
+  let persistDialogFeedbackOnClose = false;
 
   if (!main || !statusRegion) {
     return;
@@ -49,6 +51,17 @@
     if (focus) {
       statusRegion.focus({ preventScroll: true });
     }
+  }
+
+  function clearStatus() {
+    statusRegion.textContent = "";
+    statusRegion.classList.remove("is-error", "is-success");
+  }
+
+  function setDialogStatus(message, options = {}) {
+    const { persistOnClose = false, ...statusOptions } = options;
+    persistDialogFeedbackOnClose = persistOnClose;
+    setStatus(message, statusOptions);
   }
 
   // State examples mutate the same semantic attributes consumed by the stylesheet.
@@ -193,7 +206,13 @@
   }
 
   function restoreDialogContext() {
+    // Validation guidance belongs only to its dialog session; successful changes remain useful globally.
+    if (dialogSessionActive && !persistDialogFeedbackOnClose) {
+      clearStatus();
+    }
     restoreStatusRegion();
+    dialogSessionActive = false;
+    persistDialogFeedbackOnClose = false;
     main.inert = false;
     const openerToRestore = activeOpener;
     activeOpener = null;
@@ -225,6 +244,9 @@
     tokenEditorTitle.textContent = `Edit ${tokenName}`;
     tokenEditorName.value = tokenName;
     tokenEditorValue.value = currentTokenValue(tokenName);
+    clearStatus();
+    dialogSessionActive = true;
+    persistDialogFeedbackOnClose = false;
     // Feedback must be a dialog descendant while showModal() makes the rest of the document inert.
     tokenEditorDialog.append(statusRegion);
     main.inert = true;
@@ -276,9 +298,10 @@
     event.preventDefault();
     const tokenValue = tokenEditorValue?.value.trim() || "";
     if (!activeTokenName || !isSupportedColor(tokenValue)) {
-      setStatus("Enter a valid CSS color value, such as rgb(16 42 67), and try again.", {
+      setDialogStatus("Enter a valid CSS color value, such as rgb(16 42 67), and try again.", {
         focus: true,
-        tone: "error"
+        tone: "error",
+        persistOnClose: false
       });
       tokenEditorValue?.focus();
       return;
@@ -287,7 +310,10 @@
     tokenOverrides.set(activeTokenName, tokenValue);
     renderTokenOverrides();
     updateTokenReadout(activeTokenName, tokenValue);
-    setStatus(`${activeTokenName} updated. Close the editor to review the state lab.`, { tone: "success" });
+    setDialogStatus(`${activeTokenName} updated. Close the editor to review the state lab.`, {
+      tone: "success",
+      persistOnClose: true
+    });
   });
 
   // File, clipboard, Blob URL, and download failures each receive a focused recovery message.

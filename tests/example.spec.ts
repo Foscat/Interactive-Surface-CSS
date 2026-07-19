@@ -172,6 +172,20 @@ test.describe("state-first example page", () => {
     await expect(page.locator("#resting-panel")).toBeHidden();
   });
 
+  test("dialog feedback lifecycle clears external status before opening", async ({ page }) => {
+    const advancedTools = page.locator("#advanced-tools");
+    const globalStatus = page.locator("body > #demoStatus");
+    const dialog = page.locator("#token-editor-dialog");
+
+    await page.locator('[data-example="action"]').click();
+    await expect(globalStatus).toHaveText("Action example completed.");
+    await expect(globalStatus).toHaveClass(/is-success/);
+
+    await advancedTools.getByRole("button", { name: "Edit --interactive-surface-bg" }).click();
+    await expect(dialog.locator("#demoStatus")).toBeEmpty();
+    await expect(dialog.locator("#demoStatus")).not.toHaveClass(/is-(?:error|success)/);
+  });
+
   test("opens a modal dialog, traps focus, and restores the exact opener", async ({ page }) => {
     const main = page.locator("main");
     const advancedTools = page.locator("#advanced-tools");
@@ -221,24 +235,84 @@ test.describe("state-first example page", () => {
     await expectFocused(valueField);
   });
 
-  test("applies a valid token override from the dialog", async ({ page }) => {
+  test("dialog feedback lifecycle discards invalid feedback after Escape and Cancel", async ({ page }) => {
+    const advancedTools = page.locator("#advanced-tools");
+    const backgroundOpener = advancedTools.getByRole("button", { name: "Edit --interactive-surface-bg" });
+    const focusOpener = advancedTools.getByRole("button", {
+      name: "Edit --interactive-surface-focus-ring-color"
+    });
+    const dialog = page.locator("#token-editor-dialog");
+    const valueField = page.getByLabel("Token value");
+    const globalStatus = page.locator("body > #demoStatus");
+
+    await backgroundOpener.click();
+    await valueField.fill("not-a-color");
+    await page.getByRole("button", { name: "Apply token" }).click();
+    await expect(dialog.locator("#demoStatus")).toHaveClass(/is-error/);
+    await page.keyboard.press("Escape");
+    await expect(globalStatus).toBeEmpty();
+    await expect(globalStatus).not.toHaveClass(/is-(?:error|success)/);
+
+    await focusOpener.click();
+    await expect(dialog.locator("#demoStatus")).toBeEmpty();
+    await valueField.fill("still-not-a-color");
+    await page.getByRole("button", { name: "Apply token" }).click();
+    await page.getByRole("button", { name: "Cancel token edit" }).click();
+    await expect(globalStatus).toBeEmpty();
+    await expect(globalStatus).not.toHaveClass(/is-(?:error|success)/);
+  });
+
+  test("dialog feedback lifecycle preserves valid success until the next session", async ({ page }) => {
     const advancedTools = page.locator("#advanced-tools");
     const dialog = page.getByRole("dialog", { name: "Edit --interactive-surface-bg" });
     await advancedTools.getByRole("button", { name: "Edit --interactive-surface-bg" }).click();
     await page.getByLabel("Token value").fill("rgb(250 251 252)");
     await page.getByRole("button", { name: "Apply token" }).click();
 
-    await expect(dialog.getByRole("status")).toHaveText(
+    const dialogStatus = dialog.getByRole("status");
+    await expect(dialogStatus).toHaveText(
       "--interactive-surface-bg updated. Close the editor to review the state lab."
     );
+    await expect(dialogStatus).toHaveClass(/is-success/);
     await expect(page.locator('[data-token="--interactive-surface-bg"] [data-token-value]')).toHaveText(
       "rgb(250 251 252)"
     );
 
     await page.keyboard.press("Escape");
-    await expect(page.locator("body > #demoStatus")).toHaveText(
+    const globalStatus = page.locator("body > #demoStatus");
+    await expect(globalStatus).toHaveText(
       "--interactive-surface-bg updated. Close the editor to review the state lab."
     );
+    await expect(globalStatus).toHaveClass(/is-success/);
+
+    await advancedTools
+      .getByRole("button", { name: "Edit --interactive-surface-focus-ring-color" })
+      .click();
+    await expect(page.locator("#token-editor-dialog #demoStatus")).toBeEmpty();
+    await expect(page.locator("#token-editor-dialog #demoStatus")).not.toHaveClass(/is-(?:error|success)/);
+  });
+
+  test("reports a dialog launch failure globally after cleanup", async ({ page }) => {
+    await page.evaluate(() => {
+      Object.defineProperty(HTMLDialogElement.prototype, "showModal", {
+        configurable: true,
+        value: () => {
+          throw new Error("dialog launch failed");
+        }
+      });
+    });
+
+    const opener = page
+      .locator("#advanced-tools")
+      .getByRole("button", { name: "Edit --interactive-surface-bg" });
+    await opener.click();
+
+    const globalStatus = page.locator("body > #demoStatus");
+    await expect(page.locator("#token-editor-dialog")).toBeHidden();
+    await expect(page.locator("main")).not.toHaveAttribute("inert", "");
+    await expect(globalStatus).toHaveText("The token editor could not open. Reload the page and try again.");
+    await expect(globalStatus).toHaveClass(/is-error/);
+    await expectFocused(globalStatus);
   });
 
   test("renders the repository README without markdown fence artifacts", async ({ page }) => {
