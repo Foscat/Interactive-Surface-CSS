@@ -4,19 +4,22 @@
  */
 
 .interactive-surface {
-  /* Resolve public interaction tokens through their supported legacy fallbacks. */
-  --_is-lift-base: var(--interactive-surface-lift-base, var(--lift-base, 0px));
-  --_is-lift-hover: var(--interactive-surface-lift-hover, var(--lift-hover, -4px));
-  --_is-lift-active: var(--interactive-surface-lift-active, var(--lift-active, -2px));
-  --_is-base-shadow: var(--interactive-surface-shadow-base, var(--shadow-base, 0 0 0 rgba(0, 0, 0, 0)));
+  /* Preset-only fallbacks keep the core neutral while preserving complete-bundle behavior. */
+  --_is-lift-base: var(--interactive-surface-lift-base, var(--_is-preset-lift-base, 0px));
+  --_is-lift-hover: var(--interactive-surface-lift-hover, var(--_is-preset-lift-hover, 0px));
+  --_is-lift-active: var(--interactive-surface-lift-active, var(--_is-preset-lift-active, 0px));
+  --_is-base-shadow: var(
+    --interactive-surface-shadow-base,
+    var(--interactive-surface-level-shadow, var(--_is-preset-shadow-base, none))
+  );
   --_is-shadow-base: var(--_is-base-shadow);
   --_is-shadow-hover: var(
     --interactive-surface-shadow-hover,
-    var(--shadow-hover, 0 10px 28px rgba(0, 0, 0, 0.35), 0 2px 8px rgba(0, 0, 0, 0.25))
+    var(--_is-preset-shadow-hover, var(--_is-base-shadow))
   );
   --_is-shadow-active: var(
     --interactive-surface-shadow-active,
-    var(--shadow-active, 0 6px 18px rgba(0, 0, 0, 0.3), 0 1px 4px rgba(0, 0, 0, 0.2))
+    var(--_is-preset-shadow-active, var(--_is-base-shadow))
   );
   --_is-darken-hover: var(--interactive-surface-darken-hover, var(--surface-darken-hover, 0.96));
   --_is-darken-active: var(--interactive-surface-darken-active, var(--surface-darken-active, 0.98));
@@ -55,14 +58,11 @@
   cursor: pointer;
   touch-action: manipulation;
   -webkit-tap-highlight-color: var(--_is-tap-highlight);
-  transform: translateY(var(--_is-lift-base)) translateZ(0) !important;
+  translate: 0 var(--_is-lift-base);
   box-shadow: var(--_is-shadow-base);
   transition:
-    transform var(--_is-motion-default) var(--_is-ease-standard),
+    translate var(--_is-motion-default) var(--_is-ease-standard),
     box-shadow var(--_is-motion-default) var(--_is-ease-standard),
-    background-color var(--_is-motion-default) linear,
-    border-color var(--_is-motion-default) linear,
-    color var(--_is-motion-default) linear,
     outline-color var(--_is-motion-default) linear;
   will-change: auto;
 }
@@ -91,135 +91,155 @@
   }
 }
 
-.interactive-surface:not(.is-disabled, :disabled, [aria-disabled="true"]):focus-visible {
-  transform: translateY(var(--_is-lift-hover)) translateZ(0) !important;
+.interactive-surface:not(:is(.is-disabled, :disabled, [aria-disabled="true"])):focus-visible {
+  translate: 0 var(--_is-lift-hover);
   box-shadow: var(--_is-shadow-hover);
   outline: var(--_is-focus-ring-width) solid var(--_is-focus-ring-color);
   outline-offset: var(--_is-focus-ring-offset);
 }
 
-.interactive-surface:not(.is-disabled, :disabled, [aria-disabled="true"]):focus-visible::before {
+.interactive-surface:not(:is(.is-disabled, :disabled, [aria-disabled="true"])):focus-visible::before {
   opacity: var(--_is-state-layer-focus-opacity);
 }
 
-.interactive-surface[aria-disabled="true"]:focus-visible {
-  outline: var(--_is-focus-ring-width) solid var(--_is-focus-ring-color);
-  outline-offset: var(--_is-focus-ring-offset);
-}
-
-.interactive-surface.is-active:not(.is-disabled, [aria-disabled="true"]),
-.interactive-surface[aria-pressed="true"]:not(.is-disabled, :disabled, [aria-disabled="true"]),
-.interactive-surface[aria-current="page"]:not(.is-disabled, :disabled, [aria-disabled="true"]) {
-  transform: translateY(var(--_is-lift-active)) translateZ(0) !important;
+.interactive-surface:is(
+    .is-active,
+    [aria-pressed="true"],
+    [aria-pressed="mixed"],
+    [aria-current]:not([aria-current="false"]),
+    [aria-selected="true"],
+    [aria-busy="true"],
+    .is-loading
+  ):not(:is(.is-disabled, :disabled, [aria-disabled="true"])) {
+  translate: 0 var(--_is-lift-active);
   box-shadow: var(--_is-shadow-active);
 }
 
-.interactive-surface.is-active:not(.is-disabled, [aria-disabled="true"])::before,
-.interactive-surface[aria-pressed="true"]:not(.is-disabled, :disabled, [aria-disabled="true"])::before,
-.interactive-surface[aria-current="page"]:not(.is-disabled, :disabled, [aria-disabled="true"])::before {
+.interactive-surface:is(
+    .is-active,
+    [aria-pressed="true"],
+    [aria-pressed="mixed"],
+    [aria-current]:not([aria-current="false"]),
+    [aria-selected="true"],
+    [aria-busy="true"],
+    .is-loading
+  ):not(:is(.is-disabled, :disabled, [aria-disabled="true"]))::before {
   opacity: var(--_is-state-layer-active-opacity);
 }
 
 @media (hover: hover) and (pointer: fine) {
   .interactive-surface {
-    will-change: transform, box-shadow;
+    will-change: translate, box-shadow;
   }
 
-  .interactive-surface:not(.is-disabled, :disabled, [aria-disabled="true"]):hover {
-    transform: translateY(var(--_is-lift-hover)) translateZ(0) !important;
+  .interactive-surface:not(:is(.is-disabled, :disabled, [aria-disabled="true"])):hover {
+    translate: 0 var(--_is-lift-hover);
     box-shadow: var(--_is-shadow-hover);
   }
 
-  .interactive-surface:not(.is-disabled, :disabled, [aria-disabled="true"]):hover::before {
+  .interactive-surface:not(:is(.is-disabled, :disabled, [aria-disabled="true"])):hover::before {
     opacity: var(--_is-state-layer-hover-opacity);
   }
 }
 
-.interactive-surface:not(.is-disabled, :disabled, [aria-disabled="true"]):active {
-  transform: translateY(var(--_is-lift-base)) translateZ(0) !important;
+.interactive-surface:not(:is(.is-disabled, :disabled, [aria-disabled="true"])):active {
+  translate: 0 var(--_is-lift-base);
   box-shadow: var(--_is-shadow-base);
   transition-duration: var(--_is-motion-press);
   transition-timing-function: var(--_is-ease-press);
 }
 
-.interactive-surface:not(.is-disabled, :disabled, [aria-disabled="true"]):active::before {
+.interactive-surface:not(:is(.is-disabled, :disabled, [aria-disabled="true"])):active::before {
   opacity: 0;
+  transition-duration: var(--_is-motion-press);
+  transition-timing-function: var(--_is-ease-press);
 }
 
-.interactive-surface.is-disabled,
-.interactive-surface:disabled {
+/*
+ * Disabled styling is visual only. Consumers must still suppress programmatic and keyboard
+ * activation for custom controls that use aria-disabled or the is-disabled class.
+ */
+.interactive-surface:is(.is-disabled, :disabled, [aria-disabled="true"]) {
   cursor: not-allowed;
   pointer-events: none;
-  transform: none !important;
+  translate: none;
   box-shadow: none;
   opacity: var(--_is-disabled-opacity);
+  animation: none;
   transition: none;
 }
 
-.interactive-surface[aria-disabled="true"] {
-  cursor: not-allowed;
-  pointer-events: none;
-  transform: none !important;
-  box-shadow: none;
-  opacity: var(--_is-disabled-opacity);
+.interactive-surface:is(.is-disabled, :disabled, [aria-disabled="true"])::before {
+  opacity: 0;
+  animation: none;
+  transition: none;
 }
 
-/* This primitive owns host motion and neutralizes competing transform longhands. */
-.interactive-surface,
-.interactive-surface:hover,
-.interactive-surface:focus-visible,
-.interactive-surface:active,
-.interactive-surface.is-active,
-.interactive-surface[aria-current="page"] {
-  scale: 1 !important;
-  rotate: 0deg !important;
-  translate: 0 0 !important;
+/* Focus remains visible on custom disabled widgets that stay in the keyboard tab order. */
+.interactive-surface:is(.is-disabled, [aria-disabled="true"]):focus-visible {
+  outline: var(--_is-focus-ring-width) solid var(--_is-focus-ring-color);
+  outline-offset: var(--_is-focus-ring-offset);
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .interactive-surface {
-    transform: none !important;
+  .interactive-surface,
+  .interactive-surface:not(:is(.is-disabled, :disabled, [aria-disabled="true"])):hover,
+  .interactive-surface:not(:is(.is-disabled, :disabled, [aria-disabled="true"])):focus-visible,
+  .interactive-surface:not(:is(.is-disabled, :disabled, [aria-disabled="true"])):active,
+  .interactive-surface:is(
+      .is-active,
+      [aria-pressed="true"],
+      [aria-pressed="mixed"],
+      [aria-current]:not([aria-current="false"]),
+      [aria-selected="true"],
+      [aria-busy="true"],
+      .is-loading
+    ):not(:is(.is-disabled, :disabled, [aria-disabled="true"])) {
+    translate: none;
+    animation: none;
     transition: none;
   }
 
   .interactive-surface::before {
+    animation: none;
     transition: none;
-  }
-
-  .interactive-surface:not(.is-disabled, :disabled, [aria-disabled="true"]):hover,
-  .interactive-surface:not(.is-disabled, :disabled, [aria-disabled="true"]):focus-visible,
-  .interactive-surface:not(.is-disabled, :disabled, [aria-disabled="true"]):active,
-  .interactive-surface.is-active:not(.is-disabled, [aria-disabled="true"]),
-  .interactive-surface[aria-pressed="true"]:not(.is-disabled, :disabled, [aria-disabled="true"]),
-  .interactive-surface[aria-current="page"]:not(.is-disabled, :disabled, [aria-disabled="true"]) {
-    transform: none !important;
-    box-shadow: none;
-  }
-
-  .interactive-surface:hover::before,
-  .interactive-surface:focus-visible::before,
-  .interactive-surface:active::before,
-  .interactive-surface.is-active::before,
-  .interactive-surface[aria-pressed="true"]::before,
-  .interactive-surface[aria-current="page"]::before {
-    opacity: 0;
   }
 }
 
 @media (prefers-contrast: more) {
   .interactive-surface {
-    --interactive-surface-darken-hover: 1;
-    --interactive-surface-darken-active: 1;
-    --interactive-surface-focus-ring-width: 3px;
-    --interactive-surface-border-width: 2px;
-    --interactive-surface-shadow-base: none;
-    --interactive-surface-shadow-hover: none;
-    --interactive-surface-shadow-active: none;
+    --_is-focus-ring-width: 3px;
+  }
+
+  .interactive-surface:is(
+      .is-active,
+      [aria-pressed="true"],
+      [aria-pressed="mixed"],
+      [aria-current]:not([aria-current="false"]),
+      [aria-selected="true"],
+      [aria-busy="true"],
+      .is-loading
+    ):not(:is(.is-disabled, :disabled, [aria-disabled="true"])) {
+    outline: 2px solid currentcolor;
+    outline-offset: 2px;
+  }
+
+  .interactive-surface:focus,
+  .interactive-surface:not(:is(.is-disabled, :disabled, [aria-disabled="true"])):focus-visible,
+  .interactive-surface[aria-disabled="true"]:focus-visible {
+    outline: var(--_is-focus-ring-width) solid var(--_is-focus-ring-color);
   }
 }
 
 @media (forced-colors: active) {
   .interactive-surface {
+    --_is-lift-base: 0px;
+    --_is-lift-hover: 0px;
+    --_is-lift-active: 0px;
+    --_is-shadow-base: none;
+    --_is-shadow-hover: none;
+    --_is-shadow-active: none;
+
     box-shadow: none;
   }
 
@@ -227,25 +247,33 @@
     display: none;
   }
 
-  .interactive-surface:hover,
-  .interactive-surface:focus-visible,
-  .interactive-surface.is-active,
-  .interactive-surface[aria-pressed="true"],
-  .interactive-surface[aria-current="page"],
-  .interactive-surface:active {
-    transform: none !important;
-    box-shadow: none;
+  .interactive-surface:is(
+      .is-active,
+      [aria-pressed="true"],
+      [aria-pressed="mixed"],
+      [aria-current]:not([aria-current="false"]),
+      [aria-selected="true"],
+      [aria-busy="true"],
+      .is-loading
+    ):not(:is(.is-disabled, :disabled, [aria-disabled="true"])) {
+    outline: 2px solid ButtonText;
+    outline-offset: 2px;
   }
 
   .interactive-surface:focus,
-  .interactive-surface:focus-visible {
+  .interactive-surface:not(:is(.is-disabled, :disabled, [aria-disabled="true"])):focus-visible {
     outline: 2px solid Highlight;
     outline-offset: 2px;
   }
 
-  .interactive-surface.is-disabled,
-  .interactive-surface:disabled,
-  .interactive-surface[aria-disabled="true"] {
+  .interactive-surface:is(.is-disabled, :disabled, [aria-disabled="true"]) {
+    outline: 1px solid GrayText;
+    outline-offset: 2px;
     opacity: 1;
+  }
+
+  .interactive-surface[aria-disabled="true"]:focus-visible {
+    outline: 2px solid GrayText;
+    outline-offset: 2px;
   }
 }

@@ -189,14 +189,22 @@ test.describe("interactive surface package behavior", () => {
     ]);
   });
 
-  test("reduced motion disables movement transform", async ({ page }) => {
+  test("reduced motion disables individual translation and transition timing", async ({ page }) => {
     await page.emulateMedia({ reducedMotion: "reduce" });
     await page.setContent(html);
     const target = page.locator("#target");
     await target.hover();
 
-    const transform = await target.evaluate((el) => window.getComputedStyle(el).transform);
-    expect(transform).toBe("none");
+    const motion = await target.evaluate((el) => {
+      const computed = window.getComputedStyle(el);
+      return {
+        transitionDuration: computed.transitionDuration,
+        translate: computed.getPropertyValue("translate")
+      };
+    });
+
+    expect(motion.translate).toBe("none");
+    expect(motion.transitionDuration).toBe("0s");
   });
 
   test("icon-only enforces minimum target size", async ({ page }) => {

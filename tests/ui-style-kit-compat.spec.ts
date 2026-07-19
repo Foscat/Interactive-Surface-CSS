@@ -9,6 +9,7 @@ const __dirname = path.dirname(__filename);
 const require = createRequire(import.meta.url);
 const packageRoot = path.resolve(__dirname, "..");
 const interactiveCss = fs.readFileSync(path.join(packageRoot, "interactive-surface.css"), "utf8");
+const stateCoreCss = fs.readFileSync(path.join(packageRoot, "state-core.css"), "utf8");
 const uiKitRoot = path.dirname(require.resolve("ui-style-kit-css/package.json"));
 
 const uiKitWithBridge = fs.readFileSync(path.join(uiKitRoot, "dist", "ui-style-kit.with-bridge.css"), "utf8");
@@ -39,11 +40,11 @@ function stripCssImports(css: string) {
   return css.replaceAll(/@import\s+url\(["'][^)]+["']\);\s*/g, "");
 }
 
-function htmlFor(order: ImportOrder, system: SystemName, mode: ModeName) {
+function htmlFor(order: ImportOrder, system: SystemName, mode: ModeName, surfaceCss = interactiveCss) {
   const styles =
     order === "with-bridge-first"
-      ? `<style data-source="ui-kit-with-bridge">${uiKitWithBridge}</style><style data-source="interactive">${interactiveCss}</style>`
-      : `<style data-source="interactive">${interactiveCss}</style><style data-source="ui-kit-theme-colors">${uiKitThemeColors}</style><style data-source="ui-kit-native-elements">${uiKitNativeElements}</style><style data-source="ui-kit-style">${readStyle(system)}</style><style data-source="ui-kit-bridge">${uiKitBridge}</style>`;
+      ? `<style data-source="ui-kit-with-bridge">${uiKitWithBridge}</style><style data-source="interactive">${surfaceCss}</style>`
+      : `<style data-source="interactive">${surfaceCss}</style><style data-source="ui-kit-theme-colors">${uiKitThemeColors}</style><style data-source="ui-kit-native-elements">${uiKitNativeElements}</style><style data-source="ui-kit-style">${readStyle(system)}</style><style data-source="ui-kit-bridge">${uiKitBridge}</style>`;
 
   return `
 <!doctype html>
@@ -83,9 +84,19 @@ async function computed(page: Page, selector: string) {
       outlineStyle: styles.outlineStyle,
       outlineWidth: styles.outlineWidth,
       pointerEvents: styles.pointerEvents,
-      transform: styles.transform
+      transitionDuration: styles.transitionDuration,
+      translate: styles.getPropertyValue("translate")
     };
   });
+}
+
+function translateY(value: string) {
+  if (value === "none") {
+    return 0;
+  }
+
+  const coordinates = value.trim().split(/\s+/);
+  return Number.parseFloat(coordinates[1] ?? "0");
 }
 
 async function resolvedTokenValue(page: Page, selector: string, tokenName: string, propertyName: string) {
@@ -177,7 +188,7 @@ test.describe("ui-style-kit-css 2.0.1 compatibility", () => {
 
       expect(focused.outlineStyle).toBe("solid");
       expect(focused.outlineWidth).toBe("2px");
-      expect(focused.transform).not.toBe("none");
+      await expect.poll(async () => translateY((await computed(page, "#base")).translate)).toBe(-4);
       expect(disabled.pointerEvents).toBe("none");
       expect(Number.parseFloat(disabled.opacity)).toBeLessThanOrEqual(0.72);
       expect(icon.minWidth).toBe("44px");
@@ -197,8 +208,43 @@ test.describe("ui-style-kit-css 2.0.1 compatibility", () => {
       await page.locator("#base").hover();
       const reduced = await computed(page, "#base");
 
-      expect(reduced.transform).toBe("none");
-      expect(reduced.boxShadow).toBe("none");
+      expect(reduced.translate).toBe("none");
+      // UI Style Kit uses a conventional 1ms cap; both supported orders remain effectively motionless.
+      expect(Number.parseFloat(reduced.transitionDuration)).toBeLessThanOrEqual(0.001);
+    });
+
+    test(`${order} lets the state core preserve UI Style Kit paint`, async ({ page }) => {
+      await page.setContent(htmlFor(order, "minimal-saas", "dark", ""));
+      const baseline = {
+        base: await computed(page, "#base"),
+        level: await computed(page, "#level"),
+        primary: await computed(page, "#primary")
+      };
+
+      await page.setContent(htmlFor(order, "minimal-saas", "dark", stateCoreCss));
+      const withCore = {
+        base: await computed(page, "#base"),
+        level: await computed(page, "#level"),
+        primary: await computed(page, "#primary")
+      };
+
+      for (const surface of ["base", "level", "primary"] as const) {
+        expect({
+          backgroundColor: withCore[surface].backgroundColor,
+          borderColor: withCore[surface].borderColor,
+          borderRadius: withCore[surface].borderRadius,
+          borderWidth: withCore[surface].borderWidth,
+          boxShadow: withCore[surface].boxShadow,
+          color: withCore[surface].color
+        }).toEqual({
+          backgroundColor: baseline[surface].backgroundColor,
+          borderColor: baseline[surface].borderColor,
+          borderRadius: baseline[surface].borderRadius,
+          borderWidth: baseline[surface].borderWidth,
+          boxShadow: baseline[surface].boxShadow,
+          color: baseline[surface].color
+        });
+      }
     });
   }
 });

@@ -4,6 +4,19 @@
  */
 
 :is(.interactive-surface) {
+  /* Complete bundles retain the established lift and shadow fallbacks without imposing them on the core. */
+  --_is-preset-lift-base: var(--lift-base, 0px);
+  --_is-preset-lift-hover: var(--lift-hover, -4px);
+  --_is-preset-lift-active: var(--lift-active, -2px);
+  --_is-preset-shadow-base: var(--shadow-base, 0 0 0 rgb(0 0 0 / 0));
+  --_is-preset-shadow-hover: var(
+    --shadow-hover,
+    0 10px 28px rgb(0 0 0 / 0.35), 0 2px 8px rgb(0 0 0 / 0.25)
+  );
+  --_is-preset-shadow-active: var(
+    --shadow-active,
+    0 6px 18px rgb(0 0 0 / 0.3), 0 1px 4px rgb(0 0 0 / 0.2)
+  );
   --_is-base-bg: var(--interactive-surface-bg, var(--surface-bg, var(--bg-surface, rgb(248 250 252))));
   --_is-bg: var(--_is-base-bg);
   --_is-fg: var(--interactive-surface-fg, var(--surface-fg, var(--text-primary, rgb(17 24 39))));
