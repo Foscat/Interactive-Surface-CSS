@@ -157,10 +157,14 @@ function collectDocumentAssets(indexHtml, demoScript) {
   const metaConfigPattern =
     /<meta\b(?=[^>]*\bname\s*=\s*["']msapplication-config["'])(?=[^>]*\bcontent\s*=\s*["']([^"']+)["'])[^>]*>/gi;
   const fetchPattern = /\bfetch\s*\(\s*["']([^"']+)["']/gi;
-  const documentMarkup = indexHtml.replace(
-    /<script\b[^>]*\bid=["']embeddedReadme["'][^>]*>[\s\S]*?<\/script>/i,
-    "",
-  );
+  const embeddedReadmeScriptPattern =
+    /<script\b[^>]*\bid=["']embeddedReadme["'][^>]*>[\s\S]*?<\/script>/gi;
+  let documentMarkup = indexHtml;
+  let previousMarkup;
+  do {
+    previousMarkup = documentMarkup;
+    documentMarkup = documentMarkup.replace(embeddedReadmeScriptPattern, "");
+  } while (documentMarkup !== previousMarkup);
 
   // README examples are inert text; only assets requested by the live document belong in this check.
   for (const match of documentMarkup.matchAll(attributePattern))
