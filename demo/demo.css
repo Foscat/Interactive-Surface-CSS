@@ -1,0 +1,602 @@
+/*
+ * Demo presentation layer.
+ * The standalone preset owns component paint and interaction mechanics; this file owns page composition only.
+ */
+
+/* Theme foundation preserves the established blue, glass, and ink visual language. */
+:root {
+  --interactive-surface-bg: rgb(255 255 255);
+  --interactive-surface-fg: rgb(16 42 67);
+  --interactive-surface-border-color: rgb(203 215 227);
+  --interactive-surface-focus-ring-color: rgb(30 91 240);
+  --interactive-surface-radius: 0.875rem;
+  --interactive-surface-variant-primary-bg: rgb(15 79 127);
+  --interactive-surface-variant-primary-fg: rgb(244 251 255);
+  --interactive-surface-variant-primary-border-color: rgb(12 65 105);
+  --interactive-surface-variant-secondary-bg: rgb(220 232 242);
+  --interactive-surface-variant-secondary-fg: rgb(20 48 70);
+  --interactive-surface-variant-secondary-border-color: rgb(155 183 206);
+  --interactive-surface-variant-accent-bg: rgb(201 240 237);
+  --interactive-surface-variant-accent-fg: rgb(6 74 79);
+  --interactive-surface-variant-accent-border-color: rgb(105 195 200);
+  --interactive-surface-variant-subtle-bg: rgb(235 242 248);
+  --interactive-surface-variant-subtle-fg: rgb(26 52 75);
+  --interactive-surface-variant-subtle-border-color: rgb(173 191 206);
+  --demo-app-bg: rgb(244 248 251);
+  --demo-panel-bg: rgb(255 255 255 / 84%);
+  --demo-card-bg: rgb(255 255 255 / 72%);
+  --demo-text: rgb(16 42 67);
+  --demo-muted: rgb(72 101 129);
+  --demo-border: rgb(16 42 67 / 14%);
+  --demo-border-strong: rgb(16 42 67 / 24%);
+  --demo-accent: rgb(15 79 127);
+  --demo-accent-soft: rgb(220 232 242);
+  --demo-code-bg: rgb(236 243 248);
+  --demo-success: rgb(11 122 76);
+  --demo-error: rgb(167 48 45);
+  --demo-shadow: 0 1.25rem 3.5rem rgb(17 55 84 / 12%);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --interactive-surface-bg: rgb(24 38 49);
+    --interactive-surface-fg: rgb(226 237 245);
+    --interactive-surface-border-color: rgb(56 82 104);
+    --interactive-surface-focus-ring-color: rgb(109 168 255);
+    --interactive-surface-variant-primary-bg: rgb(91 164 255);
+    --interactive-surface-variant-primary-fg: rgb(8 28 43);
+    --interactive-surface-variant-primary-border-color: rgb(133 187 255);
+    --interactive-surface-variant-secondary-bg: rgb(29 52 71);
+    --interactive-surface-variant-secondary-fg: rgb(226 237 245);
+    --interactive-surface-variant-secondary-border-color: rgb(72 105 132);
+    --interactive-surface-variant-accent-bg: rgb(23 82 88);
+    --interactive-surface-variant-accent-fg: rgb(219 255 252);
+    --interactive-surface-variant-accent-border-color: rgb(69 148 154);
+    --interactive-surface-variant-subtle-bg: rgb(19 37 52);
+    --interactive-surface-variant-subtle-fg: rgb(226 237 245);
+    --interactive-surface-variant-subtle-border-color: rgb(65 91 113);
+    --demo-app-bg: rgb(9 19 28);
+    --demo-panel-bg: rgb(13 26 38 / 86%);
+    --demo-card-bg: rgb(17 36 52 / 78%);
+    --demo-text: rgb(226 237 245);
+    --demo-muted: rgb(159 187 209);
+    --demo-border: rgb(159 187 209 / 24%);
+    --demo-border-strong: rgb(159 187 209 / 38%);
+    --demo-accent: rgb(91 164 255);
+    --demo-accent-soft: rgb(29 52 71);
+    --demo-code-bg: rgb(12 27 40);
+    --demo-success: rgb(107 221 165);
+    --demo-error: rgb(255 155 150);
+    --demo-shadow: 0 1.25rem 3.5rem rgb(0 0 0 / 30%);
+  }
+}
+
+/* Document foundation keeps every intrinsic width constrained to the viewport. */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  min-width: 0;
+  scroll-behavior: smooth;
+}
+
+body {
+  min-width: 0;
+  min-height: 100vh;
+  margin: 0;
+  overflow-x: clip;
+  background:
+    radial-gradient(circle at 12% 5%, rgb(30 91 240 / 16%), transparent 32rem),
+    radial-gradient(circle at 90% 18%, rgb(15 79 127 / 14%), transparent 30rem),
+    var(--demo-app-bg);
+  color: var(--demo-text);
+  font-family:
+    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  line-height: 1.55;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+a {
+  color: var(--demo-accent);
+}
+
+code,
+pre {
+  font-family: SFMono-Regular, Consolas, "Liberation Mono", monospace;
+}
+
+.skip-link {
+  position: fixed;
+  top: 0.5rem;
+  left: 0.5rem;
+  z-index: 20;
+  padding: 0.65rem 0.85rem;
+  border-radius: 0.5rem;
+  background: var(--demo-text);
+  color: var(--demo-app-bg);
+  translate: 0 -200%;
+}
+
+.skip-link:focus {
+  translate: 0;
+}
+
+main {
+  width: min(74rem, calc(100% - 2rem));
+  min-width: 0;
+  margin-inline: auto;
+  padding-block: clamp(1rem, 4vw, 3rem) 5rem;
+}
+
+/* Shared surfaces establish consistent rhythm without overriding library state paint. */
+.hero,
+.panel {
+  min-width: 0;
+  border: 1px solid var(--demo-border);
+  border-radius: clamp(1rem, 2vw, 1.5rem);
+  background: var(--demo-panel-bg);
+  box-shadow: var(--demo-shadow);
+  backdrop-filter: blur(1.25rem);
+}
+
+.hero {
+  padding: clamp(1.35rem, 5vw, 4.25rem);
+}
+
+.panel {
+  margin-top: 1.25rem;
+  padding: clamp(1.25rem, 3vw, 2.25rem);
+  scroll-margin-top: 1rem;
+}
+
+.eyebrow {
+  margin: 0 0 0.55rem;
+  color: var(--demo-accent);
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+h1,
+h2,
+h3,
+p {
+  overflow-wrap: anywhere;
+}
+
+h1,
+h2,
+h3 {
+  color: var(--demo-text);
+  line-height: 1.15;
+}
+
+h1 {
+  max-width: 14ch;
+  margin: 0;
+  font-size: clamp(2.3rem, 8vw, 5.25rem);
+  letter-spacing: -0.055em;
+}
+
+h2 {
+  margin: 0;
+  font-size: clamp(1.55rem, 3vw, 2.35rem);
+  letter-spacing: -0.025em;
+}
+
+h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.hero-lead,
+.section-heading > p:last-child {
+  max-width: 68ch;
+  color: var(--demo-muted);
+}
+
+.hero-lead {
+  margin: 1rem 0 0;
+  font-size: clamp(1rem, 2vw, 1.25rem);
+}
+
+.hero-links,
+.token-actions,
+.dialog-actions,
+.reference-links,
+.tab-list {
+  display: flex;
+  min-width: 0;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.hero-links {
+  margin-top: 1.5rem;
+}
+
+.surface-control {
+  display: inline-flex;
+  max-width: 100%;
+  min-height: 2.75rem;
+  align-items: center;
+  justify-content: center;
+  padding: 0.7rem 1rem;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+.surface-control.size-sm {
+  min-height: 2.5rem;
+  padding: 0.55rem 0.75rem;
+}
+
+.section-heading {
+  margin-bottom: 1.25rem;
+}
+
+.section-heading > p:last-child {
+  margin: 0.65rem 0 0;
+}
+
+/* Ecosystem cards preserve a clear three-package ownership hierarchy. */
+.ownership-grid,
+.guidance-grid,
+.entry-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.ownership-grid article,
+.guidance-grid article,
+.entry-grid article,
+.example-card,
+.token-card {
+  min-width: 0;
+  padding: 1rem;
+  border: 1px solid var(--demo-border);
+  border-radius: 1rem;
+  background: var(--demo-card-bg);
+}
+
+.ownership-grid p,
+.guidance-grid p,
+.entry-grid p {
+  margin: 0.65rem 0 0;
+  color: var(--demo-muted);
+}
+
+.ownership-grid .ownership-role {
+  color: var(--demo-accent);
+  font-weight: 750;
+}
+
+/* State lab cards keep semantics, controls, and attribute names visually adjacent. */
+.state-lab {
+  border-color: var(--demo-border-strong);
+}
+
+.state-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+  gap: 1rem;
+}
+
+.example-card {
+  display: flex;
+  min-height: 11.5rem;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.example-card > code {
+  max-width: 100%;
+  margin-top: auto;
+  padding: 0.35rem 0.5rem;
+  border-radius: 0.4rem;
+  background: var(--demo-code-bg);
+  color: var(--demo-muted);
+  font-size: 0.75rem;
+  overflow-wrap: anywhere;
+}
+
+.example-card svg {
+  width: 1.3rem;
+  height: 1.3rem;
+  fill: currentcolor;
+}
+
+.tab-example {
+  align-items: stretch;
+}
+
+.tab-list .surface-control {
+  flex: 1 1 auto;
+}
+
+.tab-panel {
+  margin: 0;
+  color: var(--demo-muted);
+}
+
+/* Entry-point code scrolls locally instead of widening the document. */
+.entry-grid pre {
+  max-width: 100%;
+  margin: 1rem 0 0;
+  overflow-x: auto;
+  padding: 0.75rem;
+  border: 1px solid var(--demo-border);
+  border-radius: 0.65rem;
+  background: var(--demo-code-bg);
+  color: var(--demo-text);
+  font-size: 0.75rem;
+}
+
+.entry-grid article {
+  overflow-x: hidden;
+}
+
+/* Advanced token tooling stays secondary while remaining usable at narrow widths. */
+.token-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 19rem), 1fr));
+  gap: 1rem;
+}
+
+.token-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.token-card > div {
+  min-width: 0;
+}
+
+.token-name {
+  display: block;
+  max-width: 100%;
+  margin-top: 0.4rem;
+  color: var(--demo-muted);
+  font-size: 0.75rem;
+  overflow-wrap: anywhere;
+}
+
+.token-value {
+  grid-column: 1 / -1;
+  margin: 0;
+  color: var(--demo-muted);
+  font-family: SFMono-Regular, Consolas, "Liberation Mono", monospace;
+  font-size: 0.8rem;
+  overflow-wrap: anywhere;
+}
+
+.token-actions {
+  align-items: end;
+  margin-top: 1rem;
+}
+
+.file-field {
+  display: grid;
+  min-width: min(100%, 18rem);
+  flex: 1 1 18rem;
+  gap: 0.35rem;
+  color: var(--demo-muted);
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.file-field input,
+.token-field input {
+  width: 100%;
+  min-width: 0;
+  min-height: 2.75rem;
+  padding: 0.6rem 0.7rem;
+  border: 1px solid var(--demo-border-strong);
+  border-radius: 0.65rem;
+  background: var(--interactive-surface-bg);
+  color: var(--interactive-surface-fg);
+}
+
+.file-field input:focus-visible,
+.token-field input:focus-visible {
+  outline: 2px solid var(--interactive-surface-focus-ring-color);
+  outline-offset: 2px;
+}
+
+/* Reference rendering is deliberately restrained and remains last in the workflow. */
+.reference-links {
+  margin-bottom: 1rem;
+}
+
+.reference-links a {
+  overflow-wrap: anywhere;
+}
+
+.markdown-body {
+  min-width: 0;
+  overflow-x: hidden;
+  padding: clamp(1rem, 3vw, 1.5rem);
+  border: 1px solid var(--demo-border);
+  border-radius: 1rem;
+  background: var(--demo-card-bg);
+}
+
+.markdown-body > :first-child {
+  margin-top: 0;
+}
+
+.markdown-body > :last-child {
+  margin-bottom: 0;
+}
+
+.markdown-body pre {
+  max-width: 100%;
+  overflow-x: auto;
+  padding: 0.75rem;
+  border-radius: 0.65rem;
+  background: var(--demo-code-bg);
+}
+
+.markdown-body code {
+  overflow-wrap: anywhere;
+}
+
+.markdown-body ul,
+.markdown-body ol,
+.markdown-body li {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+/* The shared status remains outside inert content and accepts focus on actionable errors. */
+.live-status {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 15;
+  width: min(30rem, calc(100% - 2rem));
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--demo-border-strong);
+  border-radius: 0.75rem;
+  background: var(--demo-panel-bg);
+  color: var(--demo-text);
+  box-shadow: var(--demo-shadow);
+  backdrop-filter: blur(1rem);
+}
+
+.live-status:empty {
+  display: none;
+}
+
+.live-status.is-success {
+  border-color: var(--demo-success);
+}
+
+.live-status.is-error {
+  border-color: var(--demo-error);
+  color: var(--demo-error);
+}
+
+.live-status:focus-visible {
+  outline: 2px solid var(--interactive-surface-focus-ring-color);
+  outline-offset: 2px;
+}
+
+/* Native dialog presentation complements, but does not replace, browser modal behavior. */
+#token-editor-dialog {
+  width: min(32rem, calc(100% - 2rem));
+  max-width: 100%;
+  padding: 0;
+  border: 1px solid var(--demo-border-strong);
+  border-radius: 1.25rem;
+  background: var(--demo-panel-bg);
+  color: var(--demo-text);
+  box-shadow: var(--demo-shadow);
+}
+
+#token-editor-dialog::backdrop {
+  background: rgb(4 15 24 / 70%);
+  backdrop-filter: blur(0.25rem);
+}
+
+.token-editor {
+  display: grid;
+  gap: 1rem;
+  padding: clamp(1rem, 4vw, 1.75rem);
+}
+
+.dialog-heading h2 {
+  overflow-wrap: anywhere;
+}
+
+.token-field {
+  display: grid;
+  min-width: 0;
+  gap: 0.35rem;
+  color: var(--demo-muted);
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.token-field input[readonly] {
+  color: var(--demo-muted);
+}
+
+/* The 720px breakpoint is also the deterministic 200% reflow equivalent of 1440 CSS pixels. */
+@media (width <= 720px) {
+  main {
+    width: calc(100% - 1.25rem);
+    padding-block: 0.625rem 5rem;
+  }
+
+  .hero,
+  .panel {
+    border-radius: 1rem;
+  }
+
+  .ownership-grid,
+  .guidance-grid,
+  .entry-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .token-card {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .token-card .surface-control,
+  .token-value {
+    grid-column: 1;
+  }
+}
+
+@media (width <= 400px) {
+  .hero-links,
+  .token-actions,
+  .dialog-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .hero-links .surface-control,
+  .token-actions .surface-control,
+  .dialog-actions .surface-control,
+  .file-field {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+  }
+}
+
+@media (forced-colors: active) {
+  .hero,
+  .panel,
+  .example-card,
+  .token-card,
+  .live-status,
+  #token-editor-dialog {
+    border-color: CanvasText;
+  }
+}
