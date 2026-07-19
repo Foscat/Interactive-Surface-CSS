@@ -304,7 +304,30 @@ test("wiki installation and quality guidance matches the release-candidate packa
     assert.match(document, /release candidate/i);
   });
 
-  assert.ok(wiki.installation.includes(labUrl));
+  const normalizeUrlForComparison = (value) => {
+    const parsed = new URL(value);
+    const normalizedPath = parsed.pathname.endsWith("/")
+      ? parsed.pathname
+      : `${parsed.pathname}/`;
+    return `${parsed.origin}${normalizedPath}`;
+  };
+
+  const expectedLabUrl = normalizeUrlForComparison(labUrl);
+  const installationUrls = [...wiki.installation.matchAll(/https?:\/\/[^\s)>"'`]+/gi)]
+    .map((match) => match[0])
+    .map((candidate) => {
+      try {
+        return normalizeUrlForComparison(candidate);
+      } catch {
+        return null;
+      }
+    })
+    .filter(Boolean);
+
+  assert.ok(
+    installationUrls.includes(expectedLabUrl),
+    "Installation page must include the exact interface systems lab URL",
+  );
   assert.match(wiki.installation, /use one[^\n]*use two[^\n]*use all three/i);
   assertAppearsInOrder(wiki.installation, [
     'import "ui-style-kit-css/with-bridge.css";',
