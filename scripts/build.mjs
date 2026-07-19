@@ -112,6 +112,14 @@ export async function verifyBundles(bundleMap, outputDirectory = projectRoot) {
   }
 }
 
+export async function verifyPublicBundles(bundleMap, outputDirectory = projectRoot) {
+  const publicBundles = Object.fromEntries(
+    Object.entries(bundleMap).filter(([target]) => !target.startsWith("dist/"))
+  );
+
+  await verifyBundles(publicBundles, outputDirectory);
+}
+
 function selectTargets(bundleMap, step) {
   if (step === "bundle") {
     return Object.fromEntries(Object.entries(bundleMap).filter(([target]) => !target.endsWith(".min.css")));
@@ -135,6 +143,12 @@ async function run() {
 
   if (step === "check") {
     await verifyBundles(bundleMap);
+    return;
+  }
+
+  if (step === "check-public") {
+    // Public roots are committed, while dist is intentionally absent from a clean checkout.
+    await verifyPublicBundles(bundleMap);
     return;
   }
 

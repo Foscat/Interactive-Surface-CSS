@@ -23,7 +23,8 @@ This runs the deterministic validation tier plus the complete Playwright matrix 
 | Command | Purpose |
 | --- | --- |
 | `npm run check:no-hex-colors` | Reject disallowed hex color literals |
-| `npm run check:generated` | Verify committed public bundles match authored CSS |
+| `npm run check:public` | Verify committed public roots before generating ignored distribution files |
+| `npm run check:generated` | Verify public and distribution bundles after a build |
 | `npm run lint:css` | Run Stylelint over authored, generated, and demo CSS |
 | `npm run test:contracts` | Run deterministic public, build, and documentation contracts |
 | `npm run test:chromium` | Run the selected Playwright tests in Chromium |

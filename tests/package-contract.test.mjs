@@ -46,11 +46,12 @@ const expectedExports = {
 
 const expectedScripts = {
   "test:package": "node --test tests/package-contract.test.mjs",
+  "check:public": "node ./scripts/build.mjs check-public",
   audit: "npm audit",
   "validate:publish": [
     "npm run check:no-hex-colors",
     "npm run lint:css",
-    "npm run check:generated",
+    "npm run check:public",
     "npm run build",
     "npm run check:generated",
     "npm run test:contracts",

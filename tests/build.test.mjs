@@ -4,7 +4,12 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
 
-import { buildBundles, createBundleMap, verifyBundles } from "../scripts/build.mjs";
+import {
+  buildBundles,
+  createBundleMap,
+  verifyBundles,
+  verifyPublicBundles
+} from "../scripts/build.mjs";
 
 const publicBundleNames = ["state-core.css", "standalone-preset.css", "interactive-surface.css"];
 
@@ -72,4 +77,26 @@ test("bundle parity reports the stale target without mutating project files", as
   await writeFile(path.join(outputDirectory, staleTarget), "/* stale fixture */\n");
 
   await assert.rejects(verifyBundles(bundleMap, outputDirectory), new RegExp(staleTarget.replace(".", "\\.")));
+});
+
+test("public parity can run before ignored distribution bundles exist", async (t) => {
+  const outputDirectory = await mkdtemp(path.join(tmpdir(), "interactive-surface-public-build-"));
+  const bundleMap = await createBundleMap();
+  const publicBundleMap = Object.fromEntries(
+    Object.entries(bundleMap).filter(([target]) => !target.startsWith("dist/"))
+  );
+
+  t.after(() => rm(outputDirectory, { force: true, recursive: true }));
+
+  // A clean checkout contains the committed public roots but intentionally excludes ignored dist output.
+  await buildBundles(publicBundleMap, outputDirectory);
+  await verifyPublicBundles(bundleMap, outputDirectory);
+  await assert.rejects(verifyBundles(bundleMap, outputDirectory), /dist\/state-core\.css/);
+
+  const staleTarget = "state-core.css";
+  await writeFile(path.join(outputDirectory, staleTarget), "/* stale public fixture */\n");
+  await assert.rejects(
+    verifyPublicBundles(bundleMap, outputDirectory),
+    new RegExp(staleTarget.replace(".", "\\."))
+  );
 });
