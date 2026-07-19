@@ -29,6 +29,8 @@ npm run validate
 npm run validate:browsers
 ```
 
+Use Node.js 20+ locally. The CI matrix keeps the minimum Node.js 20 lane and the preferred Node.js 22 lane green before release.
+
 Use `npm run validate:full` before release review when Chromium, Firefox, and WebKit are available.
 
 The validation tiers are documented in [Testing and Quality](https://github.com/Foscat/Interactive-Surface-CSS/wiki/Testing-and-Quality).

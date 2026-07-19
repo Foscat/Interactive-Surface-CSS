@@ -9,7 +9,9 @@ const packageRoot = path.resolve(__dirname, "..");
 
 function readPackageFile(relativePath: string): string {
   const absolutePath = path.join(packageRoot, relativePath);
-  return fs.existsSync(absolutePath) ? fs.readFileSync(absolutePath, "utf8") : "";
+  return fs.existsSync(absolutePath)
+    ? fs.readFileSync(absolutePath, "utf8")
+    : "";
 }
 
 const sourceHtml = readPackageFile("index.html");
@@ -25,23 +27,30 @@ const packageManifest = JSON.parse(readPackageFile("package.json")) as {
 const exampleHtml = sourceHtml
   .replace(
     '<link rel="stylesheet" href="./standalone-preset.css" />',
-    `<style data-test-asset="standalone-preset.css">${standaloneCss}</style>`
+    `<style data-test-asset="standalone-preset.css">${standaloneCss}</style>`,
   )
   .replace(
     '<link rel="stylesheet" href="./demo/demo.css" />',
-    `<style data-test-asset="demo/demo.css">${demoCss}</style>`
+    `<style data-test-asset="demo/demo.css">${demoCss}</style>`,
   )
-  .replace('<script src="./demo/demo.js" defer></script>', () => `<script>${demoJavaScript}</script>`);
+  .replace(
+    '<script src="./demo/demo.js" defer></script>',
+    () => `<script>${demoJavaScript}</script>`,
+  );
 const fullReadmeExampleHtml = exampleHtml.replace(
   /(<script id="embeddedReadme" type="text\/markdown">)[\s\S]*?(<\/script>)/,
-  (_match, openingTag: string, closingTag: string) => `${openingTag}\n${readmeMarkdown}\n${closingTag}`
+  (_match, openingTag: string, closingTag: string) =>
+    `${openingTag}\n${readmeMarkdown}\n${closingTag}`,
 );
 
 async function expectFocused(locator: Locator): Promise<void> {
   await expect(locator).toBeFocused();
 }
 
-async function expectActionableError(page: Page, message: string): Promise<void> {
+async function expectActionableError(
+  page: Page,
+  message: string,
+): Promise<void> {
   const status = page.getByRole("status");
   await expect(status).toHaveText(message);
   await expectFocused(status);
@@ -55,49 +64,92 @@ test.describe("state-first example page", () => {
   });
 
   test("loads the standalone preset and split demo assets", async () => {
-    expect(sourceHtml).toContain('<link rel="stylesheet" href="./standalone-preset.css" />');
-    expect(sourceHtml).toContain('<link rel="stylesheet" href="./demo/demo.css" />');
-    expect(sourceHtml).toContain('<script src="./demo/demo.js" defer></script>');
+    expect(sourceHtml).toContain(
+      '<link rel="stylesheet" href="./standalone-preset.css" />',
+    );
+    expect(sourceHtml).toContain(
+      '<link rel="stylesheet" href="./demo/demo.css" />',
+    );
+    expect(sourceHtml).toContain(
+      '<script src="./demo/demo.js" defer></script>',
+    );
     expect(sourceHtml).not.toContain('id="demoThemeStyles"');
-    expect(sourceHtml).not.toMatch(/<link[^>]+href="[^"]*ISC(?:%20| )logo\.png"/i);
-    expect(sourceHtml).toMatch(/<link rel="icon" href="data:image\/svg\+xml,[^"]+" \/>/);
+    expect(sourceHtml).not.toMatch(
+      /<link[^>]+href="[^"]*ISC(?:%20| )logo\.png"/i,
+    );
+    expect(sourceHtml).not.toMatch(/<link[^>]+href="data:image\/svg\+xml/i);
+    [
+      '<link rel="icon" href="./assets/favicon.ico" sizes="any" />',
+      '<link rel="icon" type="image/png" sizes="16x16" href="./assets/favicon-16x16.png" />',
+      '<link rel="icon" type="image/png" sizes="32x32" href="./assets/favicon-32x32.png" />',
+      '<link rel="icon" type="image/png" sizes="48x48" href="./assets/favicon-48x48.png" />',
+      '<link rel="icon" type="image/png" sizes="64x64" href="./assets/favicon-64x64.png" />',
+      '<link rel="apple-touch-icon" sizes="180x180" href="./assets/apple-touch-icon.png" />',
+      '<link rel="manifest" href="./assets/site.webmanifest" />',
+      '<meta name="msapplication-config" content="./assets/browserconfig.xml" />',
+    ].forEach((assetReference) => expect(sourceHtml).toContain(assetReference));
     expect(sourceHtml).toContain('<script type="application/ld+json">');
-    expect(sourceHtml).toContain('<script id="embeddedReadme" type="text/markdown">');
+    expect(sourceHtml).toContain(
+      '<script id="embeddedReadme" type="text/markdown">',
+    );
     expect(demoCss.length).toBeGreaterThan(0);
     expect(demoJavaScript.length).toBeGreaterThan(0);
-    expect(packageManifest.files).toEqual(expect.arrayContaining(["demo/demo.css", "demo/demo.js"]));
+    expect(packageManifest.files).toEqual(
+      expect.arrayContaining(["demo/demo.css", "demo/demo.js"]),
+    );
     expect(packageManifest.exports?.["./index.html"]).toBe("./index.html");
-    expect(packageManifest.sideEffects).toEqual(expect.arrayContaining(["*.css"]));
+    expect(packageManifest.sideEffects).toEqual(
+      expect.arrayContaining(["*.css"]),
+    );
   });
 
-  test("puts integrated proof and live state evidence before token tooling", async ({ page }) => {
-    await expect(page.getByRole("heading", { level: 1, name: "Interactive Surface CSS" })).toBeVisible();
+  test("puts integrated proof and live state evidence before token tooling", async ({
+    page,
+  }) => {
+    await expect(
+      page.getByRole("heading", { level: 1, name: "Interactive Surface CSS" }),
+    ).toBeVisible();
 
-    const systemsLabLink = page.getByRole("link", { name: "Open the Interface Systems Lab" });
+    const systemsLabLink = page.getByRole("link", {
+      name: "Open the Interface Systems Lab",
+    });
     await expect(systemsLabLink).toBeVisible();
-    await expect(systemsLabLink).toHaveAttribute("href", "https://foscat.github.io/interface-systems-lab/");
+    await expect(systemsLabLink).toHaveAttribute(
+      "href",
+      "https://foscat.github.io/interface-systems-lab/",
+    );
     await expect(systemsLabLink).toHaveAttribute("data-primary-control", "");
 
-    const sectionOrder = await page.locator("main > section").evaluateAll((sections) =>
-      sections.map((section) => section.id)
-    );
+    const sectionOrder = await page
+      .locator("main > section")
+      .evaluateAll((sections) => sections.map((section) => section.id));
     expect(sectionOrder).toEqual([
       "ecosystem-ownership",
       "state-lab",
       "accessibility-guidance",
       "entry-points",
       "advanced-tools",
-      "readme-reference"
+      "readme-reference",
     ]);
 
     const ownership = page.locator("#ecosystem-ownership");
-    await expect(ownership.getByText("structure and geometry", { exact: true })).toBeVisible();
-    await expect(ownership.getByText("visual paint and themes", { exact: true })).toBeVisible();
-    await expect(ownership.getByText("interaction states", { exact: true })).toBeVisible();
-    await expect(page.locator("#readme-reference #readmeContent")).toContainText("Interactive Surface CSS");
+    await expect(
+      ownership.getByText("structure and geometry", { exact: true }),
+    ).toBeVisible();
+    await expect(
+      ownership.getByText("visual paint and themes", { exact: true }),
+    ).toBeVisible();
+    await expect(
+      ownership.getByText("interaction states", { exact: true }),
+    ).toBeVisible();
+    await expect(
+      page.locator("#readme-reference #readmeContent"),
+    ).toContainText("Interactive Surface CSS");
   });
 
-  test("exposes every supported state with native, inspectable semantics", async ({ page }) => {
+  test("exposes every supported state with native, inspectable semantics", async ({
+    page,
+  }) => {
     const stateLab = page.locator("#state-lab");
     const action = stateLab.locator('[data-example="action"]');
     const toggle = stateLab.locator('[data-example="toggle"]');
@@ -118,11 +170,16 @@ test.describe("state-first example page", () => {
     await expect(disabled).toBeDisabled();
     await expect(variant).toHaveClass(/variant-primary/);
     await expect(level).toHaveAttribute("data-surface-level", "2");
-    await expect(icon).toHaveAttribute("aria-label", "Show interaction details");
+    await expect(icon).toHaveAttribute(
+      "aria-label",
+      "Show interaction details",
+    );
     await expect(icon.locator("svg")).toHaveAttribute("aria-hidden", "true");
   });
 
-  test("updates pressed, selected, busy, and action state through real controls", async ({ page }) => {
+  test("updates pressed, selected, busy, and action state through real controls", async ({
+    page,
+  }) => {
     const stateLab = page.locator("#state-lab");
     const toggle = stateLab.locator('[data-example="toggle"]');
     await toggle.click();
@@ -132,26 +189,39 @@ test.describe("state-first example page", () => {
     const selectedTab = stateLab.locator('[data-example="selected"]');
     await selectedTab.click();
     await expect(selectedTab).toHaveAttribute("aria-selected", "true");
-    await expect(page.locator('#state-tabs [role="tab"]').first()).toHaveAttribute("aria-selected", "false");
+    await expect(
+      page.locator('#state-tabs [role="tab"]').first(),
+    ).toHaveAttribute("aria-selected", "false");
 
     const loading = stateLab.locator('[data-example="loading"]');
-    const initialLoadingState = await loading.evaluate((element: HTMLButtonElement) => {
-      // Capture transient state in the click task so its completion timer cannot race protocol round trips.
-      element.click();
-      return {
-        busy: element.getAttribute("aria-busy"),
-        text: element.textContent
-      };
+    const initialLoadingState = await loading.evaluate(
+      (element: HTMLButtonElement) => {
+        // Capture transient state in the click task so its completion timer cannot race protocol round trips.
+        element.click();
+        return {
+          busy: element.getAttribute("aria-busy"),
+          text: element.textContent,
+        };
+      },
+    );
+    expect(initialLoadingState).toEqual({
+      busy: "true",
+      text: "Loading proof…",
     });
-    expect(initialLoadingState).toEqual({ busy: "true", text: "Loading proof…" });
-    await expect(loading).toHaveAttribute("aria-busy", "false", { timeout: 2_000 });
+    await expect(loading).toHaveAttribute("aria-busy", "false", {
+      timeout: 2_000,
+    });
     await expect(loading).toHaveText("Run loading proof");
 
     await stateLab.locator('[data-example="action"]').click();
-    await expect(page.getByRole("status")).toHaveText("Action example completed.");
+    await expect(page.getByRole("status")).toHaveText(
+      "Action example completed.",
+    );
   });
 
-  test("supports wrapping keyboard navigation for the roving state tabs", async ({ page }) => {
+  test("supports wrapping keyboard navigation for the roving state tabs", async ({
+    page,
+  }) => {
     const restingTab = page.getByRole("tab", { name: "Resting" });
     const selectedTab = page.getByRole("tab", { name: "Selected" });
 
@@ -179,7 +249,9 @@ test.describe("state-first example page", () => {
     await expect(page.locator("#resting-panel")).toBeHidden();
   });
 
-  test("dialog feedback lifecycle clears external status before opening", async ({ page }) => {
+  test("dialog feedback lifecycle clears external status before opening", async ({
+    page,
+  }) => {
     const advancedTools = page.locator("#advanced-tools");
     const globalStatus = page.locator("body > #demoStatus");
     const dialog = page.locator("#token-editor-dialog");
@@ -188,17 +260,29 @@ test.describe("state-first example page", () => {
     await expect(globalStatus).toHaveText("Action example completed.");
     await expect(globalStatus).toHaveClass(/is-success/);
 
-    await advancedTools.getByRole("button", { name: "Edit --interactive-surface-bg" }).click();
+    await advancedTools
+      .getByRole("button", { name: "Edit --interactive-surface-bg" })
+      .click();
     await expect(dialog.locator("#demoStatus")).toBeEmpty();
-    await expect(dialog.locator("#demoStatus")).not.toHaveClass(/is-(?:error|success)/);
+    await expect(dialog.locator("#demoStatus")).not.toHaveClass(
+      /is-(?:error|success)/,
+    );
   });
 
-  test("opens a modal dialog, traps focus, and restores the exact opener", async ({ page }) => {
+  test("opens a modal dialog, traps focus, and restores the exact opener", async ({
+    page,
+  }) => {
     const main = page.locator("main");
     const advancedTools = page.locator("#advanced-tools");
-    const opener = advancedTools.getByRole("button", { name: "Edit --interactive-surface-focus-ring-color" });
-    const cancelOpener = advancedTools.getByRole("button", { name: "Edit --interactive-surface-bg" });
-    const dialog = page.getByRole("dialog", { name: "Edit --interactive-surface-focus-ring-color" });
+    const opener = advancedTools.getByRole("button", {
+      name: "Edit --interactive-surface-focus-ring-color",
+    });
+    const cancelOpener = advancedTools.getByRole("button", {
+      name: "Edit --interactive-surface-bg",
+    });
+    const dialog = page.getByRole("dialog", {
+      name: "Edit --interactive-surface-focus-ring-color",
+    });
     const valueField = page.getByLabel("Token value");
     const cancel = page.getByRole("button", { name: "Cancel token edit" });
 
@@ -226,27 +310,37 @@ test.describe("state-first example page", () => {
     await expectFocused(cancelOpener);
   });
 
-  test("keeps validation feedback available inside the open token dialog", async ({ page }) => {
+  test("keeps validation feedback available inside the open token dialog", async ({
+    page,
+  }) => {
     const advancedTools = page.locator("#advanced-tools");
-    const dialog = page.getByRole("dialog", { name: "Edit --interactive-surface-bg" });
+    const dialog = page.getByRole("dialog", {
+      name: "Edit --interactive-surface-bg",
+    });
     const valueField = page.getByLabel("Token value");
 
-    await advancedTools.getByRole("button", { name: "Edit --interactive-surface-bg" }).click();
+    await advancedTools
+      .getByRole("button", { name: "Edit --interactive-surface-bg" })
+      .click();
     await valueField.fill("not-a-color");
     await page.getByRole("button", { name: "Apply token" }).click();
 
     await expect(dialog).toBeVisible();
     await expect(dialog.getByRole("status")).toHaveText(
-      "Enter a valid CSS color value, such as rgb(16 42 67), and try again."
+      "Enter a valid CSS color value, such as rgb(16 42 67), and try again.",
     );
     await expectFocused(valueField);
   });
 
-  test("dialog feedback lifecycle discards invalid feedback after Escape and Cancel", async ({ page }) => {
+  test("dialog feedback lifecycle discards invalid feedback after Escape and Cancel", async ({
+    page,
+  }) => {
     const advancedTools = page.locator("#advanced-tools");
-    const backgroundOpener = advancedTools.getByRole("button", { name: "Edit --interactive-surface-bg" });
+    const backgroundOpener = advancedTools.getByRole("button", {
+      name: "Edit --interactive-surface-bg",
+    });
     const focusOpener = advancedTools.getByRole("button", {
-      name: "Edit --interactive-surface-focus-ring-color"
+      name: "Edit --interactive-surface-focus-ring-color",
     });
     const dialog = page.locator("#token-editor-dialog");
     const valueField = page.getByLabel("Token value");
@@ -269,43 +363,57 @@ test.describe("state-first example page", () => {
     await expect(globalStatus).not.toHaveClass(/is-(?:error|success)/);
   });
 
-  test("dialog feedback lifecycle preserves valid success until the next session", async ({ page }) => {
+  test("dialog feedback lifecycle preserves valid success until the next session", async ({
+    page,
+  }) => {
     const advancedTools = page.locator("#advanced-tools");
-    const dialog = page.getByRole("dialog", { name: "Edit --interactive-surface-bg" });
-    await advancedTools.getByRole("button", { name: "Edit --interactive-surface-bg" }).click();
+    const dialog = page.getByRole("dialog", {
+      name: "Edit --interactive-surface-bg",
+    });
+    await advancedTools
+      .getByRole("button", { name: "Edit --interactive-surface-bg" })
+      .click();
     await page.getByLabel("Token value").fill("rgb(250 251 252)");
     await page.getByRole("button", { name: "Apply token" }).click();
 
     const dialogStatus = dialog.getByRole("status");
     await expect(dialogStatus).toHaveText(
-      "--interactive-surface-bg updated. Close the editor to review the state lab."
+      "--interactive-surface-bg updated. Close the editor to review the state lab.",
     );
     await expect(dialogStatus).toHaveClass(/is-success/);
-    await expect(page.locator('[data-token="--interactive-surface-bg"] [data-token-value]')).toHaveText(
-      "rgb(250 251 252)"
-    );
+    await expect(
+      page.locator(
+        '[data-token="--interactive-surface-bg"] [data-token-value]',
+      ),
+    ).toHaveText("rgb(250 251 252)");
 
     await page.keyboard.press("Escape");
     const globalStatus = page.locator("body > #demoStatus");
     await expect(globalStatus).toHaveText(
-      "--interactive-surface-bg updated. Close the editor to review the state lab."
+      "--interactive-surface-bg updated. Close the editor to review the state lab.",
     );
     await expect(globalStatus).toHaveClass(/is-success/);
 
     await advancedTools
-      .getByRole("button", { name: "Edit --interactive-surface-focus-ring-color" })
+      .getByRole("button", {
+        name: "Edit --interactive-surface-focus-ring-color",
+      })
       .click();
     await expect(page.locator("#token-editor-dialog #demoStatus")).toBeEmpty();
-    await expect(page.locator("#token-editor-dialog #demoStatus")).not.toHaveClass(/is-(?:error|success)/);
+    await expect(
+      page.locator("#token-editor-dialog #demoStatus"),
+    ).not.toHaveClass(/is-(?:error|success)/);
   });
 
-  test("reports a dialog launch failure globally after cleanup", async ({ page }) => {
+  test("reports a dialog launch failure globally after cleanup", async ({
+    page,
+  }) => {
     await page.evaluate(() => {
       Object.defineProperty(HTMLDialogElement.prototype, "showModal", {
         configurable: true,
         value: () => {
           throw new Error("dialog launch failed");
-        }
+        },
       });
     });
 
@@ -317,64 +425,98 @@ test.describe("state-first example page", () => {
     const globalStatus = page.locator("body > #demoStatus");
     await expect(page.locator("#token-editor-dialog")).toBeHidden();
     await expect(page.locator("main")).not.toHaveAttribute("inert", "");
-    await expect(globalStatus).toHaveText("The token editor could not open. Reload the page and try again.");
+    await expect(globalStatus).toHaveText(
+      "The token editor could not open. Reload the page and try again.",
+    );
     await expect(globalStatus).toHaveClass(/is-error/);
     await expectFocused(globalStatus);
   });
 
-  test("renders the repository README without markdown fence artifacts", async ({ page }) => {
+  test("renders the repository README without markdown fence artifacts", async ({
+    page,
+  }) => {
     await page.setContent(fullReadmeExampleHtml);
-    await expect(page.locator("body")).toHaveAttribute("data-demo-ready", "true");
+    await expect(page.locator("body")).toHaveAttribute(
+      "data-demo-ready",
+      "true",
+    );
 
     const readmeReference = page.locator("#readme-reference #readmeContent");
     await expect(readmeReference).not.toContainText("```");
-    expect(await readmeReference.locator("pre > code").count()).toBeGreaterThan(3);
+    expect(await readmeReference.locator("pre > code").count()).toBeGreaterThan(
+      3,
+    );
   });
 
-  test("reports a readable recovery when token file import fails", async ({ page }) => {
+  test("reports a readable recovery when token file import fails", async ({
+    page,
+  }) => {
     await page.evaluate(() => {
       Object.defineProperty(File.prototype, "text", {
         configurable: true,
-        value: () => Promise.reject(new Error("file read failed"))
+        value: () => Promise.reject(new Error("file read failed")),
       });
     });
 
-    await page.locator("#advanced-tools").getByLabel("Import token CSS").setInputFiles({
-      name: "tokens.css",
-      mimeType: "text/css",
-      buffer: Buffer.from(":root {}")
-    });
+    await page
+      .locator("#advanced-tools")
+      .getByLabel("Import token CSS")
+      .setInputFiles({
+        name: "tokens.css",
+        mimeType: "text/css",
+        buffer: Buffer.from(":root {}"),
+      });
 
-    await expectActionableError(page, "Token CSS import failed. Choose a readable CSS file and try again.");
+    await expectActionableError(
+      page,
+      "Token CSS import failed. Choose a readable CSS file and try again.",
+    );
   });
 
-  test("reports a readable recovery when clipboard access fails", async ({ page }) => {
+  test("reports a readable recovery when clipboard access fails", async ({
+    page,
+  }) => {
     await page.evaluate(() => {
       Object.defineProperty(navigator, "clipboard", {
         configurable: true,
-        value: { writeText: () => Promise.reject(new Error("clipboard denied")) }
+        value: {
+          writeText: () => Promise.reject(new Error("clipboard denied")),
+        },
       });
     });
 
-    await page.locator("#advanced-tools").getByRole("button", { name: "Copy token CSS" }).click();
-    await expectActionableError(page, "Token CSS could not be copied. Allow clipboard access and try again.");
+    await page
+      .locator("#advanced-tools")
+      .getByRole("button", { name: "Copy token CSS" })
+      .click();
+    await expectActionableError(
+      page,
+      "Token CSS could not be copied. Allow clipboard access and try again.",
+    );
   });
 
-  test("reports a readable recovery when Blob URL creation fails", async ({ page }) => {
+  test("reports a readable recovery when Blob URL creation fails", async ({
+    page,
+  }) => {
     await page.evaluate(() => {
       URL.createObjectURL = () => {
         throw new Error("Blob URL failed");
       };
     });
 
-    await page.locator("#advanced-tools").getByRole("button", { name: "Download token CSS" }).click();
+    await page
+      .locator("#advanced-tools")
+      .getByRole("button", { name: "Download token CSS" })
+      .click();
     await expectActionableError(
       page,
-      "Token CSS download could not be prepared. Check browser download support and try again."
+      "Token CSS download could not be prepared. Check browser download support and try again.",
     );
   });
 
-  test("reports a readable recovery when the generated download fails", async ({ page }) => {
+  test("reports a readable recovery when the generated download fails", async ({
+    page,
+  }) => {
     await page.evaluate(() => {
       URL.createObjectURL = () => "blob:interactive-surface-test";
       URL.revokeObjectURL = () => undefined;
@@ -383,19 +525,30 @@ test.describe("state-first example page", () => {
       };
     });
 
-    await page.locator("#advanced-tools").getByRole("button", { name: "Download token CSS" }).click();
-    await expectActionableError(page, "Token CSS download could not start. Try again or use Copy token CSS.");
+    await page
+      .locator("#advanced-tools")
+      .getByRole("button", { name: "Download token CSS" })
+      .click();
+    await expectActionableError(
+      page,
+      "Token CSS download could not start. Try again or use Copy token CSS.",
+    );
   });
 
   for (const width of [1440, 1024, 720, 390, 320]) {
-    test(`keeps the ${width}px state lab within the viewport`, async ({ page }) => {
+    test(`keeps the ${width}px state lab within the viewport`, async ({
+      page,
+    }) => {
       await page.setViewportSize({ width, height: 900 });
       await page.setContent(fullReadmeExampleHtml);
-      await expect(page.locator("body")).toHaveAttribute("data-demo-ready", "true");
+      await expect(page.locator("body")).toHaveAttribute(
+        "data-demo-ready",
+        "true",
+      );
 
       const overflow = await page.evaluate(() => ({
         clientWidth: document.documentElement.clientWidth,
-        scrollWidth: document.documentElement.scrollWidth
+        scrollWidth: document.documentElement.scrollWidth,
       }));
       expect(overflow.scrollWidth).toBeLessThanOrEqual(overflow.clientWidth);
 

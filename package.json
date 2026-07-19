@@ -58,6 +58,19 @@
     "interactive-surface.css",
     "state-core.css",
     "standalone-preset.css",
+    "assets/android-chrome-192x192.png",
+    "assets/android-chrome-512x512.png",
+    "assets/apple-touch-icon.png",
+    "assets/browserconfig.xml",
+    "assets/favicon-16x16.png",
+    "assets/favicon-32x32.png",
+    "assets/favicon-48x48.png",
+    "assets/favicon-64x64.png",
+    "assets/favicon.ico",
+    "assets/maskable-icon-192x192.png",
+    "assets/maskable-icon-512x512.png",
+    "assets/mstile-150x150.png",
+    "assets/site.webmanifest",
     "demo/demo.css",
     "demo/demo.js",
     "index.html",
@@ -66,7 +79,7 @@
     "LICENSE"
   ],
   "engines": {
-    "node": ">=18"
+    "node": ">=20"
   },
   "scripts": {
     "check:no-hex-colors": "node ./scripts/check-no-hex-colors.mjs",
@@ -84,7 +97,9 @@
     "test:install": "playwright install --with-deps chromium firefox webkit",
     "test:install:chromium": "playwright install chromium --with-deps --only-shell",
     "audit": "npm audit",
-    "validate:node18": "npm run check:no-hex-colors && npm run check:public && npm run build && npm run check:generated && npm run test:contracts && npm run test:package && npm run pack:dry && npm run audit",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "validate:node20": "npm run validate:ci",
     "validate:publish": "npm run check:no-hex-colors && npm run lint:css && npm run check:public && npm run build && npm run check:generated && npm run test:contracts && npm run test:package && npm run pack:dry",
     "validate:ci": "npm run validate:publish && npm run audit",
     "validate:browsers": "npm run validate:ci && npm run test:install:chromium && npm run test:chromium",
@@ -97,6 +112,7 @@
     "clean-css": "~5.3.3",
     "stylelint": "^17.14.0",
     "stylelint-config-standard": "^40.0.0",
+    "prettier": "3.9.5",
     "ui-style-kit-css": "2.0.1"
   },
   "publishConfig": {

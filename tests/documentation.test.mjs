@@ -9,7 +9,9 @@ const wikiUrl = `${repositoryUrl}/wiki`;
 const labUrl = "https://foscat.github.io/interface-systems-lab/";
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const read = (...segments) =>
-  fs.readFileSync(path.join(root, ...segments), "utf8").replaceAll("\r\n", "\n");
+  fs
+    .readFileSync(path.join(root, ...segments), "utf8")
+    .replaceAll("\r\n", "\n");
 
 const readme = read("README.md");
 const index = read("index.html");
@@ -27,15 +29,24 @@ const wiki = {
   faq: read("wiki", "FAQ.md"),
   contributing: read("wiki", "Contributing.md"),
   sidebar: read("wiki", "_Sidebar.md"),
-  footer: read("wiki", "_Footer.md")
+  footer: read("wiki", "_Footer.md"),
 };
 const allDocumentation = [readme, ...Object.values(wiki)].join("\n");
-const authoredCss = [read("styles", "state-core.css"), read("styles", "standalone-preset.css")].join("\n");
-const publicTokens = new Set(authoredCss.match(/--interactive-surface-[a-z0-9-]+/g));
+const authoredCss = [
+  read("styles", "state-core.css"),
+  read("styles", "standalone-preset.css"),
+].join("\n");
+const publicTokens = new Set(
+  authoredCss.match(/--interactive-surface-[a-z0-9-]+/g),
+);
 const compatibilityTokens = new Set(
   authoredCss
     .match(/--[a-z][a-z0-9-]+/g)
-    .filter((token) => !token.startsWith("--interactive-surface-") && !token.startsWith("--_is-"))
+    .filter(
+      (token) =>
+        !token.startsWith("--interactive-surface-") &&
+        !token.startsWith("--_is-"),
+    ),
 );
 
 // Documentation URLs are parsed locally so release checks never depend on network availability.
@@ -50,7 +61,10 @@ function assertAppearsInOrder(source, values) {
 
   for (const value of values) {
     const next = source.indexOf(value, cursor + 1);
-    assert.ok(next > cursor, `${value} must appear in the documented npm-reader order`);
+    assert.ok(
+      next > cursor,
+      `${value} must appear in the documented npm-reader order`,
+    );
     cursor = next;
   }
 }
@@ -58,11 +72,16 @@ function assertAppearsInOrder(source, values) {
 // The machine-readable table keeps human-facing package resolution guidance synchronized with npm.
 function readPackageResolutionRows(source) {
   const match = source.match(
-    /<!-- package-resolution-contract:start -->\n([\s\S]*?)\n<!-- package-resolution-contract:end -->/
+    /<!-- package-resolution-contract:start -->\n([\s\S]*?)\n<!-- package-resolution-contract:end -->/,
   );
-  assert.ok(match, "API reference must contain the package resolution contract table");
+  assert.ok(
+    match,
+    "API reference must contain the package resolution contract table",
+  );
 
-  return [...match[1].matchAll(/^\| `([^`]+)` \| `([^`]+)` \|$/gm)].map(([, key, value]) => [key, value]);
+  return [...match[1].matchAll(/^\| `([^`]+)` \| `([^`]+)` \|$/gm)].map(
+    ([, key, value]) => [key, value],
+  );
 }
 
 test("README is an npm-first guide with durable project links", () => {
@@ -75,7 +94,7 @@ test("README is an npm-first guide with durable project links", () => {
     `${repositoryUrl}/blob/main/CHANGELOG.md`,
     `${repositoryUrl}/blob/main/CONTRIBUTING.md`,
     `${repositoryUrl}/blob/main/SECURITY.md`,
-    `${repositoryUrl}/blob/main/LICENSE`
+    `${repositoryUrl}/blob/main/LICENSE`,
   ].forEach((url) => {
     assertPublicHttpsUrl(url);
     assert.ok(readme.includes(url), `README is missing durable URL: ${url}`);
@@ -92,7 +111,7 @@ test("README is an npm-first guide with durable project links", () => {
     "## Accessibility responsibilities",
     "## Pair with UI Style Kit CSS",
     "## Use all three libraries",
-    "## Support and project links"
+    "## Support and project links",
   ]);
 
   for (const [, destination] of readme.matchAll(/\]\(([^)]+)\)/g)) {
@@ -106,23 +125,38 @@ test("README documents every supported entry point and a pinned CDN setup", () =
     'import "interactive-surface-css/interactive-surface.css";',
     'import "interactive-surface-css/state-core.css";',
     'import "interactive-surface-css/standalone-preset.css";',
-    `${manifest.name}@${manifest.version}/standalone-preset.css`
-  ].forEach((value) => assert.ok(readme.includes(value), `README is missing: ${value}`));
+    `${manifest.name}@${manifest.version}/standalone-preset.css`,
+  ].forEach((value) =>
+    assert.ok(readme.includes(value), `README is missing: ${value}`),
+  );
 
-  const pinnedVersions = [...readme.matchAll(/interactive-surface-css@(\d+\.\d+\.\d+)\//g)].map((match) => match[1]);
-  assert.ok(pinnedVersions.length >= 2, "README must show pinned jsDelivr and unpkg examples");
+  const pinnedVersions = [
+    ...readme.matchAll(/interactive-surface-css@(\d+\.\d+\.\d+)\//g),
+  ].map((match) => match[1]);
+  assert.ok(
+    pinnedVersions.length >= 2,
+    "README must show pinned jsDelivr and unpkg examples",
+  );
   pinnedVersions.forEach((version) => assert.equal(version, manifest.version));
   ["https://cdn.jsdelivr.net/npm/", "https://unpkg.com/"].forEach((host) =>
     assert.ok(
-      readme.includes(`${host}${manifest.name}@${manifest.version}/standalone-preset.css`),
-      `README is missing the ${host} manifest-version CDN pin`
-    )
+      readme.includes(
+        `${host}${manifest.name}@${manifest.version}/standalone-preset.css`,
+      ),
+      `README is missing the ${host} manifest-version CDN pin`,
+    ),
   );
 
-  assert.match(readme, /@latest[^\n]*(opt-in|unpinned)|(opt-in|unpinned)[^\n]*@latest/i);
+  assert.match(
+    readme,
+    /@latest[^\n]*(opt-in|unpinned)|(opt-in|unpinned)[^\n]*@latest/i,
+  );
   assert.doesNotMatch(readme, /all three companion CSS libraries/i);
   ["`main`", "`module`", "`style`", "`unpkg`", "`jsdelivr`"].forEach((field) =>
-    assert.ok(wiki.api.includes(field), `API reference is missing package metadata field: ${field}`)
+    assert.ok(
+      wiki.api.includes(field),
+      `API reference is missing package metadata field: ${field}`,
+    ),
   );
 });
 
@@ -132,8 +166,8 @@ test("API package resolution matches package.json exactly", () => {
     ...manifestFields.map((field) => [field, manifest[field]]),
     ...Object.entries(manifest.exports).map(([key, target]) => [
       `exports[${JSON.stringify(key)}]`,
-      typeof target === "string" ? target : JSON.stringify(target)
-    ])
+      typeof target === "string" ? target : JSON.stringify(target),
+    ]),
   ];
 
   assert.deepEqual(readPackageResolutionRows(wiki.api), expectedRows);
@@ -148,45 +182,63 @@ test("README teaches the complete semantic and ecosystem contract", () => {
     "disabled",
     'aria-disabled="true"',
     ".is-disabled",
+    'input class="interactive-surface variant-subtle" type="file"',
+    "::file-selector-button",
     "data-surface-variant",
     "data-surface-level",
     "icon-only",
-    "data-icon-role"
-  ].forEach((value) => assert.ok(readme.includes(value), `README is missing semantic API: ${value}`));
+    "data-icon-role",
+  ].forEach((value) =>
+    assert.ok(
+      readme.includes(value),
+      `README is missing semantic API: ${value}`,
+    ),
+  );
 
   assert.match(readme, /native `disabled`[^\n]*preferred/i);
-  assert.match(readme, /suppress activation[^\n]*`aria-disabled="true"`[^\n]*`.is-disabled`/i);
+  assert.match(
+    readme,
+    /suppress activation[^\n]*`aria-disabled="true"`[^\n]*`.is-disabled`/i,
+  );
   assert.match(readme, /use one[^\n]*use two[^\n]*use all three/i);
 
   const allThreeOrder = [
     'import "ui-style-kit-css/with-bridge.css";',
     'import "interactive-surface-css/state-core.css";',
     'import "layout-style-css/bridge.css";',
-    'import "layout-style-css";'
+    'import "layout-style-css";',
   ];
-  assertAppearsInOrder(readme.slice(readme.indexOf("## Use all three libraries")), allThreeOrder);
+  assertAppearsInOrder(
+    readme.slice(readme.indexOf("## Use all three libraries")),
+    allThreeOrder,
+  );
 });
 
 test("wiki API, token, and accessibility references cover the 1.4.0 contract", () => {
   assert.ok(
-    wiki.api.includes("`.size-sm`: default lift with a compact shadow profile."),
-    "API reference must describe the size-sm lift accurately"
+    wiki.api.includes(
+      "`.size-sm`: default lift with a compact shadow profile.",
+    ),
+    "API reference must describe the size-sm lift accurately",
   );
   assert.doesNotMatch(wiki.api, /\.size-sm[^\n]*compact lift/i);
 
   [
     'aria-pressed="mixed"',
-    "[aria-current]:not([aria-current=\"false\"])",
+    '[aria-current]:not([aria-current="false"])',
     'aria-selected="true"',
     'aria-busy="true"',
     ".is-loading",
     ":disabled",
     'aria-disabled="true"',
     ".is-disabled",
+    'input[type="file"].interactive-surface::file-selector-button',
     "data-surface-variant",
     "data-surface-level",
-    "data-icon-role"
-  ].forEach((value) => assert.ok(wiki.api.includes(value), `API reference is missing: ${value}`));
+    "data-icon-role",
+  ].forEach((value) =>
+    assert.ok(wiki.api.includes(value), `API reference is missing: ${value}`),
+  );
 
   [
     "Core defaults",
@@ -196,15 +248,26 @@ test("wiki API, token, and accessibility references cover the 1.4.0 contract", (
     "--interactive-surface-disabled-opacity",
     "--interactive-surface-variant-primary-bg",
     "--interactive-surface-level-1-bg",
-    "--interactive-surface-light-icon-color"
-  ].forEach((value) => assert.ok(wiki.tokens.includes(value), `Token reference is missing: ${value}`));
+    "--interactive-surface-light-icon-color",
+  ].forEach((value) =>
+    assert.ok(
+      wiki.tokens.includes(value),
+      `Token reference is missing: ${value}`,
+    ),
+  );
 
   for (const token of publicTokens) {
-    assert.ok(wiki.tokens.includes(token), `Token reference is missing authored token: ${token}`);
+    assert.ok(
+      wiki.tokens.includes(token),
+      `Token reference is missing authored token: ${token}`,
+    );
   }
 
   for (const token of compatibilityTokens) {
-    assert.ok(wiki.tokens.includes(token), `Token reference is missing compatibility token: ${token}`);
+    assert.ok(
+      wiki.tokens.includes(token),
+      `Token reference is missing compatibility token: ${token}`,
+    );
   }
 
   [
@@ -217,15 +280,27 @@ test("wiki API, token, and accessibility references cover the 1.4.0 contract", (
     "`.is-disabled`",
     "suppress activation",
     "reduced motion",
-    "forced colors"
+    "forced colors",
   ].forEach((value) =>
-    assert.ok(wiki.accessibility.toLowerCase().includes(value.toLowerCase()), `Accessibility guide is missing: ${value}`)
+    assert.ok(
+      wiki.accessibility.toLowerCase().includes(value.toLowerCase()),
+      `Accessibility guide is missing: ${value}`,
+    ),
   );
 });
 
 test("wiki installation and quality guidance matches the release-candidate package", () => {
-  [wiki.home, wiki.gettingStarted, wiki.installation, wiki.publishing, wiki.roadmap].forEach((document) => {
-    assert.ok(document.includes("1.4.0"), "Release-facing wiki page must identify 1.4.0");
+  [
+    wiki.home,
+    wiki.gettingStarted,
+    wiki.installation,
+    wiki.publishing,
+    wiki.roadmap,
+  ].forEach((document) => {
+    assert.ok(
+      document.includes("1.4.0"),
+      "Release-facing wiki page must identify 1.4.0",
+    );
     assert.match(document, /release candidate/i);
   });
 
@@ -235,26 +310,47 @@ test("wiki installation and quality guidance matches the release-candidate packa
     'import "ui-style-kit-css/with-bridge.css";',
     'import "interactive-surface-css/state-core.css";',
     'import "layout-style-css/bridge.css";',
-    'import "layout-style-css";'
+    'import "layout-style-css";',
   ]);
 
-  assert.match(wiki.testing, /`npm run (validate|validate:ci)`[^#]*static[^#]*package[^#]*audit/i);
+  assert.match(
+    wiki.testing,
+    /`npm run (validate|validate:ci)`[^#]*static[^#]*package[^#]*audit/i,
+  );
   assert.match(wiki.testing, /`npm run validate:browsers`[^#]*Chromium/i);
-  assert.match(wiki.testing, /`npm run validate:full`[^#]*Chromium[^#]*Firefox[^#]*WebKit/i);
+  assert.match(
+    wiki.testing,
+    /`npm run validate:full`[^#]*Chromium[^#]*Firefox[^#]*WebKit/i,
+  );
+  assert.match(readme, /Node\.js 20\+/);
+  assert.match(wiki.testing, /Node\.js 20[^#]*Node\.js 22/i);
+  assert.match(wiki.testing, /`npm run validate:node20`/);
+  assert.doesNotMatch(allDocumentation, /Node\.js 18|validate:node18/);
 });
 
 test("public docs contain no stale 1.x guidance", () => {
   assert.doesNotMatch(allDocumentation, /\]\(\.\/wiki\//);
   assert.doesNotMatch(allDocumentation, /example\.html/);
   assert.doesNotMatch(allDocumentation, /\.surface-card/);
-  assert.doesNotMatch(allDocumentation, /only transform-based motion owner|owns transform-based motion|warn against extra transforms/i);
-  assert.doesNotMatch(allDocumentation, /interactive-surface-css@latest\/(?![^\n]*(?:opt-in|unpinned))/i);
+  assert.doesNotMatch(
+    allDocumentation,
+    /only transform-based motion owner|owns transform-based motion|warn against extra transforms/i,
+  );
+  assert.doesNotMatch(
+    allDocumentation,
+    /interactive-surface-css@latest\/(?![^\n]*(?:opt-in|unpinned))/i,
+  );
 });
 
 test("every maintained wiki surface points at current documentation", () => {
-  [wiki.faq, wiki.contributing, wiki.sidebar, wiki.footer].forEach((document) => {
-    assert.ok(document.includes(wikiUrl), "Wiki navigation must use an absolute GitHub Wiki URL");
-  });
+  [wiki.faq, wiki.contributing, wiki.sidebar, wiki.footer].forEach(
+    (document) => {
+      assert.ok(
+        document.includes(wikiUrl),
+        "Wiki navigation must use an absolute GitHub Wiki URL",
+      );
+    },
+  );
 
   assert.ok(wiki.sidebar.includes(labUrl));
   assert.ok(wiki.footer.includes(labUrl));
@@ -272,7 +368,9 @@ test("public Markdown links have deterministic absolute URL shapes", () => {
 });
 
 test("the demo's offline README fallback cannot drift from README.md", () => {
-  const match = index.match(/<script id="embeddedReadme" type="text\/markdown">\n([\s\S]*?)\n\s*<\/script>/);
+  const match = index.match(
+    /<script id="embeddedReadme" type="text\/markdown">\n([\s\S]*?)\n\s*<\/script>/,
+  );
   assert.ok(match, "index.html must contain the embedded README fallback");
   assert.equal(match[1].trim(), readme.trim());
 });

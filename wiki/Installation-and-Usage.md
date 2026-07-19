@@ -2,6 +2,8 @@
 
 These instructions target the Interactive Surface CSS 1.4.0 release candidate. Existing 1.x imports remain supported.
 
+The npm package targets Node.js 20+ for installation and local validation. CI also proves the preferred Node.js 22 release lane.
+
 ## Install from npm
 
 ```bash
@@ -69,10 +71,10 @@ export default {
     rules: [
       {
         test: /\.css$/i,
-        use: ["style-loader", "css-loader"]
-      }
-    ]
-  }
+        use: ["style-loader", "css-loader"],
+      },
+    ],
+  },
 };
 ```
 
@@ -83,7 +85,9 @@ The direct stylesheet entry points are the most portable option because they do 
 ```html
 <button class="interactive-surface" type="button">Submit</button>
 
-<button class="interactive-surface variant-accent size-lg" type="button">Continue</button>
+<button class="interactive-surface variant-accent size-lg" type="button">
+  Continue
+</button>
 
 <button
   class="interactive-surface"

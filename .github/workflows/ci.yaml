@@ -18,12 +18,12 @@ jobs:
 
     strategy:
       fail-fast: false
-      # The minimum-runtime lane skips Stylelint 17, whose CLI requires Node 20.19+.
+      # Run the full deterministic release gate on the minimum supported major and the preferred LTS major.
       matrix:
         include:
-          - node-version: 18
-            validation-script: validate:node18
-          - node-version: 24
+          - node-version: 20
+            validation-script: validate:node20
+          - node-version: 22
             validation-script: validate:ci
 
     permissions:

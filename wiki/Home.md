@@ -6,11 +6,11 @@ Version 1.4.0 is a release candidate until it is published. It preserves every e
 
 ## Choose the layer you need
 
-| Library | Responsibility |
-| --- | --- |
+| Library                   | Responsibility                                                                 |
+| ------------------------- | ------------------------------------------------------------------------------ |
 | `interactive-surface-css` | Interaction states, focus visibility, state precedence, and interaction motion |
-| `ui-style-kit-css` | Theme paint, modes, component appearance, and visual tokens |
-| `layout-style-css` | Page structure, layout recipes, and geometry |
+| `ui-style-kit-css`        | Theme paint, modes, component appearance, and visual tokens                    |
+| `layout-style-css`        | Page structure, layout recipes, and geometry                                   |
 
 Use one library, use two compatible libraries, or use all three. None of the packages is a prerequisite for another.
 

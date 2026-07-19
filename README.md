@@ -7,6 +7,8 @@ Framework-agnostic CSS for reliable hover, focus, press, selected, current, load
 
 Version 1.4.0 is a release candidate in this repository until its npm release is published. Existing 1.x imports, selectors, data hooks, ARIA hooks, and tokens remain supported.
 
+The package targets Node.js 20+ for npm installs and local validation. CI proves the minimum Node 20 lane and the preferred Node 22 lane before release.
+
 ## Start here
 
 - [Live standalone demo](https://foscat.github.io/Interactive-Surface-CSS/)
@@ -21,11 +23,11 @@ Version 1.4.0 is a release candidate in this repository until its npm release is
 
 Each package remains independently useful. Use one library, use two compatible libraries, or use all three according to the layers your application needs.
 
-| Library | Owns | Does not own |
-| --- | --- | --- |
+| Library                   | Owns                                                                           | Does not own                        |
+| ------------------------- | ------------------------------------------------------------------------------ | ----------------------------------- |
 | `interactive-surface-css` | Interaction states, focus visibility, state precedence, and interaction motion | Page layout or an application theme |
-| `ui-style-kit-css` | Theme paint, modes, component appearance, and visual tokens | Page layout or interaction behavior |
-| `layout-style-css` | Page structure, layout recipes, and geometry | Theme paint or interaction behavior |
+| `ui-style-kit-css`        | Theme paint, modes, component appearance, and visual tokens                    | Page layout or interaction behavior |
+| `layout-style-css`        | Page structure, layout recipes, and geometry                                   | Theme paint or interaction behavior |
 
 ## 60-second standalone setup
 
@@ -44,7 +46,9 @@ import "interactive-surface-css/standalone-preset.css";
 Add the base class to a native control:
 
 ```html
-<button class="interactive-surface variant-primary" type="button">Save changes</button>
+<button class="interactive-surface variant-primary" type="button">
+  Save changes
+</button>
 ```
 
 For a no-build page, pin the release:
@@ -64,22 +68,33 @@ Prefer native elements, then reflect persistent application state through ARIA:
 
 ```html
 <!-- Action -->
-<button class="interactive-surface variant-primary" type="button">Publish</button>
+<button class="interactive-surface variant-primary" type="button">
+  Publish
+</button>
 
 <!-- Toggle: update aria-pressed when the value changes -->
-<button class="interactive-surface" type="button" aria-pressed="true">Pinned</button>
+<button class="interactive-surface" type="button" aria-pressed="true">
+  Pinned
+</button>
 
 <!-- Current navigation item: any non-false aria-current value is supported -->
 <a class="interactive-surface" href="/account" aria-current="page">Account</a>
 
 <!-- Selected item in a composite widget -->
-<button class="interactive-surface" role="tab" aria-selected="true">Details</button>
+<button class="interactive-surface" role="tab" aria-selected="true">
+  Details
+</button>
 
 <!-- Loading: update the accessible label or nearby status text as needed -->
-<button class="interactive-surface" type="button" aria-busy="true">Saving…</button>
+<button class="interactive-surface" type="button" aria-busy="true">
+  Saving…
+</button>
 
 <!-- Prefer native disabled when the control cannot activate -->
 <button class="interactive-surface" type="button" disabled>Unavailable</button>
+
+<!-- Native file inputs opt in on the host; the selector button follows the same tokens -->
+<input class="interactive-surface variant-subtle" type="file" />
 
 <!-- Variant and level hooks are safe for renderers and companion bridges -->
 <button
@@ -92,7 +107,11 @@ Prefer native elements, then reflect persistent application state through ARIA:
 </button>
 
 <!-- Icon-only controls need an accessible name; the icon itself is decorative -->
-<button class="interactive-surface icon-only" type="button" aria-label="Open settings">
+<button
+  class="interactive-surface icon-only"
+  type="button"
+  aria-label="Open settings"
+>
   <svg aria-hidden="true" data-icon-role="dark" viewBox="0 0 24 24">…</svg>
 </button>
 ```
@@ -101,12 +120,12 @@ Native `disabled` is preferred because the browser suppresses focus and activati
 
 ## Entry points
 
-| Import | Presentation | Best for |
-| --- | --- | --- |
-| `import "interactive-surface-css/standalone-preset.css";` | State core plus neutral paint, variants, levels, icon sizing, and preset token defaults | New standalone integrations |
-| `import "interactive-surface-css/state-core.css";` | Interaction mechanics and neutral core token fallbacks only | Existing design systems that already own paint and geometry |
-| `import "interactive-surface-css/interactive-surface.css";` | Complete standalone compatibility bundle | Existing direct-CSS 1.x consumers |
-| `import "interactive-surface-css";` | JavaScript entry that imports the complete compatibility bundle | Existing bundlers configured for CSS imports |
+| Import                                                      | Presentation                                                                            | Best for                                                    |
+| ----------------------------------------------------------- | --------------------------------------------------------------------------------------- | ----------------------------------------------------------- |
+| `import "interactive-surface-css/standalone-preset.css";`   | State core plus neutral paint, variants, levels, icon sizing, and preset token defaults | New standalone integrations                                 |
+| `import "interactive-surface-css/state-core.css";`          | Interaction mechanics and neutral core token fallbacks only                             | Existing design systems that already own paint and geometry |
+| `import "interactive-surface-css/interactive-surface.css";` | Complete standalone compatibility bundle                                                | Existing direct-CSS 1.x consumers                           |
+| `import "interactive-surface-css";`                         | JavaScript entry that imports the complete compatibility bundle                         | Existing bundlers configured for CSS imports                |
 
 `standalone-preset.css` and `interactive-surface.css` are generated from the same authored modules and are behaviorally equivalent in 1.4.0. The compatibility paths remain stable; no 1.x migration is required.
 
@@ -114,17 +133,18 @@ The package `main` and `module` fields preserve the CommonJS and ESM entries; bo
 
 ## Compact API
 
-| Kind | Public hooks |
-| --- | --- |
-| Base | `.interactive-surface` |
-| Size | `.size-sm`, default medium, `.size-lg` |
-| Transient | pointer `:hover`, keyboard `:focus-visible`, `:active` |
-| Persistent | `.is-active`, `aria-pressed="true"`, `aria-pressed="mixed"`, any non-false `aria-current`, `aria-selected="true"` |
-| Loading | `aria-busy="true"`, `.is-loading` |
-| Disabled | native `:disabled`, `aria-disabled="true"`, `.is-disabled` |
-| Variant | `.variant-primary`, `.variant-secondary`, `.variant-accent`, `.variant-subtle`, `.variant-warning`, `.variant-danger`, or matching `data-surface-variant` values |
-| Level | `data-surface-level="1|2|3"` |
-| Icon | `.icon-only`; child `data-icon-role="light|dark|accessibility"` or the legacy role classes |
+| Kind              | Public hooks                                                                                                                                                     |
+| ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Base              | `.interactive-surface`                                                                                                                                           |
+| Size              | `.size-sm`, default medium, `.size-lg`                                                                                                                           |
+| Transient         | pointer `:hover`, keyboard `:focus-visible`, `:active`                                                                                                           |
+| Persistent        | `.is-active`, `aria-pressed="true"`, `aria-pressed="mixed"`, any non-false `aria-current`, `aria-selected="true"`                                                |
+| Loading           | `aria-busy="true"`, `.is-loading`                                                                                                                                |
+| Disabled          | native `:disabled`, `aria-disabled="true"`, `.is-disabled`                                                                                                       |
+| Variant           | `.variant-primary`, `.variant-secondary`, `.variant-accent`, `.variant-subtle`, `.variant-warning`, `.variant-danger`, or matching `data-surface-variant` values |
+| Level             | `data-surface-level="1                                                                                                                                           | 2    | 3"`                                        |
+| Icon              | `.icon-only`; child `data-icon-role="light                                                                                                                       | dark | accessibility"` or the legacy role classes |
+| Native subcontrol | `input[type="file"].interactive-surface::file-selector-button` inherits surface paint and hover/active feedback                                                  |
 
 Disabled state has highest visual precedence. The state layer preserves static meaning under reduced motion and uses system-color affordances in forced-colors mode. Interaction lift uses the individual `translate` property, so consumer-owned `transform`, `scale`, and `rotate` declarations can coexist.
 

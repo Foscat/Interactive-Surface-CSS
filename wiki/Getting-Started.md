@@ -19,7 +19,9 @@ The preset combines the interaction state core with neutral paint, variants, sur
 ## Add a native control
 
 ```html
-<button class="interactive-surface variant-primary" type="button">Save changes</button>
+<button class="interactive-surface variant-primary" type="button">
+  Save changes
+</button>
 ```
 
 Use `<button>` for actions and `<a href>` for navigation. Native elements already provide keyboard and activation behavior that CSS cannot create.
@@ -27,13 +29,19 @@ Use `<button>` for actions and `<a href>` for navigation. Native elements alread
 ## Add persistent state
 
 ```html
-<button class="interactive-surface" type="button" aria-pressed="true">Pinned</button>
+<button class="interactive-surface" type="button" aria-pressed="true">
+  Pinned
+</button>
 
 <a class="interactive-surface" href="/account" aria-current="page">Account</a>
 
-<button class="interactive-surface" role="tab" aria-selected="true">Details</button>
+<button class="interactive-surface" role="tab" aria-selected="true">
+  Details
+</button>
 
-<button class="interactive-surface" type="button" aria-busy="true">Saving…</button>
+<button class="interactive-surface" type="button" aria-busy="true">
+  Saving…
+</button>
 ```
 
 Update the ARIA value whenever application state changes. For an indeterminate toggle, `aria-pressed="mixed"` is also supported.

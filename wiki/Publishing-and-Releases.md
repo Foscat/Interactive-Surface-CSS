@@ -20,15 +20,15 @@ See the [npm publish workflow](https://github.com/Foscat/Interactive-Surface-CSS
 3. Build public stylesheets and verify generated parity.
 4. Run deterministic validation:
 
-    ```bash
-    npm run validate
-    ```
+   ```bash
+   npm run validate
+   ```
 
 5. Run the supported browser matrix:
 
-    ```bash
-    npm run validate:full
-    ```
+   ```bash
+   npm run validate:full
+   ```
 
 6. Inspect the actual packed tarball and confirm only intended public files are present.
 7. Review the final branch diff and resolve every release-blocking finding.

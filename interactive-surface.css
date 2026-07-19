@@ -17,15 +17,23 @@
   --_is-preset-shadow-base: var(--shadow-base, 0 0 0 rgb(0 0 0 / 0));
   --_is-preset-shadow-hover: var(
     --shadow-hover,
-    0 10px 28px rgb(0 0 0 / 0.35), 0 2px 8px rgb(0 0 0 / 0.25)
+    0 10px 28px rgb(0 0 0 / 0.35),
+    0 2px 8px rgb(0 0 0 / 0.25)
   );
   --_is-preset-shadow-active: var(
     --shadow-active,
-    0 6px 18px rgb(0 0 0 / 0.3), 0 1px 4px rgb(0 0 0 / 0.2)
+    0 6px 18px rgb(0 0 0 / 0.3),
+    0 1px 4px rgb(0 0 0 / 0.2)
   );
-  --_is-base-bg: var(--interactive-surface-bg, var(--surface-bg, var(--bg-surface, rgb(248 250 252))));
+  --_is-base-bg: var(
+    --interactive-surface-bg,
+    var(--surface-bg, var(--bg-surface, rgb(248 250 252)))
+  );
   --_is-bg: var(--_is-base-bg);
-  --_is-fg: var(--interactive-surface-fg, var(--surface-fg, var(--text-primary, rgb(17 24 39))));
+  --_is-fg: var(
+    --interactive-surface-fg,
+    var(--surface-fg, var(--text-primary, rgb(17 24 39)))
+  );
   --_is-base-border-color: var(
     --interactive-surface-border-color,
     var(--surface-border, var(--border-color, rgba(15, 23, 42, 0.2)))
@@ -55,12 +63,7 @@
 
   /* stylelint-disable declaration-block-no-redundant-longhand-properties -- Each longhand must survive companion shorthands in either import order. */
   transition-property:
-    background-color,
-    border-color,
-    box-shadow,
-    color,
-    transform,
-    translate,
+    background-color, border-color, box-shadow, color, transform, translate,
     outline-color !important;
   transition-duration: var(--_is-transition-duration) !important;
   transition-timing-function: var(--_is-transition-timing-function) !important;
@@ -71,15 +74,27 @@
 /* Surface levels consume bridge tokens while preserving standalone fallbacks. */
 .interactive-surface[data-surface-level] {
   --_is-bg: var(--interactive-surface-level-bg, var(--_is-base-bg));
-  --_is-border-color: var(--interactive-surface-level-border-color, var(--_is-base-border-color));
-  --_is-shadow-base: var(--interactive-surface-level-shadow, var(--_is-base-shadow));
+  --_is-border-color: var(
+    --interactive-surface-level-border-color,
+    var(--_is-base-border-color)
+  );
+  --_is-shadow-base: var(
+    --interactive-surface-level-shadow,
+    var(--_is-base-shadow)
+  );
 }
 
 .interactive-surface[data-surface-level="1"] {
-  --_is-bg: var(--interactive-surface-level-bg, var(--interactive-surface-level-1-bg, var(--_is-base-bg)));
+  --_is-bg: var(
+    --interactive-surface-level-bg,
+    var(--interactive-surface-level-1-bg, var(--_is-base-bg))
+  );
   --_is-border-color: var(
     --interactive-surface-level-border-color,
-    var(--interactive-surface-level-1-border-color, var(--_is-base-border-color))
+    var(
+      --interactive-surface-level-1-border-color,
+      var(--_is-base-border-color)
+    )
   );
   --_is-shadow-base: var(
     --interactive-surface-level-shadow,
@@ -100,10 +115,16 @@
 }
 
 .interactive-surface[data-surface-level="2"] {
-  --_is-bg: var(--interactive-surface-level-bg, var(--interactive-surface-level-2-bg, var(--_is-base-bg)));
+  --_is-bg: var(
+    --interactive-surface-level-bg,
+    var(--interactive-surface-level-2-bg, var(--_is-base-bg))
+  );
   --_is-border-color: var(
     --interactive-surface-level-border-color,
-    var(--interactive-surface-level-2-border-color, var(--_is-base-border-color))
+    var(
+      --interactive-surface-level-2-border-color,
+      var(--_is-base-border-color)
+    )
   );
   --_is-shadow-base: var(
     --interactive-surface-level-shadow,
@@ -124,10 +145,16 @@
 }
 
 .interactive-surface[data-surface-level="3"] {
-  --_is-bg: var(--interactive-surface-level-bg, var(--interactive-surface-level-3-bg, var(--_is-base-bg)));
+  --_is-bg: var(
+    --interactive-surface-level-bg,
+    var(--interactive-surface-level-3-bg, var(--_is-base-bg))
+  );
   --_is-border-color: var(
     --interactive-surface-level-border-color,
-    var(--interactive-surface-level-3-border-color, var(--_is-base-border-color))
+    var(
+      --interactive-surface-level-3-border-color,
+      var(--_is-base-border-color)
+    )
   );
   --_is-shadow-base: var(
     --interactive-surface-level-shadow,
@@ -156,17 +183,35 @@
   font: inherit;
 }
 
+/* File inputs have a native selector button; the preset maps it into the same surface token contract. */
+:is(input[type="file"].interactive-surface) {
+  min-height: 2.75rem;
+}
+
+:is(input[type="file"].interactive-surface)::file-selector-button {
+  margin-inline-end: 0.75rem;
+  padding: 0.55rem 0.85rem;
+  border: var(--_is-border-width) solid var(--_is-border-color);
+  border-radius: calc(var(--_is-radius) * 0.75);
+  background-color: var(--_is-bg);
+  color: var(--_is-fg);
+  font: inherit;
+  font-weight: 700;
+}
+
 .interactive-surface.size-sm {
   --interactive-surface-lift-hover: -4px;
   --interactive-surface-lift-active: -2px;
-  --interactive-surface-shadow-hover: 0 6px 16px rgba(0, 0, 0, 0.28), 0 1px 4px rgba(0, 0, 0, 0.2);
+  --interactive-surface-shadow-hover:
+    0 6px 16px rgba(0, 0, 0, 0.28), 0 1px 4px rgba(0, 0, 0, 0.2);
   --interactive-surface-shadow-active: 0 4px 10px rgba(0, 0, 0, 0.25);
 }
 
 .interactive-surface.size-lg {
   --interactive-surface-lift-hover: -8px;
   --interactive-surface-lift-active: -4px;
-  --interactive-surface-shadow-hover: 0 14px 36px rgba(0, 0, 0, 0.38), 0 3px 10px rgba(0, 0, 0, 0.3);
+  --interactive-surface-shadow-hover:
+    0 14px 36px rgba(0, 0, 0, 0.38), 0 3px 10px rgba(0, 0, 0, 0.3);
   --interactive-surface-shadow-active: 0 8px 22px rgba(0, 0, 0, 0.32);
 }
 
@@ -188,29 +233,44 @@
 /* Icon-role hooks provide useful standalone defaults while remaining token-driven. */
 .interactive-surface.icon-only .light-icon,
 .interactive-surface.icon-only [data-icon-role="light"] {
-  color: var(--interactive-surface-light-icon-color, var(--icon-light, rgb(212 175 55)));
+  color: var(
+    --interactive-surface-light-icon-color,
+    var(--icon-light, rgb(212 175 55))
+  );
 }
 
 .interactive-surface.icon-only .dark-icon,
 .interactive-surface.icon-only [data-icon-role="dark"] {
-  color: var(--interactive-surface-dark-icon-color, var(--icon-dark, rgb(0 0 0)));
+  color: var(
+    --interactive-surface-dark-icon-color,
+    var(--icon-dark, rgb(0 0 0))
+  );
 }
 
 .interactive-surface.icon-only .accessibility-icon,
 .interactive-surface.icon-only [data-icon-role="accessibility"] {
-  color: var(--interactive-surface-accessibility-icon-color, var(--icon-accessibility, rgb(59 130 246)));
+  color: var(
+    --interactive-surface-accessibility-icon-color,
+    var(--icon-accessibility, rgb(59 130 246))
+  );
   border-radius: 0;
 }
 
 @media (prefers-color-scheme: dark) {
   .interactive-surface.icon-only .light-icon,
   .interactive-surface.icon-only [data-icon-role="light"] {
-    color: var(--interactive-surface-light-icon-color-dark, var(--icon-light-dark, rgb(255 255 255)));
+    color: var(
+      --interactive-surface-light-icon-color-dark,
+      var(--icon-light-dark, rgb(255 255 255))
+    );
   }
 
   .interactive-surface.icon-only .dark-icon,
   .interactive-surface.icon-only [data-icon-role="dark"] {
-    color: var(--interactive-surface-dark-icon-color-dark, var(--icon-dark-dark, rgb(30 58 138)));
+    color: var(
+      --interactive-surface-dark-icon-color-dark,
+      var(--icon-dark-dark, rgb(30 58 138))
+    );
   }
 
   .interactive-surface.icon-only .accessibility-icon,
@@ -222,28 +282,76 @@
   }
 }
 
-:where([data-theme="dark"], [data-mode="dark"], [data-mode="contrast"], .theme-dark, .dark-mode, .dark)
+:where(
+    [data-theme="dark"],
+    [data-mode="dark"],
+    [data-mode="contrast"],
+    .theme-dark,
+    .dark-mode,
+    .dark
+  )
   .interactive-surface.icon-only
   .light-icon,
-:where([data-theme="dark"], [data-mode="dark"], [data-mode="contrast"], .theme-dark, .dark-mode, .dark)
+:where(
+    [data-theme="dark"],
+    [data-mode="dark"],
+    [data-mode="contrast"],
+    .theme-dark,
+    .dark-mode,
+    .dark
+  )
   .interactive-surface.icon-only
   [data-icon-role="light"] {
-  color: var(--interactive-surface-light-icon-color-dark, var(--icon-light-dark, rgb(255 255 255)));
+  color: var(
+    --interactive-surface-light-icon-color-dark,
+    var(--icon-light-dark, rgb(255 255 255))
+  );
 }
 
-:where([data-theme="dark"], [data-mode="dark"], [data-mode="contrast"], .theme-dark, .dark-mode, .dark)
+:where(
+    [data-theme="dark"],
+    [data-mode="dark"],
+    [data-mode="contrast"],
+    .theme-dark,
+    .dark-mode,
+    .dark
+  )
   .interactive-surface.icon-only
   .dark-icon,
-:where([data-theme="dark"], [data-mode="dark"], [data-mode="contrast"], .theme-dark, .dark-mode, .dark)
+:where(
+    [data-theme="dark"],
+    [data-mode="dark"],
+    [data-mode="contrast"],
+    .theme-dark,
+    .dark-mode,
+    .dark
+  )
   .interactive-surface.icon-only
   [data-icon-role="dark"] {
-  color: var(--interactive-surface-dark-icon-color-dark, var(--icon-dark-dark, rgb(30 58 138)));
+  color: var(
+    --interactive-surface-dark-icon-color-dark,
+    var(--icon-dark-dark, rgb(30 58 138))
+  );
 }
 
-:where([data-theme="dark"], [data-mode="dark"], [data-mode="contrast"], .theme-dark, .dark-mode, .dark)
+:where(
+    [data-theme="dark"],
+    [data-mode="dark"],
+    [data-mode="contrast"],
+    .theme-dark,
+    .dark-mode,
+    .dark
+  )
   .interactive-surface.icon-only
   .accessibility-icon,
-:where([data-theme="dark"], [data-mode="dark"], [data-mode="contrast"], .theme-dark, .dark-mode, .dark)
+:where(
+    [data-theme="dark"],
+    [data-mode="dark"],
+    [data-mode="contrast"],
+    .theme-dark,
+    .dark-mode,
+    .dark
+  )
   .interactive-surface.icon-only
   [data-icon-role="accessibility"] {
   color: var(
@@ -374,6 +482,21 @@
     color: GrayText;
     border-color: GrayText;
   }
+
+  :is(.interactive-surface[type="file"])::file-selector-button {
+    border-color: ButtonText;
+    background-color: ButtonFace;
+    color: ButtonText;
+  }
+
+  :is(.interactive-surface[type="file"]):is(
+      .is-disabled,
+      :disabled,
+      [aria-disabled="true"]
+    )::file-selector-button {
+    border-color: GrayText;
+    color: GrayText;
+  }
 }
 
 /*
@@ -383,12 +506,21 @@
 
 .interactive-surface {
   /* Preset-only fallbacks keep the core neutral while preserving complete-bundle behavior. */
-  --_is-lift-base: var(--interactive-surface-lift-base, var(--_is-preset-lift-base, 0px));
-  --_is-lift-hover: var(--interactive-surface-lift-hover, var(--_is-preset-lift-hover, 0px));
+  --_is-lift-base: var(
+    --interactive-surface-lift-base,
+    var(--_is-preset-lift-base, 0px)
+  );
+  --_is-lift-hover: var(
+    --interactive-surface-lift-hover,
+    var(--_is-preset-lift-hover, 0px)
+  );
   --_is-hover-lift: calc(
     var(--_is-lift-hover) + var(--_is-preset-hover-lift-offset, 0px)
   );
-  --_is-lift-active: var(--interactive-surface-lift-active, var(--_is-preset-lift-active, 0px));
+  --_is-lift-active: var(
+    --interactive-surface-lift-active,
+    var(--_is-preset-lift-active, 0px)
+  );
   --_is-base-shadow: var(
     --interactive-surface-shadow-base,
     var(--interactive-surface-level-shadow, var(--_is-preset-shadow-base, none))
@@ -402,24 +534,51 @@
     --interactive-surface-shadow-active,
     var(--_is-preset-shadow-active, var(--_is-base-shadow))
   );
-  --_is-darken-hover: var(--interactive-surface-darken-hover, var(--surface-darken-hover, 0.96));
-  --_is-darken-active: var(--interactive-surface-darken-active, var(--surface-darken-active, 0.98));
-  --_is-state-layer-base-opacity: var(--interactive-surface-state-layer-opacity, 0);
+  --_is-darken-hover: var(
+    --interactive-surface-darken-hover,
+    var(--surface-darken-hover, 0.96)
+  );
+  --_is-darken-active: var(
+    --interactive-surface-darken-active,
+    var(--surface-darken-active, 0.98)
+  );
+  --_is-state-layer-base-opacity: var(
+    --interactive-surface-state-layer-opacity,
+    0
+  );
   --_is-state-layer-hover-opacity: var(
     --interactive-surface-state-layer-hover-opacity,
-    var(--interactive-surface-state-layer-opacity-hover, calc(1 - var(--_is-darken-hover)))
+    var(
+      --interactive-surface-state-layer-opacity-hover,
+      calc(1 - var(--_is-darken-hover))
+    )
   );
   --_is-state-layer-active-opacity: var(
     --interactive-surface-state-layer-active-opacity,
-    var(--interactive-surface-state-layer-opacity-active, calc(1 - var(--_is-darken-active)))
+    var(
+      --interactive-surface-state-layer-opacity-active,
+      calc(1 - var(--_is-darken-active))
+    )
   );
   --_is-state-layer-focus-opacity: var(
     --interactive-surface-state-layer-focus-opacity,
-    var(--interactive-surface-state-layer-opacity-focus, var(--_is-state-layer-hover-opacity))
+    var(
+      --interactive-surface-state-layer-opacity-focus,
+      var(--_is-state-layer-hover-opacity)
+    )
   );
-  --_is-state-layer-color: var(--interactive-surface-state-layer-color, rgb(0 0 0));
-  --_is-motion-default: var(--interactive-surface-motion-default, var(--motion-default, 140ms));
-  --_is-motion-press: var(--interactive-surface-motion-press, var(--motion-press, 60ms));
+  --_is-state-layer-color: var(
+    --interactive-surface-state-layer-color,
+    rgb(0 0 0)
+  );
+  --_is-motion-default: var(
+    --interactive-surface-motion-default,
+    var(--motion-default, 140ms)
+  );
+  --_is-motion-press: var(
+    --interactive-surface-motion-press,
+    var(--motion-press, 60ms)
+  );
   --_is-ease-standard: var(
     --interactive-surface-ease-standard,
     var(--ease-standard, cubic-bezier(0.2, 0, 0.2, 1))
@@ -433,11 +592,17 @@
   --_is-transition-duration: var(--_is-motion-default);
   --_is-transition-timing-function: var(--_is-ease-standard);
   --_is-transition-delay: 0s;
-  --_is-focus-ring-color: var(--interactive-surface-focus-ring-color, var(--focus-ring, rgb(11 99 246)));
+  --_is-focus-ring-color: var(
+    --interactive-surface-focus-ring-color,
+    var(--focus-ring, rgb(11 99 246))
+  );
   --_is-focus-ring-width: var(--interactive-surface-focus-ring-width, 2px);
   --_is-focus-ring-offset: var(--interactive-surface-focus-ring-offset, 2px);
   --_is-disabled-opacity: var(--interactive-surface-disabled-opacity, 0.72);
-  --_is-tap-highlight: var(--interactive-surface-tap-highlight-color, rgb(11 99 246 / 0.18));
+  --_is-tap-highlight: var(
+    --interactive-surface-tap-highlight-color,
+    rgb(11 99 246 / 0.18)
+  );
 
   position: relative;
   isolation: isolate;
@@ -447,9 +612,12 @@
   translate: 0 var(--_is-lift-base);
   box-shadow: var(--_is-shadow-base);
   transition:
-    translate var(--_is-transition-duration) var(--_is-transition-timing-function) var(--_is-transition-delay),
-    box-shadow var(--_is-transition-duration) var(--_is-transition-timing-function) var(--_is-transition-delay),
-    outline-color var(--_is-transition-duration) linear var(--_is-transition-delay);
+    translate var(--_is-transition-duration)
+      var(--_is-transition-timing-function) var(--_is-transition-delay),
+    box-shadow var(--_is-transition-duration)
+      var(--_is-transition-timing-function) var(--_is-transition-delay),
+    outline-color var(--_is-transition-duration) linear
+      var(--_is-transition-delay);
   will-change: auto;
 }
 
@@ -477,15 +645,40 @@
   }
 }
 
-.interactive-surface:not(:is(.is-disabled, :disabled, [aria-disabled="true"])):focus-visible {
+.interactive-surface:not(
+    :is(.is-disabled, :disabled, [aria-disabled="true"])
+  ):focus-visible {
   translate: 0 var(--_is-lift-hover);
   box-shadow: var(--_is-shadow-hover);
   outline: var(--_is-focus-ring-width) solid var(--_is-focus-ring-color);
   outline-offset: var(--_is-focus-ring-offset);
 }
 
-.interactive-surface:not(:is(.is-disabled, :disabled, [aria-disabled="true"])):focus-visible::before {
+.interactive-surface:not(
+    :is(.is-disabled, :disabled, [aria-disabled="true"])
+  ):focus-visible::before {
   opacity: var(--_is-state-layer-focus-opacity);
+}
+
+/* Native file inputs expose an inner button that needs the same interaction feedback as the host. */
+:where(input[type="file"].interactive-surface)::file-selector-button {
+  cursor: pointer;
+  transition:
+    background-color var(--_is-transition-duration)
+      var(--_is-transition-timing-function) var(--_is-transition-delay),
+    border-color var(--_is-transition-duration)
+      var(--_is-transition-timing-function) var(--_is-transition-delay),
+    box-shadow var(--_is-transition-duration)
+      var(--_is-transition-timing-function) var(--_is-transition-delay),
+    color var(--_is-transition-duration) var(--_is-transition-timing-function)
+      var(--_is-transition-delay);
+}
+
+:where(input[type="file"].interactive-surface):not(
+    :is(.is-disabled, :disabled, [aria-disabled="true"])
+  ):focus-visible::file-selector-button {
+  box-shadow: inset 0 0 0 999px
+    rgb(0 0 0 / var(--_is-state-layer-focus-opacity));
 }
 
 /* Zero-specificity state branches let later transient and focus selectors retain precedence. */
@@ -519,17 +712,30 @@
     will-change: translate, box-shadow;
   }
 
-  .interactive-surface:not(:is(.is-disabled, :disabled, [aria-disabled="true"])):hover {
+  .interactive-surface:not(
+      :is(.is-disabled, :disabled, [aria-disabled="true"])
+    ):hover {
     translate: 0 var(--_is-hover-lift);
     box-shadow: var(--_is-shadow-hover);
   }
 
-  .interactive-surface:not(:is(.is-disabled, :disabled, [aria-disabled="true"])):hover::before {
+  .interactive-surface:not(
+      :is(.is-disabled, :disabled, [aria-disabled="true"])
+    ):hover::before {
     opacity: var(--_is-state-layer-hover-opacity);
+  }
+
+  :where(input[type="file"].interactive-surface):not(
+      :is(.is-disabled, :disabled, [aria-disabled="true"])
+    ):hover::file-selector-button {
+    box-shadow: inset 0 0 0 999px
+      rgb(0 0 0 / var(--_is-state-layer-hover-opacity));
   }
 }
 
-.interactive-surface:not(:is(.is-disabled, :disabled, [aria-disabled="true"])):active {
+.interactive-surface:not(
+    :is(.is-disabled, :disabled, [aria-disabled="true"])
+  ):active {
   --_is-transition-duration: var(--_is-motion-press);
   --_is-transition-timing-function: var(--_is-ease-press);
 
@@ -537,8 +743,19 @@
   box-shadow: var(--_is-shadow-base);
 }
 
-.interactive-surface:not(:is(.is-disabled, :disabled, [aria-disabled="true"])):active::before {
+.interactive-surface:not(
+    :is(.is-disabled, :disabled, [aria-disabled="true"])
+  ):active::before {
   opacity: 0;
+  transition-duration: var(--_is-motion-press);
+  transition-timing-function: var(--_is-ease-press);
+}
+
+:where(input[type="file"].interactive-surface):not(
+    :is(.is-disabled, :disabled, [aria-disabled="true"])
+  ):active::file-selector-button {
+  box-shadow: inset 0 0 0 999px
+    rgb(0 0 0 / var(--_is-state-layer-active-opacity));
   transition-duration: var(--_is-motion-press);
   transition-timing-function: var(--_is-ease-press);
 }
@@ -559,9 +776,23 @@
   transition: none;
 }
 
-.interactive-surface:is(.is-disabled, :disabled, [aria-disabled="true"])::before {
+.interactive-surface:is(
+    .is-disabled,
+    :disabled,
+    [aria-disabled="true"]
+  )::before {
   opacity: 0;
   animation: none;
+  transition: none;
+}
+
+:where(input[type="file"].interactive-surface):is(
+    .is-disabled,
+    :disabled,
+    [aria-disabled="true"]
+  )::file-selector-button {
+  cursor: not-allowed;
+  box-shadow: none;
   transition: none;
 }
 
@@ -573,9 +804,15 @@
 
 @media (prefers-reduced-motion: reduce) {
   .interactive-surface,
-  .interactive-surface:not(:is(.is-disabled, :disabled, [aria-disabled="true"])):hover,
-  .interactive-surface:not(:is(.is-disabled, :disabled, [aria-disabled="true"])):focus-visible,
-  .interactive-surface:not(:is(.is-disabled, :disabled, [aria-disabled="true"])):active,
+  .interactive-surface:not(
+      :is(.is-disabled, :disabled, [aria-disabled="true"])
+    ):hover,
+  .interactive-surface:not(
+      :is(.is-disabled, :disabled, [aria-disabled="true"])
+    ):focus-visible,
+  .interactive-surface:not(
+      :is(.is-disabled, :disabled, [aria-disabled="true"])
+    ):active,
   .interactive-surface:where(
       .is-active,
       [aria-pressed="true"],
@@ -617,7 +854,9 @@
   }
 
   .interactive-surface:focus,
-  .interactive-surface:not(:is(.is-disabled, :disabled, [aria-disabled="true"])):focus-visible,
+  .interactive-surface:not(
+      :is(.is-disabled, :disabled, [aria-disabled="true"])
+    ):focus-visible,
   .interactive-surface[aria-disabled="true"]:focus-visible {
     outline: var(--_is-focus-ring-width) solid var(--_is-focus-ring-color);
   }
@@ -656,7 +895,9 @@
   }
 
   .interactive-surface:focus,
-  .interactive-surface:not(:is(.is-disabled, :disabled, [aria-disabled="true"])):focus-visible {
+  .interactive-surface:not(
+      :is(.is-disabled, :disabled, [aria-disabled="true"])
+    ):focus-visible {
     outline: 2px solid Highlight;
     outline-offset: 2px;
   }

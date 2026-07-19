@@ -75,16 +75,30 @@ test("the complete bundle retains the 1.x public contract", () => {
     "data-icon-role",
     "aria-pressed",
     "aria-current",
-    "aria-disabled"
-  ].forEach((value) => assert.ok(css.includes(value), "Missing public contract: " + value));
-
-  ["--interactive-surface-", "--lift-", "--shadow-", "--motion-", "--ease-"].forEach((value) =>
-    assert.ok(css.includes(value), "Missing token family: " + value)
+    "aria-disabled",
+  ].forEach((value) =>
+    assert.ok(css.includes(value), "Missing public contract: " + value),
   );
 
-  assert.equal(manifest.exports["./interactive-surface.css"], "./interactive-surface.css");
+  [
+    "--interactive-surface-",
+    "--lift-",
+    "--shadow-",
+    "--motion-",
+    "--ease-",
+  ].forEach((value) =>
+    assert.ok(css.includes(value), "Missing token family: " + value),
+  );
+
+  assert.equal(
+    manifest.exports["./interactive-surface.css"],
+    "./interactive-surface.css",
+  );
   assert.match(fs.readFileSync("index.js", "utf8"), /interactive-surface\.css/);
-  assert.match(fs.readFileSync("index.cjs", "utf8"), /interactive-surface\.css/);
+  assert.match(
+    fs.readFileSync("index.cjs", "utf8"),
+    /interactive-surface\.css/,
+  );
 });
 ```
 
@@ -117,7 +131,7 @@ Export testable helpers from `scripts/build.mjs`. Compose complete bundles in pr
 ```js
 const sourcePaths = {
   core: "styles/state-core.css",
-  preset: "styles/standalone-preset.css"
+  preset: "styles/standalone-preset.css",
 };
 
 export async function createBundleMap() {
@@ -126,17 +140,21 @@ export async function createBundleMap() {
   const complete = preset.trim() + "\n\n" + core.trim() + "\n";
 
   return createNormalAndMinifiedMaps({
-    "state-core.css": withGeneratedHeader("state-core.css", [sourcePaths.core], core),
+    "state-core.css": withGeneratedHeader(
+      "state-core.css",
+      [sourcePaths.core],
+      core,
+    ),
     "standalone-preset.css": withGeneratedHeader(
       "standalone-preset.css",
       [sourcePaths.preset, sourcePaths.core],
-      complete
+      complete,
     ),
     "interactive-surface.css": withGeneratedHeader(
       "interactive-surface.css",
       [sourcePaths.preset, sourcePaths.core],
-      complete
-    )
+      complete,
+    ),
   });
 }
 ```

@@ -71,14 +71,14 @@ Loading state uses the same state-layer and active-depth token contract. Consume
 
 ### Variants
 
-| Variant | Background | Foreground | Border |
-| --- | --- | --- | --- |
-| Primary | `--interactive-surface-variant-primary-bg` | `--interactive-surface-variant-primary-fg` | `--interactive-surface-variant-primary-border-color` |
+| Variant   | Background                                   | Foreground                                   | Border                                                 |
+| --------- | -------------------------------------------- | -------------------------------------------- | ------------------------------------------------------ |
+| Primary   | `--interactive-surface-variant-primary-bg`   | `--interactive-surface-variant-primary-fg`   | `--interactive-surface-variant-primary-border-color`   |
 | Secondary | `--interactive-surface-variant-secondary-bg` | `--interactive-surface-variant-secondary-fg` | `--interactive-surface-variant-secondary-border-color` |
-| Accent | `--interactive-surface-variant-accent-bg` | `--interactive-surface-variant-accent-fg` | `--interactive-surface-variant-accent-border-color` |
-| Subtle | `--interactive-surface-variant-subtle-bg` | `--interactive-surface-variant-subtle-fg` | `--interactive-surface-variant-subtle-border-color` |
-| Warning | `--interactive-surface-variant-warning-bg` | `--interactive-surface-variant-warning-fg` | `--interactive-surface-variant-warning-border-color` |
-| Danger | `--interactive-surface-variant-danger-bg` | `--interactive-surface-variant-danger-fg` | `--interactive-surface-variant-danger-border-color` |
+| Accent    | `--interactive-surface-variant-accent-bg`    | `--interactive-surface-variant-accent-fg`    | `--interactive-surface-variant-accent-border-color`    |
+| Subtle    | `--interactive-surface-variant-subtle-bg`    | `--interactive-surface-variant-subtle-fg`    | `--interactive-surface-variant-subtle-border-color`    |
+| Warning   | `--interactive-surface-variant-warning-bg`   | `--interactive-surface-variant-warning-fg`   | `--interactive-surface-variant-warning-border-color`   |
+| Danger    | `--interactive-surface-variant-danger-bg`    | `--interactive-surface-variant-danger-fg`    | `--interactive-surface-variant-danger-border-color`    |
 
 ### Surface levels
 
@@ -88,11 +88,11 @@ Generic bridge-facing level tokens:
 - `--interactive-surface-level-border-color`
 - `--interactive-surface-level-shadow`
 
-| Level | Paint and depth | State opacity |
-| --- | --- | --- |
-| 1 | `--interactive-surface-level-1-bg`, `--interactive-surface-level-1-border-color`, `--interactive-surface-level-1-shadow` | `--interactive-surface-level-1-hover-opacity`, `--interactive-surface-level-1-focus-opacity`, `--interactive-surface-level-1-active-opacity` |
-| 2 | `--interactive-surface-level-2-bg`, `--interactive-surface-level-2-border-color`, `--interactive-surface-level-2-shadow` | `--interactive-surface-level-2-hover-opacity`, `--interactive-surface-level-2-focus-opacity`, `--interactive-surface-level-2-active-opacity` |
-| 3 | `--interactive-surface-level-3-bg`, `--interactive-surface-level-3-border-color`, `--interactive-surface-level-3-shadow` | `--interactive-surface-level-3-hover-opacity`, `--interactive-surface-level-3-focus-opacity`, `--interactive-surface-level-3-active-opacity` |
+| Level | Paint and depth                                                                                                          | State opacity                                                                                                                                |
+| ----- | ------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1     | `--interactive-surface-level-1-bg`, `--interactive-surface-level-1-border-color`, `--interactive-surface-level-1-shadow` | `--interactive-surface-level-1-hover-opacity`, `--interactive-surface-level-1-focus-opacity`, `--interactive-surface-level-1-active-opacity` |
+| 2     | `--interactive-surface-level-2-bg`, `--interactive-surface-level-2-border-color`, `--interactive-surface-level-2-shadow` | `--interactive-surface-level-2-hover-opacity`, `--interactive-surface-level-2-focus-opacity`, `--interactive-surface-level-2-active-opacity` |
+| 3     | `--interactive-surface-level-3-bg`, `--interactive-surface-level-3-border-color`, `--interactive-surface-level-3-shadow` | `--interactive-surface-level-3-hover-opacity`, `--interactive-surface-level-3-focus-opacity`, `--interactive-surface-level-3-active-opacity` |
 
 ### Icon roles
 

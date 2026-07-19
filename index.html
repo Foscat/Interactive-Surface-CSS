@@ -10,11 +10,54 @@
     />
     <meta name="author" content="Kyle Foster" />
     <meta name="robots" content="index, follow" />
-    <meta name="theme-color" media="(prefers-color-scheme: light)" content="rgb(244 248 251)" />
-    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="rgb(9 19 28)" />
+    <meta
+      name="theme-color"
+      media="(prefers-color-scheme: light)"
+      content="rgb(244 248 251)"
+    />
+    <meta
+      name="theme-color"
+      media="(prefers-color-scheme: dark)"
+      content="rgb(9 19 28)"
+    />
     <meta name="color-scheme" content="light dark" />
-    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='royalblue'/%3E%3Cpath d='M18 16h10v32H18zm18 0h10v32H36z' fill='white'/%3E%3C/svg%3E" />
-    <link rel="canonical" href="https://foscat.github.io/Interactive-Surface-CSS/" />
+    <link rel="icon" href="./assets/favicon.ico" sizes="any" />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="./assets/favicon-16x16.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="./assets/favicon-32x32.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="48x48"
+      href="./assets/favicon-48x48.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="64x64"
+      href="./assets/favicon-64x64.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="./assets/apple-touch-icon.png"
+    />
+    <link rel="manifest" href="./assets/site.webmanifest" />
+    <meta name="msapplication-TileColor" content="#09131c" />
+    <meta name="msapplication-config" content="./assets/browserconfig.xml" />
+    <link
+      rel="canonical"
+      href="https://foscat.github.io/Interactive-Surface-CSS/"
+    />
 
     <script type="application/ld+json">
       {
@@ -41,7 +84,8 @@
         <p class="eyebrow">State-first interaction primitive</p>
         <h1>Interactive Surface CSS</h1>
         <p class="hero-lead">
-          Inspect native controls as their pressed, selected, busy, current, and disabled states change in real time.
+          Inspect native controls as their pressed, selected, busy, current, and
+          disabled states change in real time.
         </p>
         <nav class="hero-links" aria-label="Primary documentation">
           <a
@@ -69,17 +113,27 @@
       </header>
 
       <!-- Ecosystem ownership stays explicit so consumers choose the correct layer. -->
-      <section id="ecosystem-ownership" class="panel" aria-labelledby="ecosystem-heading">
+      <section
+        id="ecosystem-ownership"
+        class="panel"
+        aria-labelledby="ecosystem-heading"
+      >
         <div class="section-heading">
           <p class="eyebrow">One system, clear boundaries</p>
           <h2 id="ecosystem-heading">Ecosystem ownership</h2>
-          <p>Each package remains useful on its own while owning one distinct part of the interface contract.</p>
+          <p>
+            Each package remains useful on its own while owning one distinct
+            part of the interface contract.
+          </p>
         </div>
         <div class="ownership-grid">
           <article>
             <h3>Layout Style CSS</h3>
             <p class="ownership-role">structure and geometry</p>
-            <p>Responsive composition, spacing relationships, and page-level layout.</p>
+            <p>
+              Responsive composition, spacing relationships, and page-level
+              layout.
+            </p>
           </article>
           <article>
             <h3>UI Style Kit CSS</h3>
@@ -89,17 +143,27 @@
           <article>
             <h3>Interactive Surface CSS</h3>
             <p class="ownership-role">interaction states</p>
-            <p>Focus, hover, active, pressed, selected, busy, and disabled behavior.</p>
+            <p>
+              Focus, hover, active, pressed, selected, busy, and disabled
+              behavior.
+            </p>
           </article>
         </div>
       </section>
 
       <!-- Live proof precedes configuration so the library's purpose is immediately testable. -->
-      <section id="state-lab" class="panel state-lab" aria-labelledby="state-lab-heading">
+      <section
+        id="state-lab"
+        class="panel state-lab"
+        aria-labelledby="state-lab-heading"
+      >
         <div class="section-heading">
           <p class="eyebrow">Live semantic proof</p>
           <h2 id="state-lab-heading">Interaction state lab</h2>
-          <p>Use the controls, then inspect their native attributes. No pseudo-class is faked.</p>
+          <p>
+            Use the controls, then inspect their native attributes. No
+            pseudo-class is faked.
+          </p>
         </div>
 
         <div class="state-grid">
@@ -130,7 +194,12 @@
 
           <article class="example-card">
             <h3>Current</h3>
-            <a class="interactive-surface surface-control variant-subtle" href="#state-lab" aria-current="page" data-example="current">
+            <a
+              class="interactive-surface surface-control variant-subtle"
+              href="#state-lab"
+              aria-current="page"
+              data-example="current"
+            >
               State lab
             </a>
             <code>aria-current="page"</code>
@@ -138,7 +207,12 @@
 
           <article class="example-card tab-example">
             <h3>Selected</h3>
-            <div id="state-tabs" class="tab-list" role="tablist" aria-label="State views">
+            <div
+              id="state-tabs"
+              class="tab-list"
+              role="tablist"
+              aria-label="State views"
+            >
               <button
                 id="resting-tab"
                 type="button"
@@ -162,8 +236,21 @@
                 Selected
               </button>
             </div>
-            <p id="resting-panel" class="tab-panel" role="tabpanel" aria-labelledby="resting-tab">Resting view</p>
-            <p id="selected-panel" class="tab-panel" role="tabpanel" aria-labelledby="selected-tab" hidden>
+            <p
+              id="resting-panel"
+              class="tab-panel"
+              role="tabpanel"
+              aria-labelledby="resting-tab"
+            >
+              Resting view
+            </p>
+            <p
+              id="selected-panel"
+              class="tab-panel"
+              role="tabpanel"
+              aria-labelledby="selected-tab"
+              hidden
+            >
               Selected view
             </p>
           </article>
@@ -183,7 +270,12 @@
 
           <article class="example-card">
             <h3>Disabled</h3>
-            <button type="button" class="interactive-surface surface-control" disabled data-example="disabled">
+            <button
+              type="button"
+              class="interactive-surface surface-control"
+              disabled
+              data-example="disabled"
+            >
               Unavailable action
             </button>
             <code>disabled</code>
@@ -191,7 +283,11 @@
 
           <article class="example-card">
             <h3>Variant</h3>
-            <button type="button" class="interactive-surface surface-control variant-primary" data-example="variant">
+            <button
+              type="button"
+              class="interactive-surface surface-control variant-primary"
+              data-example="variant"
+            >
               Primary variant
             </button>
             <code>.variant-primary</code>
@@ -199,7 +295,12 @@
 
           <article class="example-card">
             <h3>Level</h3>
-            <button type="button" class="interactive-surface surface-control" data-surface-level="2" data-example="level">
+            <button
+              type="button"
+              class="interactive-surface surface-control"
+              data-surface-level="2"
+              data-example="level"
+            >
               Elevated level 2
             </button>
             <code>data-surface-level="2"</code>
@@ -214,7 +315,9 @@
               data-example="icon"
             >
               <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                <path d="M11 7h2v2h-2zm0 4h2v6h-2zm1-9a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm0 18a8 8 0 1 1 0-16 8 8 0 0 1 0 16z"></path>
+                <path
+                  d="M11 7h2v2h-2zm0 4h2v6h-2zm1-9a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm0 18a8 8 0 1 1 0-16 8 8 0 0 1 0 16z"
+                ></path>
               </svg>
             </button>
             <code>aria-label + icon-only</code>
@@ -223,7 +326,11 @@
       </section>
 
       <!-- Accessibility guidance describes the behavior demonstrated above. -->
-      <section id="accessibility-guidance" class="panel" aria-labelledby="accessibility-heading">
+      <section
+        id="accessibility-guidance"
+        class="panel"
+        aria-labelledby="accessibility-heading"
+      >
         <div class="section-heading">
           <p class="eyebrow">Built on browser semantics</p>
           <h2 id="accessibility-heading">Accessibility guidance</h2>
@@ -231,21 +338,35 @@
         <div class="guidance-grid">
           <article>
             <h3>Start with native controls</h3>
-            <p>Use buttons for actions and anchors for navigation so keyboard and assistive technology behavior is preserved.</p>
+            <p>
+              Use buttons for actions and anchors for navigation so keyboard and
+              assistive technology behavior is preserved.
+            </p>
           </article>
           <article>
             <h3>Expose persistent state</h3>
-            <p>Pair visual treatment with <code>aria-pressed</code>, <code>aria-selected</code>, <code>aria-current</code>, or <code>aria-busy</code>.</p>
+            <p>
+              Pair visual treatment with <code>aria-pressed</code>,
+              <code>aria-selected</code>, <code>aria-current</code>, or
+              <code>aria-busy</code>.
+            </p>
           </article>
           <article>
             <h3>Keep focus reliable</h3>
-            <p>Disabled controls stay non-interactive, modal focus stays contained, and closing restores the initiating control.</p>
+            <p>
+              Disabled controls stay non-interactive, modal focus stays
+              contained, and closing restores the initiating control.
+            </p>
           </article>
         </div>
       </section>
 
       <!-- Entry points make the layered package contract easy to choose. -->
-      <section id="entry-points" class="panel" aria-labelledby="entry-points-heading">
+      <section
+        id="entry-points"
+        class="panel"
+        aria-labelledby="entry-points-heading"
+      >
         <div class="section-heading">
           <p class="eyebrow">Choose the right ownership boundary</p>
           <h2 id="entry-points-heading">Entry points</h2>
@@ -253,12 +374,18 @@
         <div class="entry-grid">
           <article>
             <h3>Standalone preset</h3>
-            <p>Complete paint, geometry, and interaction behavior for a framework-agnostic page.</p>
+            <p>
+              Complete paint, geometry, and interaction behavior for a
+              framework-agnostic page.
+            </p>
             <pre><code>@import "interactive-surface-css/standalone-preset.css";</code></pre>
           </article>
           <article>
             <h3>State core</h3>
-            <p>Interaction mechanics only when a host design system already owns presentation.</p>
+            <p>
+              Interaction mechanics only when a host design system already owns
+              presentation.
+            </p>
             <pre><code>@import "interactive-surface-css/state-core.css";</code></pre>
           </article>
           <article>
@@ -270,11 +397,18 @@
       </section>
 
       <!-- Token tooling is intentionally advanced and follows the live state proof. -->
-      <section id="advanced-tools" class="panel" aria-labelledby="advanced-tools-heading">
+      <section
+        id="advanced-tools"
+        class="panel"
+        aria-labelledby="advanced-tools-heading"
+      >
         <div class="section-heading">
           <p class="eyebrow">Advanced configuration</p>
           <h2 id="advanced-tools-heading">Token tools</h2>
-          <p>Edit a value, import a small CSS override, or export the current overrides for further testing.</p>
+          <p>
+            Edit a value, import a small CSS override, or export the current
+            overrides for further testing.
+          </p>
         </div>
 
         <div class="token-grid">
@@ -295,10 +429,15 @@
             </button>
           </article>
 
-          <article class="token-card" data-token="--interactive-surface-focus-ring-color">
+          <article
+            class="token-card"
+            data-token="--interactive-surface-focus-ring-color"
+          >
             <div>
               <h3>Focus ring</h3>
-              <code class="token-name">--interactive-surface-focus-ring-color</code>
+              <code class="token-name"
+                >--interactive-surface-focus-ring-color</code
+              >
             </div>
             <p class="token-value" data-token-value>rgb(30 91 240)</p>
             <button
@@ -315,36 +454,75 @@
         <div class="token-actions">
           <label class="file-field" for="tokenCssImport">
             <span>Import token CSS</span>
-            <input id="tokenCssImport" type="file" accept=".css,text/css" />
+            <input
+              id="tokenCssImport"
+              class="interactive-surface variant-subtle"
+              type="file"
+              accept=".css,text/css"
+            />
           </label>
-          <button id="tokenCssCopy" type="button" class="interactive-surface surface-control variant-secondary">
+          <button
+            id="tokenCssCopy"
+            type="button"
+            class="interactive-surface surface-control variant-secondary"
+          >
             Copy token CSS
           </button>
-          <button id="tokenCssDownload" type="button" class="interactive-surface surface-control variant-primary">
+          <button
+            id="tokenCssDownload"
+            type="button"
+            class="interactive-surface surface-control variant-primary"
+          >
             Download token CSS
           </button>
         </div>
       </section>
 
       <!-- The rendered README remains reference material rather than the primary demo experience. -->
-      <section id="readme-reference" class="panel" aria-labelledby="readme-reference-heading">
+      <section
+        id="readme-reference"
+        class="panel"
+        aria-labelledby="readme-reference-heading"
+      >
         <div class="section-heading">
           <p class="eyebrow">Reference</p>
           <h2 id="readme-reference-heading">README reference</h2>
-          <p>The repository README renders here with an embedded fallback for local and offline use.</p>
+          <p>
+            The repository README renders here with an embedded fallback for
+            local and offline use.
+          </p>
         </div>
         <nav class="reference-links" aria-label="Reference links">
-          <a href="https://github.com/Foscat/Interactive-Surface-CSS#readme">README on GitHub</a>
-          <a href="https://github.com/Foscat/Interactive-Surface-CSS/wiki/Accessibility">Accessibility wiki</a>
-          <a href="https://github.com/Foscat/Interactive-Surface-CSS/wiki/Token-Reference">Token reference</a>
+          <a href="https://github.com/Foscat/Interactive-Surface-CSS#readme"
+            >README on GitHub</a
+          >
+          <a
+            href="https://github.com/Foscat/Interactive-Surface-CSS/wiki/Accessibility"
+            >Accessibility wiki</a
+          >
+          <a
+            href="https://github.com/Foscat/Interactive-Surface-CSS/wiki/Token-Reference"
+            >Token reference</a
+          >
         </nav>
-        <article id="readmeContent" class="markdown-body" aria-label="Rendered README">
+        <article
+          id="readmeContent"
+          class="markdown-body"
+          aria-label="Rendered README"
+        >
           <p>Preparing the embedded README reference…</p>
         </article>
       </section>
     </main>
 
-    <div id="demoStatus" class="live-status" role="status" aria-live="polite" aria-atomic="true" tabindex="-1"></div>
+    <div
+      id="demoStatus"
+      class="live-status"
+      role="status"
+      aria-live="polite"
+      aria-atomic="true"
+      tabindex="-1"
+    ></div>
 
     <!-- The native dialog is outside main so inert background content never contains the active modal. -->
     <dialog id="token-editor-dialog" aria-labelledby="tokenEditorTitle">
@@ -359,11 +537,25 @@
         </label>
         <label class="token-field" for="tokenEditorValue">
           <span>Token value</span>
-          <input id="tokenEditorValue" type="text" autocomplete="off" required />
+          <input
+            id="tokenEditorValue"
+            type="text"
+            autocomplete="off"
+            required
+          />
         </label>
         <div class="dialog-actions">
-          <button type="submit" class="interactive-surface surface-control variant-primary">Apply token</button>
-          <button id="tokenEditorCancel" type="button" class="interactive-surface surface-control variant-subtle">
+          <button
+            type="submit"
+            class="interactive-surface surface-control variant-primary"
+          >
+            Apply token
+          </button>
+          <button
+            id="tokenEditorCancel"
+            type="button"
+            class="interactive-surface surface-control variant-subtle"
+          >
             Cancel token edit
           </button>
         </div>
@@ -371,200 +563,226 @@
     </dialog>
 
     <script id="embeddedReadme" type="text/markdown">
-# Interactive Surface CSS
+      # Interactive Surface CSS
 
-[![npm version](https://img.shields.io/npm/v/interactive-surface-css.svg)](https://www.npmjs.com/package/interactive-surface-css)
-[![license](https://img.shields.io/npm/l/interactive-surface-css.svg)](https://github.com/Foscat/Interactive-Surface-CSS/blob/main/LICENSE)
+      [![npm version](https://img.shields.io/npm/v/interactive-surface-css.svg)](https://www.npmjs.com/package/interactive-surface-css)
+      [![license](https://img.shields.io/npm/l/interactive-surface-css.svg)](https://github.com/Foscat/Interactive-Surface-CSS/blob/main/LICENSE)
 
-Framework-agnostic CSS for reliable hover, focus, press, selected, current, loading, disabled, and motion affordances on interactive controls. Use it alone or as the interaction layer beside your existing layout and theme system.
+      Framework-agnostic CSS for reliable hover, focus, press, selected, current, loading, disabled, and motion affordances on interactive controls. Use it alone or as the interaction layer beside your existing layout and theme system.
 
-Version 1.4.0 is a release candidate in this repository until its npm release is published. Existing 1.x imports, selectors, data hooks, ARIA hooks, and tokens remain supported.
+      Version 1.4.0 is a release candidate in this repository until its npm release is published. Existing 1.x imports, selectors, data hooks, ARIA hooks, and tokens remain supported.
 
-## Start here
+      The package targets Node.js 20+ for npm installs and local validation. CI proves the minimum Node 20 lane and the preferred Node 22 lane before release.
 
-- [Live standalone demo](https://foscat.github.io/Interactive-Surface-CSS/)
-- [Interface Systems Lab](https://foscat.github.io/interface-systems-lab/) — integrated proof with all three CSS libraries
-- [GitHub Wiki](https://github.com/Foscat/Interactive-Surface-CSS/wiki/Home)
-- [Installation guide](https://github.com/Foscat/Interactive-Surface-CSS/wiki/Installation-and-Usage)
-- [API reference](https://github.com/Foscat/Interactive-Surface-CSS/wiki/API-Reference)
-- [Token reference](https://github.com/Foscat/Interactive-Surface-CSS/wiki/Token-Reference)
-- [Accessibility guide](https://github.com/Foscat/Interactive-Surface-CSS/wiki/Accessibility)
+      ## Start here
 
-## Ownership
+      - [Live standalone demo](https://foscat.github.io/Interactive-Surface-CSS/)
+      - [Interface Systems Lab](https://foscat.github.io/interface-systems-lab/) — integrated proof with all three CSS libraries
+      - [GitHub Wiki](https://github.com/Foscat/Interactive-Surface-CSS/wiki/Home)
+      - [Installation guide](https://github.com/Foscat/Interactive-Surface-CSS/wiki/Installation-and-Usage)
+      - [API reference](https://github.com/Foscat/Interactive-Surface-CSS/wiki/API-Reference)
+      - [Token reference](https://github.com/Foscat/Interactive-Surface-CSS/wiki/Token-Reference)
+      - [Accessibility guide](https://github.com/Foscat/Interactive-Surface-CSS/wiki/Accessibility)
 
-Each package remains independently useful. Use one library, use two compatible libraries, or use all three according to the layers your application needs.
+      ## Ownership
 
-| Library | Owns | Does not own |
-| --- | --- | --- |
-| `interactive-surface-css` | Interaction states, focus visibility, state precedence, and interaction motion | Page layout or an application theme |
-| `ui-style-kit-css` | Theme paint, modes, component appearance, and visual tokens | Page layout or interaction behavior |
-| `layout-style-css` | Page structure, layout recipes, and geometry | Theme paint or interaction behavior |
+      Each package remains independently useful. Use one library, use two compatible libraries, or use all three according to the layers your application needs.
 
-## 60-second standalone setup
+      | Library                   | Owns                                                                           | Does not own                        |
+      | ------------------------- | ------------------------------------------------------------------------------ | ----------------------------------- |
+      | `interactive-surface-css` | Interaction states, focus visibility, state precedence, and interaction motion | Page layout or an application theme |
+      | `ui-style-kit-css`        | Theme paint, modes, component appearance, and visual tokens                    | Page layout or interaction behavior |
+      | `layout-style-css`        | Page structure, layout recipes, and geometry                                   | Theme paint or interaction behavior |
 
-Install the package:
+      ## 60-second standalone setup
 
-```bash
-npm install interactive-surface-css
-```
+      Install the package:
 
-Import the portable, direct CSS preset. It includes the neutral standalone presentation and the complete state layer:
+      ```bash
+      npm install interactive-surface-css
+      ```
 
-```js
-import "interactive-surface-css/standalone-preset.css";
-```
+      Import the portable, direct CSS preset. It includes the neutral standalone presentation and the complete state layer:
 
-Add the base class to a native control:
+      ```js
+      import "interactive-surface-css/standalone-preset.css";
+      ```
 
-```html
-<button class="interactive-surface variant-primary" type="button">Save changes</button>
-```
+      Add the base class to a native control:
 
-For a no-build page, pin the release:
+      ```html
+      <button class="interactive-surface variant-primary" type="button">
+        Save changes
+      </button>
+      ```
 
-```html
-<link
-  rel="stylesheet"
-  href="https://cdn.jsdelivr.net/npm/interactive-surface-css@1.4.0/standalone-preset.css"
-/>
-```
+      For a no-build page, pin the release:
 
-The equivalent unpkg URL is `https://unpkg.com/interactive-surface-css@1.4.0/standalone-preset.css`. To follow future releases deliberately, use `https://cdn.jsdelivr.net/npm/interactive-surface-css@latest/standalone-preset.css` — unpinned opt-in.
+      ```html
+      <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/interactive-surface-css@1.4.0/standalone-preset.css"
+      />
+      ```
 
-## Semantic recipes
+      The equivalent unpkg URL is `https://unpkg.com/interactive-surface-css@1.4.0/standalone-preset.css`. To follow future releases deliberately, use `https://cdn.jsdelivr.net/npm/interactive-surface-css@latest/standalone-preset.css` — unpinned opt-in.
 
-Prefer native elements, then reflect persistent application state through ARIA:
+      ## Semantic recipes
 
-```html
-<!-- Action -->
-<button class="interactive-surface variant-primary" type="button">Publish</button>
+      Prefer native elements, then reflect persistent application state through ARIA:
 
-<!-- Toggle: update aria-pressed when the value changes -->
-<button class="interactive-surface" type="button" aria-pressed="true">Pinned</button>
+      ```html
+      <!-- Action -->
+      <button class="interactive-surface variant-primary" type="button">
+        Publish
+      </button>
 
-<!-- Current navigation item: any non-false aria-current value is supported -->
-<a class="interactive-surface" href="/account" aria-current="page">Account</a>
+      <!-- Toggle: update aria-pressed when the value changes -->
+      <button class="interactive-surface" type="button" aria-pressed="true">
+        Pinned
+      </button>
 
-<!-- Selected item in a composite widget -->
-<button class="interactive-surface" role="tab" aria-selected="true">Details</button>
+      <!-- Current navigation item: any non-false aria-current value is supported -->
+      <a class="interactive-surface" href="/account" aria-current="page"
+        >Account</a
+      >
 
-<!-- Loading: update the accessible label or nearby status text as needed -->
-<button class="interactive-surface" type="button" aria-busy="true">Saving…</button>
+      <!-- Selected item in a composite widget -->
+      <button class="interactive-surface" role="tab" aria-selected="true">
+        Details
+      </button>
 
-<!-- Prefer native disabled when the control cannot activate -->
-<button class="interactive-surface" type="button" disabled>Unavailable</button>
+      <!-- Loading: update the accessible label or nearby status text as needed -->
+      <button class="interactive-surface" type="button" aria-busy="true">
+        Saving…
+      </button>
 
-<!-- Variant and level hooks are safe for renderers and companion bridges -->
-<button
-  class="interactive-surface"
-  type="button"
-  data-surface-variant="accent"
-  data-surface-level="2"
->
-  Continue
-</button>
+      <!-- Prefer native disabled when the control cannot activate -->
+      <button class="interactive-surface" type="button" disabled>
+        Unavailable
+      </button>
 
-<!-- Icon-only controls need an accessible name; the icon itself is decorative -->
-<button class="interactive-surface icon-only" type="button" aria-label="Open settings">
-  <svg aria-hidden="true" data-icon-role="dark" viewBox="0 0 24 24">…</svg>
-</button>
-```
+      <!-- Native file inputs opt in on the host; the selector button follows the same tokens -->
+      <input class="interactive-surface variant-subtle" type="file" />
 
-Native `disabled` is preferred because the browser suppresses focus and activation. CSS can only communicate disabled-looking state: consumers must suppress activation for `aria-disabled="true"` and `.is-disabled` controls in their event handling.
+      <!-- Variant and level hooks are safe for renderers and companion bridges -->
+      <button
+        class="interactive-surface"
+        type="button"
+        data-surface-variant="accent"
+        data-surface-level="2"
+      >
+        Continue
+      </button>
 
-## Entry points
+      <!-- Icon-only controls need an accessible name; the icon itself is decorative -->
+      <button
+        class="interactive-surface icon-only"
+        type="button"
+        aria-label="Open settings"
+      >
+        <svg aria-hidden="true" data-icon-role="dark" viewBox="0 0 24 24">
+          …
+        </svg>
+      </button>
+      ```
 
-| Import | Presentation | Best for |
-| --- | --- | --- |
-| `import "interactive-surface-css/standalone-preset.css";` | State core plus neutral paint, variants, levels, icon sizing, and preset token defaults | New standalone integrations |
-| `import "interactive-surface-css/state-core.css";` | Interaction mechanics and neutral core token fallbacks only | Existing design systems that already own paint and geometry |
-| `import "interactive-surface-css/interactive-surface.css";` | Complete standalone compatibility bundle | Existing direct-CSS 1.x consumers |
-| `import "interactive-surface-css";` | JavaScript entry that imports the complete compatibility bundle | Existing bundlers configured for CSS imports |
+      Native `disabled` is preferred because the browser suppresses focus and activation. CSS can only communicate disabled-looking state: consumers must suppress activation for `aria-disabled="true"` and `.is-disabled` controls in their event handling.
 
-`standalone-preset.css` and `interactive-surface.css` are generated from the same authored modules and are behaviorally equivalent in 1.4.0. The compatibility paths remain stable; no 1.x migration is required.
+      ## Entry points
 
-The package `main` and `module` fields preserve the CommonJS and ESM entries; both load `interactive-surface.css`. The `style`, `unpkg`, and `jsdelivr` fields also resolve to that complete compatibility bundle.
+      | Import                                                      | Presentation                                                                            | Best for                                                    |
+      | ----------------------------------------------------------- | --------------------------------------------------------------------------------------- | ----------------------------------------------------------- |
+      | `import "interactive-surface-css/standalone-preset.css";`   | State core plus neutral paint, variants, levels, icon sizing, and preset token defaults | New standalone integrations                                 |
+      | `import "interactive-surface-css/state-core.css";`          | Interaction mechanics and neutral core token fallbacks only                             | Existing design systems that already own paint and geometry |
+      | `import "interactive-surface-css/interactive-surface.css";` | Complete standalone compatibility bundle                                                | Existing direct-CSS 1.x consumers                           |
+      | `import "interactive-surface-css";`                         | JavaScript entry that imports the complete compatibility bundle                         | Existing bundlers configured for CSS imports                |
 
-## Compact API
+      `standalone-preset.css` and `interactive-surface.css` are generated from the same authored modules and are behaviorally equivalent in 1.4.0. The compatibility paths remain stable; no 1.x migration is required.
 
-| Kind | Public hooks |
-| --- | --- |
-| Base | `.interactive-surface` |
-| Size | `.size-sm`, default medium, `.size-lg` |
-| Transient | pointer `:hover`, keyboard `:focus-visible`, `:active` |
-| Persistent | `.is-active`, `aria-pressed="true"`, `aria-pressed="mixed"`, any non-false `aria-current`, `aria-selected="true"` |
-| Loading | `aria-busy="true"`, `.is-loading` |
-| Disabled | native `:disabled`, `aria-disabled="true"`, `.is-disabled` |
-| Variant | `.variant-primary`, `.variant-secondary`, `.variant-accent`, `.variant-subtle`, `.variant-warning`, `.variant-danger`, or matching `data-surface-variant` values |
-| Level | `data-surface-level="1|2|3"` |
-| Icon | `.icon-only`; child `data-icon-role="light|dark|accessibility"` or the legacy role classes |
+      The package `main` and `module` fields preserve the CommonJS and ESM entries; both load `interactive-surface.css`. The `style`, `unpkg`, and `jsdelivr` fields also resolve to that complete compatibility bundle.
 
-Disabled state has highest visual precedence. The state layer preserves static meaning under reduced motion and uses system-color affordances in forced-colors mode. Interaction lift uses the individual `translate` property, so consumer-owned `transform`, `scale`, and `rotate` declarations can coexist.
+      ## Compact API
 
-For selector details and responsibilities, see the [complete API reference](https://github.com/Foscat/Interactive-Surface-CSS/wiki/API-Reference).
+      | Kind              | Public hooks                                                                                                                                                     |
+      | ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+      | Base              | `.interactive-surface`                                                                                                                                           |
+      | Size              | `.size-sm`, default medium, `.size-lg`                                                                                                                           |
+      | Transient         | pointer `:hover`, keyboard `:focus-visible`, `:active`                                                                                                           |
+      | Persistent        | `.is-active`, `aria-pressed="true"`, `aria-pressed="mixed"`, any non-false `aria-current`, `aria-selected="true"`                                                |
+      | Loading           | `aria-busy="true"`, `.is-loading`                                                                                                                                |
+      | Disabled          | native `:disabled`, `aria-disabled="true"`, `.is-disabled`                                                                                                       |
+      | Variant           | `.variant-primary`, `.variant-secondary`, `.variant-accent`, `.variant-subtle`, `.variant-warning`, `.variant-danger`, or matching `data-surface-variant` values |
+      | Level             | `data-surface-level="1                                                                                                                                           | 2    | 3"`                                        |
+      | Icon              | `.icon-only`; child `data-icon-role="light                                                                                                                       | dark | accessibility"` or the legacy role classes |
+      | Native subcontrol | `input[type="file"].interactive-surface::file-selector-button` inherits surface paint and hover/active feedback                                                  |
 
-## Customize tokens
+      Disabled state has highest visual precedence. The state layer preserves static meaning under reduced motion and uses system-color affordances in forced-colors mode. Interaction lift uses the individual `translate` property, so consumer-owned `transform`, `scale`, and `rotate` declarations can coexist.
 
-`state-core.css` provides neutral defaults for state-layer color and opacity, focus rings, motion, persistent states, disabled state, and loading state. `standalone-preset.css` additionally supplies base paint, lift and shadows, variants, surface levels, icon roles, and the 44 × 44px icon-control geometry.
+      For selector details and responsibilities, see the [complete API reference](https://github.com/Foscat/Interactive-Surface-CSS/wiki/API-Reference).
 
-```css
-.save-action {
-  --interactive-surface-focus-ring-color: rgb(0 95 115);
-  --interactive-surface-state-layer-color: rgb(0 45 55);
-  --interactive-surface-state-layer-hover-opacity: 0.1;
-  --interactive-surface-motion-default: 120ms;
-}
-```
+      ## Customize tokens
 
-All public custom properties use the `--interactive-surface-*` namespace. Established legacy and semantic fallback tokens remain supported. See the [token ownership tables and full reference](https://github.com/Foscat/Interactive-Surface-CSS/wiki/Token-Reference).
+      `state-core.css` provides neutral defaults for state-layer color and opacity, focus rings, motion, persistent states, disabled state, and loading state. `standalone-preset.css` additionally supplies base paint, lift and shadows, variants, surface levels, icon roles, and the 44 × 44px icon-control geometry.
 
-## Accessibility responsibilities
+      ```css
+      .save-action {
+        --interactive-surface-focus-ring-color: rgb(0 95 115);
+        --interactive-surface-state-layer-color: rgb(0 45 55);
+        --interactive-surface-state-layer-hover-opacity: 0.1;
+        --interactive-surface-motion-default: 120ms;
+      }
+      ```
 
-The CSS package provides visible keyboard focus, persistent-state treatment, disabled precedence, reduced-motion behavior, higher-contrast behavior, forced-colors affordances, hover gating for capable pointers, and standalone icon target sizing.
+      All public custom properties use the `--interactive-surface-*` namespace. Established legacy and semantic fallback tokens remain supported. See the [token ownership tables and full reference](https://github.com/Foscat/Interactive-Surface-CSS/wiki/Token-Reference).
 
-Applications still own semantics and behavior:
+      ## Accessibility responsibilities
 
-- Use `<button>` for actions and `<a href>` for navigation.
-- Update `aria-pressed`, `aria-current`, `aria-selected`, and `aria-busy` when application state changes.
-- Prefer native `disabled`. If a custom control uses `aria-disabled="true"` or `.is-disabled`, suppress pointer, keyboard, and programmatic activation.
-- Give icon-only controls an accessible name, normally with `aria-label`, and hide decorative SVG content from assistive technology.
-- Implement the keyboard model for composite widgets such as tabs; CSS does not add runtime behavior.
+      The CSS package provides visible keyboard focus, persistent-state treatment, disabled precedence, reduced-motion behavior, higher-contrast behavior, forced-colors affordances, hover gating for capable pointers, and standalone icon target sizing.
 
-Read the [accessibility guide](https://github.com/Foscat/Interactive-Surface-CSS/wiki/Accessibility) for complete examples.
+      Applications still own semantics and behavior:
 
-## Pair with UI Style Kit CSS
+      - Use `<button>` for actions and `<a href>` for navigation.
+      - Update `aria-pressed`, `aria-current`, `aria-selected`, and `aria-busy` when application state changes.
+      - Prefer native `disabled`. If a custom control uses `aria-disabled="true"` or `.is-disabled`, suppress pointer, keyboard, and programmatic activation.
+      - Give icon-only controls an accessible name, normally with `aria-label`, and hide decorative SVG content from assistive technology.
+      - Implement the keyboard model for composite widgets such as tabs; CSS does not add runtime behavior.
 
-When UI Style Kit owns visual paint, import its opt-in bridge and the state-only core:
+      Read the [accessibility guide](https://github.com/Foscat/Interactive-Surface-CSS/wiki/Accessibility) for complete examples.
 
-```js
-import "ui-style-kit-css/with-bridge.css";
-import "interactive-surface-css/state-core.css";
-```
+      ## Pair with UI Style Kit CSS
 
-The bridge maps active UI Style Kit theme and mode values into the `--interactive-surface-*` contract. Interactive Surface keeps ownership of focus, hover, pressed, selected, current, loading, disabled, and motion behavior.
+      When UI Style Kit owns visual paint, import its opt-in bridge and the state-only core:
 
-## Use all three libraries
+      ```js
+      import "ui-style-kit-css/with-bridge.css";
+      import "interactive-surface-css/state-core.css";
+      ```
 
-Use the established order so paint, interaction, and structure retain clear ownership:
+      The bridge maps active UI Style Kit theme and mode values into the `--interactive-surface-*` contract. Interactive Surface keeps ownership of focus, hover, pressed, selected, current, loading, disabled, and motion behavior.
 
-```js
-import "ui-style-kit-css/with-bridge.css";
-import "interactive-surface-css/state-core.css";
-import "layout-style-css/bridge.css";
-import "layout-style-css";
-```
+      ## Use all three libraries
 
-The [Interface Systems Lab](https://foscat.github.io/interface-systems-lab/) is the canonical integrated example. Each package remains optional: use one library, use two compatible libraries, or use all three.
+      Use the established order so paint, interaction, and structure retain clear ownership:
 
-## Support and project links
+      ```js
+      import "ui-style-kit-css/with-bridge.css";
+      import "interactive-surface-css/state-core.css";
+      import "layout-style-css/bridge.css";
+      import "layout-style-css";
+      ```
 
-- Browser behavior: current Chromium, Firefox, and WebKit are covered by the full Playwright gate; forced-colors and platform-specific behavior are tested where supported.
-- [Testing and quality guide](https://github.com/Foscat/Interactive-Surface-CSS/wiki/Testing-and-Quality)
-- [Changelog](https://github.com/Foscat/Interactive-Surface-CSS/blob/main/CHANGELOG.md)
-- [Contributing](https://github.com/Foscat/Interactive-Surface-CSS/blob/main/CONTRIBUTING.md)
-- [Code of Conduct](https://github.com/Foscat/Interactive-Surface-CSS/blob/main/CODE_OF_CONDUCT.md)
-- [Security policy](https://github.com/Foscat/Interactive-Surface-CSS/blob/main/SECURITY.md)
-- [MIT License](https://github.com/Foscat/Interactive-Surface-CSS/blob/main/LICENSE)
+      The [Interface Systems Lab](https://foscat.github.io/interface-systems-lab/) is the canonical integrated example. Each package remains optional: use one library, use two compatible libraries, or use all three.
+
+      ## Support and project links
+
+      - Browser behavior: current Chromium, Firefox, and WebKit are covered by the full Playwright gate; forced-colors and platform-specific behavior are tested where supported.
+      - [Testing and quality guide](https://github.com/Foscat/Interactive-Surface-CSS/wiki/Testing-and-Quality)
+      - [Changelog](https://github.com/Foscat/Interactive-Surface-CSS/blob/main/CHANGELOG.md)
+      - [Contributing](https://github.com/Foscat/Interactive-Surface-CSS/blob/main/CONTRIBUTING.md)
+      - [Code of Conduct](https://github.com/Foscat/Interactive-Surface-CSS/blob/main/CODE_OF_CONDUCT.md)
+      - [Security policy](https://github.com/Foscat/Interactive-Surface-CSS/blob/main/SECURITY.md)
+      - [MIT License](https://github.com/Foscat/Interactive-Surface-CSS/blob/main/LICENSE)
     </script>
     <script src="./demo/demo.js" defer></script>
   </body>

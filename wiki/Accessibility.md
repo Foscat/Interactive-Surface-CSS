@@ -19,11 +19,19 @@ Custom disabled widgets that remain in the Tab order keep a visible focus ring. 
 ## Semantic states
 
 ```html
-<button class="interactive-surface" type="button" aria-pressed="true">Pinned</button>
-<button class="interactive-surface" type="button" aria-pressed="mixed">Partly selected</button>
+<button class="interactive-surface" type="button" aria-pressed="true">
+  Pinned
+</button>
+<button class="interactive-surface" type="button" aria-pressed="mixed">
+  Partly selected
+</button>
 <a class="interactive-surface" href="/account" aria-current="page">Account</a>
-<button class="interactive-surface" role="tab" aria-selected="true">Details</button>
-<button class="interactive-surface" type="button" aria-busy="true">Saving…</button>
+<button class="interactive-surface" role="tab" aria-selected="true">
+  Details
+</button>
+<button class="interactive-surface" type="button" aria-busy="true">
+  Saving…
+</button>
 ```
 
 Any non-false `aria-current` value receives current-state styling. `aria-selected` is intended for selectable composite widgets, while `aria-pressed` is intended for toggle buttons. `aria-busy` and `.is-loading` communicate the library's visual loading state.
@@ -44,7 +52,8 @@ Native `disabled` is preferred because the browser suppresses focus and activati
 function activateControl(event) {
   const control = event.currentTarget;
   const isDisabled =
-    control.matches(".is-disabled") || control.getAttribute("aria-disabled") === "true";
+    control.matches(".is-disabled") ||
+    control.getAttribute("aria-disabled") === "true";
 
   if (isDisabled) {
     event.preventDefault();
@@ -86,7 +95,11 @@ The standalone preset and compatibility bundle give `.icon-only` a 44 × 44px mi
 Every icon-only control needs an accessible name, and decorative SVG content should be hidden:
 
 ```html
-<button class="interactive-surface icon-only" type="button" aria-label="Open settings">
+<button
+  class="interactive-surface icon-only"
+  type="button"
+  aria-label="Open settings"
+>
   <svg aria-hidden="true" data-icon-role="dark" viewBox="0 0 24 24">…</svg>
 </button>
 ```

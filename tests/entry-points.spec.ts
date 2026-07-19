@@ -9,8 +9,14 @@ const packageRoot = path.resolve(__dirname, "..");
 
 const bundles = {
   core: fs.readFileSync(path.join(packageRoot, "state-core.css"), "utf8"),
-  preset: fs.readFileSync(path.join(packageRoot, "standalone-preset.css"), "utf8"),
-  compatibility: fs.readFileSync(path.join(packageRoot, "interactive-surface.css"), "utf8")
+  preset: fs.readFileSync(
+    path.join(packageRoot, "standalone-preset.css"),
+    "utf8",
+  ),
+  compatibility: fs.readFileSync(
+    path.join(packageRoot, "interactive-surface.css"),
+    "utf8",
+  ),
 } as const;
 
 function entryPointHtml(css: string) {
@@ -38,6 +44,7 @@ function entryPointHtml(css: string) {
     <button id="variant" class="interactive-surface variant-primary">Variant</button>
     <button id="level" class="interactive-surface" data-surface-level="2">Level</button>
     <button id="icon" class="interactive-surface icon-only" aria-label="Icon">I</button>
+    <input id="file" class="interactive-surface variant-subtle" type="file" />
     <button id="hover-motion" class="interactive-surface">Hover motion</button>
     <button id="persistent-motion" class="interactive-surface" aria-selected="true">Selected</button>
   </body>
@@ -52,7 +59,9 @@ async function standaloneSnapshot(page: Page, css: string) {
 
     return Object.fromEntries(
       selectors.map((selector) => {
-        const styles = window.getComputedStyle(document.querySelector(selector) as HTMLElement);
+        const styles = window.getComputedStyle(
+          document.querySelector(selector) as HTMLElement,
+        );
 
         return [
           selector,
@@ -66,17 +75,19 @@ async function standaloneSnapshot(page: Page, css: string) {
             display: styles.display,
             minHeight: styles.minHeight,
             minWidth: styles.minWidth,
-            padding: styles.padding
-          }
+            padding: styles.padding,
+          },
         ];
-      })
+      }),
     );
   });
 }
 
 async function translateY(page: Page, selector: string) {
   return page.locator(selector).evaluate((element) => {
-    const value = window.getComputedStyle(element).getPropertyValue("translate");
+    const value = window
+      .getComputedStyle(element)
+      .getPropertyValue("translate");
 
     if (value === "none") {
       return 0;
@@ -87,8 +98,31 @@ async function translateY(page: Page, selector: string) {
   });
 }
 
+async function fileSelectorButtonSnapshot(page: Page, selector: string) {
+  return page.locator(selector).evaluate((element) => {
+    const host = window.getComputedStyle(element);
+    const selectorButton = window.getComputedStyle(
+      element,
+      "::file-selector-button",
+    );
+
+    return {
+      buttonBackgroundColor: selectorButton.backgroundColor,
+      buttonBorderColor: selectorButton.borderColor,
+      buttonBoxShadow: selectorButton.boxShadow,
+      buttonColor: selectorButton.color,
+      buttonCursor: selectorButton.cursor,
+      buttonTransitionProperty: selectorButton.transitionProperty,
+      hostBackgroundColor: host.backgroundColor,
+      hostColor: host.color,
+    };
+  });
+}
+
 test.describe("public stylesheet entry points", () => {
-  test("state core preserves consumer-owned paint, geometry, typography, and display", async ({ page }) => {
+  test("state core preserves consumer-owned paint, geometry, typography, and display", async ({
+    page,
+  }) => {
     await page.setContent(entryPointHtml(bundles.core));
 
     const styles = await page.locator("#consumer").evaluate((element) => {
@@ -104,7 +138,7 @@ test.describe("public stylesheet entry points", () => {
         fontFamily: computed.fontFamily,
         fontSize: computed.fontSize,
         fontWeight: computed.fontWeight,
-        padding: computed.padding
+        padding: computed.padding,
       };
     });
 
@@ -118,17 +152,21 @@ test.describe("public stylesheet entry points", () => {
       fontFamily: "Georgia, serif",
       fontSize: "19px",
       fontWeight: "700",
-      padding: "13px"
+      padding: "13px",
     });
   });
 
-  test("preset and compatibility bundles render equivalent complete defaults", async ({ page }) => {
+  test("preset and compatibility bundles render equivalent complete defaults", async ({
+    page,
+  }) => {
     const preset = await standaloneSnapshot(page, bundles.preset);
     const compatibility = await standaloneSnapshot(page, bundles.compatibility);
 
     expect(compatibility).toEqual(preset);
     expect(preset["#default"].backgroundColor).not.toBe("rgba(0, 0, 0, 0)");
-    expect(preset["#variant"].backgroundColor).not.toBe(preset["#default"].backgroundColor);
+    expect(preset["#variant"].backgroundColor).not.toBe(
+      preset["#default"].backgroundColor,
+    );
     expect(preset["#level"].boxShadow).not.toBe("none");
     expect(preset["#icon"].display).toBe("inline-flex");
     expect(preset["#icon"].minWidth).toBe("44px");
@@ -136,12 +174,31 @@ test.describe("public stylesheet entry points", () => {
   });
 
   for (const entryPoint of ["preset", "compatibility"] as const) {
-    test(`${entryPoint} bundle retains familiar hover and persistent lift`, async ({ page }) => {
+    test(`${entryPoint} bundle retains familiar hover and persistent lift`, async ({
+      page,
+    }) => {
       await page.setContent(entryPointHtml(bundles[entryPoint]));
       await page.locator("#hover-motion").hover();
 
       await expect.poll(() => translateY(page, "#hover-motion")).toBe(-4);
       await expect.poll(() => translateY(page, "#persistent-motion")).toBe(-2);
+    });
+
+    test(`${entryPoint} bundle styles the native file selector button as an interaction surface`, async ({
+      page,
+    }) => {
+      await page.setContent(entryPointHtml(bundles[entryPoint]));
+
+      const rest = await fileSelectorButtonSnapshot(page, "#file");
+      expect(rest.buttonBackgroundColor).toBe(rest.hostBackgroundColor);
+      expect(rest.buttonColor).toBe(rest.hostColor);
+      expect(rest.buttonCursor).toBe("pointer");
+      expect(rest.buttonTransitionProperty).toContain("box-shadow");
+
+      await page.locator("#file").hover({ position: { x: 8, y: 8 } });
+      const hover = await fileSelectorButtonSnapshot(page, "#file");
+
+      expect(hover.buttonBoxShadow).not.toBe(rest.buttonBoxShadow);
     });
   }
 });

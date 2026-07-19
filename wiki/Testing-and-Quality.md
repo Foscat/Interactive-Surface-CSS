@@ -10,7 +10,7 @@ The deterministic release gate covers static checks, generated-bundle parity, CS
 
 Use this tier for normal CI and before requesting review.
 
-CI runs the full deterministic tier on Node.js 24. A Node.js 18 compatibility lane separately proves source checks, generation, contracts, packed-consumer resolution, dry packing, and audit; Stylelint remains in the Node.js 24 gate because its current toolchain requires Node.js 20 or newer. Official workflow actions are pinned to reviewed commit revisions.
+CI runs the full deterministic tier on Node.js 20 and Node.js 22. The Node.js 20 lane is the minimum supported npm and contributor runtime through `npm run validate:node20`; the Node.js 22 lane is the preferred release-validation runtime through `npm run validate:ci`. Official workflow actions are pinned to reviewed commit revisions.
 
 ### `npm run validate:browsers`
 
@@ -22,17 +22,17 @@ This runs the deterministic validation tier plus the complete Playwright matrix 
 
 ## Focused commands
 
-| Command | Purpose |
-| --- | --- |
-| `npm run check:no-hex-colors` | Reject disallowed hex color literals |
-| `npm run check:public` | Verify committed public roots before generating ignored distribution files |
-| `npm run check:generated` | Verify public and distribution bundles after a build |
-| `npm run lint:css` | Run Stylelint over authored, generated, and demo CSS |
-| `npm run test:contracts` | Run deterministic public, build, and documentation contracts |
-| `npm run test:chromium` | Run the selected Playwright tests in Chromium |
-| `npm test` | Run the configured Chromium, Firefox, and WebKit projects |
-| `npm run pack:dry` | Inspect the npm tarball allowlist without publishing |
-| `npm audit` | Check the dependency tree against the npm advisory database |
+| Command                       | Purpose                                                                    |
+| ----------------------------- | -------------------------------------------------------------------------- |
+| `npm run check:no-hex-colors` | Reject disallowed hex color literals                                       |
+| `npm run check:public`        | Verify committed public roots before generating ignored distribution files |
+| `npm run check:generated`     | Verify public and distribution bundles after a build                       |
+| `npm run lint:css`            | Run Stylelint over authored, generated, and demo CSS                       |
+| `npm run test:contracts`      | Run deterministic public, build, and documentation contracts               |
+| `npm run test:chromium`       | Run the selected Playwright tests in Chromium                              |
+| `npm test`                    | Run the configured Chromium, Firefox, and WebKit projects                  |
+| `npm run pack:dry`            | Inspect the npm tarball allowlist without publishing                       |
+| `npm audit`                   | Check the dependency tree against the npm advisory database                |
 
 The exact script graph is finalized as part of the 1.4.0 release candidate before publication. Browser downloads intentionally remain outside `prepublishOnly`.
 

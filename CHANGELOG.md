@@ -16,12 +16,14 @@ All notable changes to this package are documented in this file.
 
 ### Changed
 
+- Raised the npm engine contract and release validation matrix to Node.js 20+ with explicit Node.js 20 and Node.js 22 CI lanes.
 - Split authored CSS into focused state-core and standalone-preset modules, then generate all public and distribution bundles from those sources.
 - Made interaction lift composable with consumer and companion-library transforms by using token-driven individual translation.
 - Reorganized the npm README, demo, and wiki around entry-point choice, semantic state recipes, and clear ecosystem ownership.
 
 ### Fixed
 
+- Fixed native file input selector-button styling by mapping `input[type="file"].interactive-surface::file-selector-button` into the same token, hover, focus, active, and disabled state contract as the host surface.
 - Fixed disabled-state precedence so native, ARIA, and class-based disabled surfaces cannot retain active, persistent, or loading feedback.
 - Fixed UI Style Kit motion composition across supported bridge modifiers and stylesheet import orders.
 - Fixed token-dialog focus containment, focus restoration, and stale status feedback between editing sessions.

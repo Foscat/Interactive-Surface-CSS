@@ -19,19 +19,34 @@ test("the complete bundle retains the 1.x public contract", () => {
     ".variant-danger",
     ".is-active",
     ".is-disabled",
+    "::file-selector-button",
     "data-surface-variant",
     "data-surface-level",
     "data-icon-role",
     "aria-pressed",
     "aria-current",
-    "aria-disabled"
-  ].forEach((value) => assert.ok(css.includes(value), "Missing public contract: " + value));
-
-  ["--interactive-surface-", "--lift-", "--shadow-", "--motion-", "--ease-"].forEach((value) =>
-    assert.ok(css.includes(value), "Missing token family: " + value)
+    "aria-disabled",
+  ].forEach((value) =>
+    assert.ok(css.includes(value), "Missing public contract: " + value),
   );
 
-  assert.equal(manifest.exports["./interactive-surface.css"], "./interactive-surface.css");
+  [
+    "--interactive-surface-",
+    "--lift-",
+    "--shadow-",
+    "--motion-",
+    "--ease-",
+  ].forEach((value) =>
+    assert.ok(css.includes(value), "Missing token family: " + value),
+  );
+
+  assert.equal(
+    manifest.exports["./interactive-surface.css"],
+    "./interactive-surface.css",
+  );
   assert.match(fs.readFileSync("index.js", "utf8"), /interactive-surface\.css/);
-  assert.match(fs.readFileSync("index.cjs", "utf8"), /interactive-surface\.css/);
+  assert.match(
+    fs.readFileSync("index.cjs", "utf8"),
+    /interactive-surface\.css/,
+  );
 });

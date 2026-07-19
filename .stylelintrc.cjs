@@ -7,6 +7,6 @@ module.exports = {
     "color-function-notation": null,
     "alpha-value-notation": null,
     "property-no-vendor-prefix": null,
-    "no-descending-specificity": null
-  }
+    "no-descending-specificity": null,
+  },
 };

@@ -32,11 +32,11 @@ The package will continue to work by itself. Pairing it with `ui-style-kit-css` 
 
 The three libraries retain strict, independently useful boundaries:
 
-| Library | Owns | Does not own |
-| --- | --- | --- |
-| `layout-style-css` | Page structure, layout recipes, and geometry | Theme paint or interaction state behavior |
-| `ui-style-kit-css` | Themes, component paint, modes, and visual tokens | Page layout or state behavior |
-| `interactive-surface-css` | Focus, hover, pressed, selected, current, loading, disabled, and motion affordances | Page layout or application theme systems |
+| Library                   | Owns                                                                                | Does not own                              |
+| ------------------------- | ----------------------------------------------------------------------------------- | ----------------------------------------- |
+| `layout-style-css`        | Page structure, layout recipes, and geometry                                        | Theme paint or interaction state behavior |
+| `ui-style-kit-css`        | Themes, component paint, modes, and visual tokens                                   | Page layout or state behavior             |
+| `interactive-surface-css` | Focus, hover, pressed, selected, current, loading, disabled, and motion affordances | Page layout or application theme systems  |
 
 The documentation will consistently explain how to use one library, any compatible pair, or all three. No package will be presented as a prerequisite for another.
 

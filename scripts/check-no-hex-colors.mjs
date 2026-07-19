@@ -9,7 +9,7 @@ const targetFiles = [
   "styles/standalone-preset.css",
   "state-core.css",
   "standalone-preset.css",
-  "interactive-surface.css"
+  "interactive-surface.css",
 ];
 const hexPattern = /#[0-9a-fA-F]{3,8}\b/g;
 const violations = [];
@@ -24,7 +24,7 @@ targetFiles.forEach((targetFile) => {
       violations.push({
         file: targetFile,
         line: index + 1,
-        value: match[0]
+        value: match[0],
       });
       match = hexPattern.exec(line);
     }
@@ -34,7 +34,9 @@ targetFiles.forEach((targetFile) => {
 });
 
 if (violations.length === 0) {
-  console.log(`No hex color literals found in ${targetFiles.length} checked stylesheets.`);
+  console.log(
+    `No hex color literals found in ${targetFiles.length} checked stylesheets.`,
+  );
   process.exit(0);
 }
 
@@ -42,5 +44,7 @@ console.error("Hex color literals are not allowed:");
 violations.forEach((violation) => {
   console.error(`- ${violation.file}:${violation.line}: ${violation.value}`);
 });
-console.error("Use CSS functional color notation instead (for example, rgb(...), rgb(... / <alpha>), or hsl(...)).");
+console.error(
+  "Use CSS functional color notation instead (for example, rgb(...), rgb(... / <alpha>), or hsl(...)).",
+);
 process.exit(1);

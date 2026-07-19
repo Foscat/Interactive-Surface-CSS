@@ -13,9 +13,15 @@
   const toggleState = document.getElementById("toggle-state");
   const loadingExample = document.querySelector('[data-example="loading"]');
   const iconExample = document.querySelector('[data-example="icon"]');
-  const tabs = Array.from(document.querySelectorAll('#state-tabs [role="tab"]'));
-  const tokenCards = Array.from(document.querySelectorAll(".token-card[data-token]"));
-  const tokenEditButtons = Array.from(document.querySelectorAll("[data-token-edit]"));
+  const tabs = Array.from(
+    document.querySelectorAll('#state-tabs [role="tab"]'),
+  );
+  const tokenCards = Array.from(
+    document.querySelectorAll(".token-card[data-token]"),
+  );
+  const tokenEditButtons = Array.from(
+    document.querySelectorAll("[data-token-edit]"),
+  );
   const tokenCssImport = document.getElementById("tokenCssImport");
   const tokenCssCopy = document.getElementById("tokenCssCopy");
   const tokenCssDownload = document.getElementById("tokenCssDownload");
@@ -141,7 +147,9 @@
   });
 
   iconExample?.addEventListener("click", () => {
-    setStatus("The icon-only control exposes its purpose through an accessible name.");
+    setStatus(
+      "The icon-only control exposes its purpose through an accessible name.",
+    );
   });
 
   // Token helpers keep the editor, readouts, imported declarations, and export text synchronized.
@@ -150,7 +158,9 @@
   }
 
   function tokenReadout(tokenName) {
-    return document.querySelector(`[data-token="${tokenName}"] [data-token-value]`);
+    return document.querySelector(
+      `[data-token="${tokenName}"] [data-token-value]`,
+    );
   }
 
   function currentTokenValue(tokenName) {
@@ -159,7 +169,12 @@
     }
 
     const readout = tokenReadout(tokenName);
-    return readout?.textContent?.trim() || getComputedStyle(document.documentElement).getPropertyValue(tokenName).trim();
+    return (
+      readout?.textContent?.trim() ||
+      getComputedStyle(document.documentElement)
+        .getPropertyValue(tokenName)
+        .trim()
+    );
   }
 
   function updateTokenReadout(tokenName, tokenValue) {
@@ -177,12 +192,19 @@
       document.head.appendChild(overrideStyle);
     }
 
-    const declarations = Array.from(tokenOverrides, ([tokenName, tokenValue]) => `  ${tokenName}: ${tokenValue};`);
-    overrideStyle.textContent = declarations.length ? `:root {\n${declarations.join("\n")}\n}` : "";
+    const declarations = Array.from(
+      tokenOverrides,
+      ([tokenName, tokenValue]) => `  ${tokenName}: ${tokenValue};`,
+    );
+    overrideStyle.textContent = declarations.length
+      ? `:root {\n${declarations.join("\n")}\n}`
+      : "";
   }
 
   function buildTokenCss() {
-    const declarations = editableTokenNames().map((tokenName) => `  ${tokenName}: ${currentTokenValue(tokenName)};`);
+    const declarations = editableTokenNames().map(
+      (tokenName) => `  ${tokenName}: ${currentTokenValue(tokenName)};`,
+    );
     return `:root {\n${declarations.join("\n")}\n}\n`;
   }
 
@@ -196,13 +218,18 @@
       return [];
     }
 
-    return Array.from(tokenEditorDialog.querySelectorAll("button:not([disabled]), input:not([disabled])")).filter(
-      (element) => element.tabIndex >= 0
-    );
+    return Array.from(
+      tokenEditorDialog.querySelectorAll(
+        "button:not([disabled]), input:not([disabled])",
+      ),
+    ).filter((element) => element.tabIndex >= 0);
   }
 
   function restoreStatusRegion() {
-    statusRegionHome.parentNode?.insertBefore(statusRegion, statusRegionHome.nextSibling);
+    statusRegionHome.parentNode?.insertBefore(
+      statusRegion,
+      statusRegionHome.nextSibling,
+    );
   }
 
   function restoreDialogContext() {
@@ -234,8 +261,17 @@
   function openTokenEditor(trigger) {
     const card = trigger.closest(".token-card[data-token]");
     const tokenName = card?.dataset.token;
-    if (!tokenName || !tokenEditorDialog || !tokenEditorTitle || !tokenEditorName || !tokenEditorValue) {
-      setStatus("The token editor is unavailable. Reload the page and try again.", { focus: true, tone: "error" });
+    if (
+      !tokenName ||
+      !tokenEditorDialog ||
+      !tokenEditorTitle ||
+      !tokenEditorName ||
+      !tokenEditorValue
+    ) {
+      setStatus(
+        "The token editor is unavailable. Reload the page and try again.",
+        { focus: true, tone: "error" },
+      );
       return;
     }
 
@@ -257,7 +293,10 @@
       tokenEditorValue.select();
     } catch (_error) {
       restoreDialogContext();
-      setStatus("The token editor could not open. Reload the page and try again.", { focus: true, tone: "error" });
+      setStatus(
+        "The token editor could not open. Reload the page and try again.",
+        { focus: true, tone: "error" },
+      );
     }
   }
 
@@ -298,11 +337,14 @@
     event.preventDefault();
     const tokenValue = tokenEditorValue?.value.trim() || "";
     if (!activeTokenName || !isSupportedColor(tokenValue)) {
-      setDialogStatus("Enter a valid CSS color value, such as rgb(16 42 67), and try again.", {
-        focus: true,
-        tone: "error",
-        persistOnClose: false
-      });
+      setDialogStatus(
+        "Enter a valid CSS color value, such as rgb(16 42 67), and try again.",
+        {
+          focus: true,
+          tone: "error",
+          persistOnClose: false,
+        },
+      );
       tokenEditorValue?.focus();
       return;
     }
@@ -310,10 +352,13 @@
     tokenOverrides.set(activeTokenName, tokenValue);
     renderTokenOverrides();
     updateTokenReadout(activeTokenName, tokenValue);
-    setDialogStatus(`${activeTokenName} updated. Close the editor to review the state lab.`, {
-      tone: "success",
-      persistOnClose: true
-    });
+    setDialogStatus(
+      `${activeTokenName} updated. Close the editor to review the state lab.`,
+      {
+        tone: "success",
+        persistOnClose: true,
+      },
+    );
   });
 
   // File, clipboard, Blob URL, and download failures each receive a focused recovery message.
@@ -326,14 +371,22 @@
     try {
       const cssText = await file.text();
       const supportedNames = new Set(editableTokenNames());
-      const declarations = Array.from(cssText.matchAll(/(--[a-z0-9-]+)\s*:\s*([^;{}]+);/gi));
-      const accepted = declarations.filter((match) => supportedNames.has(match[1]) && isSupportedColor(match[2].trim()));
+      const declarations = Array.from(
+        cssText.matchAll(/(--[a-z0-9-]+)\s*:\s*([^;{}]+);/gi),
+      );
+      const accepted = declarations.filter(
+        (match) =>
+          supportedNames.has(match[1]) && isSupportedColor(match[2].trim()),
+      );
 
       if (!accepted.length) {
-        setStatus("No supported color tokens were found. Check the token names and try again.", {
-          focus: true,
-          tone: "error"
-        });
+        setStatus(
+          "No supported color tokens were found. Check the token names and try again.",
+          {
+            focus: true,
+            tone: "error",
+          },
+        );
         return;
       }
 
@@ -344,12 +397,18 @@
         updateTokenReadout(tokenName, tokenValue);
       });
       renderTokenOverrides();
-      setStatus(`Imported ${accepted.length} token value${accepted.length === 1 ? "" : "s"}.`, { tone: "success" });
+      setStatus(
+        `Imported ${accepted.length} token value${accepted.length === 1 ? "" : "s"}.`,
+        { tone: "success" },
+      );
     } catch (_error) {
-      setStatus("Token CSS import failed. Choose a readable CSS file and try again.", {
-        focus: true,
-        tone: "error"
-      });
+      setStatus(
+        "Token CSS import failed. Choose a readable CSS file and try again.",
+        {
+          focus: true,
+          tone: "error",
+        },
+      );
     } finally {
       tokenCssImport.value = "";
     }
@@ -357,30 +416,41 @@
 
   tokenCssCopy?.addEventListener("click", async () => {
     try {
-      if (!navigator.clipboard || typeof navigator.clipboard.writeText !== "function") {
+      if (
+        !navigator.clipboard ||
+        typeof navigator.clipboard.writeText !== "function"
+      ) {
         throw new Error("Clipboard API unavailable");
       }
 
       await navigator.clipboard.writeText(buildTokenCss());
       setStatus("Token CSS copied to the clipboard.", { tone: "success" });
     } catch (_error) {
-      setStatus("Token CSS could not be copied. Allow clipboard access and try again.", {
-        focus: true,
-        tone: "error"
-      });
+      setStatus(
+        "Token CSS could not be copied. Allow clipboard access and try again.",
+        {
+          focus: true,
+          tone: "error",
+        },
+      );
     }
   });
 
   tokenCssDownload?.addEventListener("click", () => {
     let blobUrl = "";
     try {
-      const blob = new Blob([buildTokenCss()], { type: "text/css;charset=utf-8" });
+      const blob = new Blob([buildTokenCss()], {
+        type: "text/css;charset=utf-8",
+      });
       blobUrl = URL.createObjectURL(blob);
     } catch (_error) {
-      setStatus("Token CSS download could not be prepared. Check browser download support and try again.", {
-        focus: true,
-        tone: "error"
-      });
+      setStatus(
+        "Token CSS download could not be prepared. Check browser download support and try again.",
+        {
+          focus: true,
+          tone: "error",
+        },
+      );
       return;
     }
 
@@ -393,10 +463,13 @@
       downloadLink.click();
       setStatus("Token CSS download started.", { tone: "success" });
     } catch (_error) {
-      setStatus("Token CSS download could not start. Try again or use Copy token CSS.", {
-        focus: true,
-        tone: "error"
-      });
+      setStatus(
+        "Token CSS download could not start. Try again or use Copy token CSS.",
+        {
+          focus: true,
+          tone: "error",
+        },
+      );
     } finally {
       downloadLink.remove();
       try {
@@ -518,7 +591,8 @@
   }
 
   function renderReadmeReference() {
-    const fallback = embeddedReadme?.textContent?.trim() || "# Interactive Surface CSS";
+    const fallback =
+      embeddedReadme?.textContent?.trim() || "# Interactive Surface CSS";
     renderMarkdown(fallback);
     document.body.dataset.demoReady = "true";
 

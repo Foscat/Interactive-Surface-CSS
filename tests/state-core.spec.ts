@@ -6,7 +6,10 @@ import { expect, test, type Page } from "@playwright/test";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const packageRoot = path.resolve(__dirname, "..");
-const stateCoreCss = fs.readFileSync(path.join(packageRoot, "state-core.css"), "utf8");
+const stateCoreCss = fs.readFileSync(
+  path.join(packageRoot, "state-core.css"),
+  "utf8",
+);
 
 const persistentSelectors = [
   "#pressed-true",
@@ -16,10 +19,14 @@ const persistentSelectors = [
   "#selected",
   "#active",
   "#busy",
-  "#loading"
+  "#loading",
 ] as const;
 
-const disabledSelectors = ["#native-disabled", "#aria-disabled", "#class-disabled"] as const;
+const disabledSelectors = [
+  "#native-disabled",
+  "#aria-disabled",
+  "#class-disabled",
+] as const;
 
 function stateFixtureHtml() {
   return `
@@ -118,14 +125,18 @@ function stateFixtureHtml() {
 }
 
 async function stateLayerOpacity(page: Page, selector: string) {
-  return page.locator(selector).evaluate((element) =>
-    Number.parseFloat(window.getComputedStyle(element, "::before").opacity)
-  );
+  return page
+    .locator(selector)
+    .evaluate((element) =>
+      Number.parseFloat(window.getComputedStyle(element, "::before").opacity),
+    );
 }
 
 async function translateY(page: Page, selector: string) {
   return page.locator(selector).evaluate((element) => {
-    const value = window.getComputedStyle(element).getPropertyValue("translate");
+    const value = window
+      .getComputedStyle(element)
+      .getPropertyValue("translate");
 
     if (value === "none") {
       return 0;
@@ -136,7 +147,10 @@ async function translateY(page: Page, selector: string) {
   });
 }
 
-async function systemColor(page: Page, color: "ButtonText" | "GrayText" | "Highlight") {
+async function systemColor(
+  page: Page,
+  color: "ButtonText" | "GrayText" | "Highlight",
+) {
   return page.evaluate((systemColorName) => {
     const probe = document.createElement("span");
     probe.style.color = systemColorName;
@@ -155,7 +169,7 @@ async function composedSnapshot(page: Page, selector: string) {
       rotate: styles.getPropertyValue("rotate"),
       scale: styles.getPropertyValue("scale"),
       transform: styles.transform,
-      translate: styles.getPropertyValue("translate")
+      translate: styles.getPropertyValue("translate"),
     };
   });
 }
@@ -165,15 +179,21 @@ test.describe("state core semantics and precedence", () => {
     await page.setContent(stateFixtureHtml());
   });
 
-  test("all supported enabled persistent and loading states expose a visible state layer", async ({ page }) => {
+  test("all supported enabled persistent and loading states expose a visible state layer", async ({
+    page,
+  }) => {
     for (const selector of persistentSelectors) {
       await expect
-        .poll(() => stateLayerOpacity(page, selector), { message: `${selector} should retain persistent feedback` })
+        .poll(() => stateLayerOpacity(page, selector), {
+          message: `${selector} should retain persistent feedback`,
+        })
         .toBeGreaterThan(0);
     }
   });
 
-  test("every disabled form clears persistent, loading, hover, and motion feedback", async ({ page }) => {
+  test("every disabled form clears persistent, loading, hover, and motion feedback", async ({
+    page,
+  }) => {
     for (const selector of disabledSelectors) {
       await page.locator(selector).hover({ force: true });
 
@@ -187,7 +207,7 @@ test.describe("state core semantics and precedence", () => {
           layerAnimationName: layer.animationName,
           layerOpacity: Number.parseFloat(layer.opacity),
           layerTransitionDuration: layer.transitionDuration,
-          transitionDuration: host.transitionDuration
+          transitionDuration: host.transitionDuration,
         };
       });
 
@@ -197,13 +217,15 @@ test.describe("state core semantics and precedence", () => {
         layerAnimationName: "none",
         layerOpacity: 0,
         layerTransitionDuration: "0s",
-        transitionDuration: "0s"
+        transitionDuration: "0s",
       });
       expect(await translateY(page, selector), selector).toBe(0);
     }
   });
 
-  test("focusable custom-disabled controls retain an explicit keyboard focus indicator", async ({ page }) => {
+  test("focusable custom-disabled controls retain an explicit keyboard focus indicator", async ({
+    page,
+  }) => {
     for (const selector of ["#custom-disabled", "#class-disabled"]) {
       const customDisabled = page.locator(selector);
       await customDisabled.focus();
@@ -211,7 +233,10 @@ test.describe("state core semantics and precedence", () => {
 
       const outline = await customDisabled.evaluate((element) => {
         const styles = window.getComputedStyle(element);
-        return { style: styles.outlineStyle, width: Number.parseFloat(styles.outlineWidth) };
+        return {
+          style: styles.outlineStyle,
+          width: Number.parseFloat(styles.outlineWidth),
+        };
       });
 
       expect(outline.style, selector).toBe("solid");
@@ -219,7 +244,9 @@ test.describe("state core semantics and precedence", () => {
     }
   });
 
-  test("transient pointer press feedback differs from persistent state feedback", async ({ page }) => {
+  test("transient pointer press feedback differs from persistent state feedback", async ({
+    page,
+  }) => {
     const transient = page.locator("#transient");
     await transient.hover();
     await page.mouse.down();
@@ -227,11 +254,11 @@ test.describe("state core semantics and precedence", () => {
     try {
       const transientFeedback = {
         layerOpacity: await stateLayerOpacity(page, "#transient"),
-        translateY: await translateY(page, "#transient")
+        translateY: await translateY(page, "#transient"),
       };
       const persistentFeedback = {
         layerOpacity: await stateLayerOpacity(page, "#pressed-true"),
-        translateY: await translateY(page, "#pressed-true")
+        translateY: await translateY(page, "#pressed-true"),
       };
 
       expect(transientFeedback).not.toEqual(persistentFeedback);
@@ -240,7 +267,9 @@ test.describe("state core semantics and precedence", () => {
     }
   });
 
-  test("transient press overrides persistent state feedback", async ({ page }) => {
+  test("transient press overrides persistent state feedback", async ({
+    page,
+  }) => {
     const currentStep = page.locator("#current-step");
     await currentStep.hover();
     await page.mouse.down();
@@ -254,7 +283,9 @@ test.describe("state core semantics and precedence", () => {
 });
 
 test.describe("state core user preferences", () => {
-  test("reduced motion stops movement and timing without erasing persistent or focus meaning", async ({ page }) => {
+  test("reduced motion stops movement and timing without erasing persistent or focus meaning", async ({
+    page,
+  }) => {
     await page.emulateMedia({ reducedMotion: "reduce" });
     await page.setContent(stateFixtureHtml());
 
@@ -278,7 +309,7 @@ test.describe("state core user preferences", () => {
         animationName: host.animationName,
         layerAnimationName: layer.animationName,
         layerTransitionDuration: layer.transitionDuration,
-        transitionDuration: host.transitionDuration
+        transitionDuration: host.transitionDuration,
       };
     });
 
@@ -286,16 +317,20 @@ test.describe("state core user preferences", () => {
       animationName: "none",
       layerAnimationName: "none",
       layerTransitionDuration: "0s",
-      transitionDuration: "0s"
+      transitionDuration: "0s",
     });
 
     const focusTarget = page.locator("#focus-target");
     await focusTarget.focus();
-    const focusOutline = await focusTarget.evaluate((element) => window.getComputedStyle(element).outlineStyle);
+    const focusOutline = await focusTarget.evaluate(
+      (element) => window.getComputedStyle(element).outlineStyle,
+    );
     expect(focusOutline).toBe("solid");
   });
 
-  test("forced colors replaces hidden overlays with system-color focus and state outlines", async ({ page }) => {
+  test("forced colors replaces hidden overlays with system-color focus and state outlines", async ({
+    page,
+  }) => {
     await page.emulateMedia({ forcedColors: "active" });
     await page.setContent(stateFixtureHtml());
 
@@ -309,7 +344,7 @@ test.describe("state core user preferences", () => {
         layerDisplay: layer.display,
         outlineColor: host.outlineColor,
         outlineStyle: host.outlineStyle,
-        outlineWidth: Number.parseFloat(host.outlineWidth)
+        outlineWidth: Number.parseFloat(host.outlineWidth),
       };
     });
 
@@ -325,7 +360,7 @@ test.describe("state core user preferences", () => {
       return {
         color: styles.outlineColor,
         style: styles.outlineStyle,
-        width: Number.parseFloat(styles.outlineWidth)
+        width: Number.parseFloat(styles.outlineWidth),
       };
     });
 
@@ -334,14 +369,18 @@ test.describe("state core user preferences", () => {
     expect(focus.width).toBeGreaterThanOrEqual(2);
     expect(["transparent", "rgba(0, 0, 0, 0)"]).not.toContain(focus.color);
 
-    const disabled = await page.locator("#class-disabled").evaluate((element) => {
-      const styles = window.getComputedStyle(element);
-      return { color: styles.outlineColor, style: styles.outlineStyle };
-    });
+    const disabled = await page
+      .locator("#class-disabled")
+      .evaluate((element) => {
+        const styles = window.getComputedStyle(element);
+        return { color: styles.outlineColor, style: styles.outlineStyle };
+      });
     expect(disabled).toEqual({ color: grayText, style: "solid" });
   });
 
-  test("forced colors prioritizes focus over a persistent state outline", async ({ page }) => {
+  test("forced colors prioritizes focus over a persistent state outline", async ({
+    page,
+  }) => {
     await page.emulateMedia({ forcedColors: "active" });
     await page.setContent(stateFixtureHtml());
 
@@ -357,33 +396,42 @@ test.describe("state core user preferences", () => {
     expect(outline).toEqual({ color: highlight, style: "solid" });
   });
 
-  test("greater contrast strengthens focus and persistent state distinctions", async ({ page }) => {
+  test("greater contrast strengthens focus and persistent state distinctions", async ({
+    page,
+  }) => {
     await page.emulateMedia({ contrast: "more" });
     await page.setContent(stateFixtureHtml());
 
     const focusTarget = page.locator("#focus-target");
     await focusTarget.focus();
     const focusWidth = await focusTarget.evaluate((element) =>
-      Number.parseFloat(window.getComputedStyle(element).outlineWidth)
+      Number.parseFloat(window.getComputedStyle(element).outlineWidth),
     );
-    const persistentOutline = await page.locator("#selected").evaluate((element) => {
-      const styles = window.getComputedStyle(element);
-      return { style: styles.outlineStyle, width: Number.parseFloat(styles.outlineWidth) };
-    });
+    const persistentOutline = await page
+      .locator("#selected")
+      .evaluate((element) => {
+        const styles = window.getComputedStyle(element);
+        return {
+          style: styles.outlineStyle,
+          width: Number.parseFloat(styles.outlineWidth),
+        };
+      });
 
     expect(focusWidth).toBeGreaterThanOrEqual(3);
     expect(persistentOutline.style).toBe("solid");
     expect(persistentOutline.width).toBeGreaterThanOrEqual(2);
   });
 
-  test("greater contrast prioritizes focus over a persistent state outline", async ({ page }) => {
+  test("greater contrast prioritizes focus over a persistent state outline", async ({
+    page,
+  }) => {
     await page.emulateMedia({ contrast: "more" });
     await page.setContent(stateFixtureHtml());
 
     const persistentFocus = page.locator("#current-step");
     await persistentFocus.focus();
     const outlineWidth = await persistentFocus.evaluate((element) =>
-      Number.parseFloat(window.getComputedStyle(element).outlineWidth)
+      Number.parseFloat(window.getComputedStyle(element).outlineWidth),
     );
 
     expect(outlineWidth).toBeGreaterThanOrEqual(3);
@@ -391,17 +439,19 @@ test.describe("state core user preferences", () => {
 });
 
 test.describe("state core motion composition", () => {
-  test("consumer transform, scale, and rotate survive every interaction state", async ({ page }) => {
+  test("consumer transform, scale, and rotate survive every interaction state", async ({
+    page,
+  }) => {
     const stateCases = [
       {
         name: "hover",
         expectedTranslateY: -7,
-        activate: async () => page.locator("#composed").hover()
+        activate: async () => page.locator("#composed").hover(),
       },
       {
         name: "focus",
         expectedTranslateY: -7,
-        activate: async () => page.locator("#composed").focus()
+        activate: async () => page.locator("#composed").focus(),
       },
       {
         name: "press",
@@ -409,12 +459,17 @@ test.describe("state core motion composition", () => {
         activate: async () => {
           await page.locator("#composed").hover();
           await page.mouse.down();
-        }
+        },
       },
       {
         name: "persistent",
         expectedTranslateY: -3,
-        activate: async () => page.locator("#composed").evaluate((element) => element.setAttribute("aria-selected", "true"))
+        activate: async () =>
+          page
+            .locator("#composed")
+            .evaluate((element) =>
+              element.setAttribute("aria-selected", "true"),
+            ),
       },
       {
         name: "disabled",
@@ -423,8 +478,8 @@ test.describe("state core motion composition", () => {
           page.locator("#composed").evaluate((element) => {
             element.setAttribute("aria-selected", "true");
             (element as HTMLButtonElement).disabled = true;
-          })
-      }
+          }),
+      },
     ];
 
     for (const stateCase of stateCases) {
@@ -436,11 +491,17 @@ test.describe("state core motion composition", () => {
       try {
         const composed = await composedSnapshot(page, "#composed");
 
-        expect(composed.transform, `${stateCase.name} transform`).toBe(reference.transform);
+        expect(composed.transform, `${stateCase.name} transform`).toBe(
+          reference.transform,
+        );
         expect(composed.scale, `${stateCase.name} scale`).toBe(reference.scale);
-        expect(composed.rotate, `${stateCase.name} rotate`).toBe(reference.rotate);
+        expect(composed.rotate, `${stateCase.name} rotate`).toBe(
+          reference.rotate,
+        );
         await expect
-          .poll(() => translateY(page, "#composed"), { message: `${stateCase.name} translate` })
+          .poll(() => translateY(page, "#composed"), {
+            message: `${stateCase.name} translate`,
+          })
           .toBe(stateCase.expectedTranslateY);
       } finally {
         if (stateCase.name === "press") {
@@ -450,18 +511,22 @@ test.describe("state core motion composition", () => {
     }
   });
 
-  test("core defaults to neutral lift and transitions only the package-owned translate longhand", async ({ page }) => {
+  test("core defaults to neutral lift and transitions only the package-owned translate longhand", async ({
+    page,
+  }) => {
     await page.setContent(stateFixtureHtml());
     await page.locator("#neutral").hover();
 
     expect(await translateY(page, "#neutral")).toBe(0);
 
-    const transitionProperties = await page.locator("#neutral").evaluate((element) =>
-      window
-        .getComputedStyle(element)
-        .transitionProperty.split(",")
-        .map((property) => property.trim())
-    );
+    const transitionProperties = await page
+      .locator("#neutral")
+      .evaluate((element) =>
+        window
+          .getComputedStyle(element)
+          .transitionProperty.split(",")
+          .map((property) => property.trim()),
+      );
 
     expect(transitionProperties).toContain("translate");
     expect(transitionProperties).not.toContain("transform");

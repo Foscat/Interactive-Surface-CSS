@@ -7,7 +7,7 @@ const scriptPath = fileURLToPath(import.meta.url);
 const projectRoot = path.resolve(path.dirname(scriptPath), "..");
 const sourcePaths = {
   core: "styles/state-core.css",
-  preset: "styles/standalone-preset.css"
+  preset: "styles/standalone-preset.css",
 };
 
 function normalize(css) {
@@ -20,7 +20,7 @@ function withGeneratedHeader(bundleName, sources, css) {
     ` * ${bundleName}`,
     ` * Generated from: ${sources.join(", ")}`,
     " * Do not edit directly; run node scripts/build.mjs.",
-    " */"
+    " */",
   ].join("\n");
 
   return `${header}\n\n${normalize(css).trim()}\n`;
@@ -30,7 +30,9 @@ function minify(bundleName, css) {
   const result = new CleanCSS({ level: 2 }).minify(css);
 
   if (result.errors.length > 0) {
-    throw new Error(`Unable to minify ${bundleName}:\n${result.errors.join("\n")}`);
+    throw new Error(
+      `Unable to minify ${bundleName}:\n${result.errors.join("\n")}`,
+    );
   }
 
   return `${result.styles}\n`;
@@ -54,7 +56,9 @@ async function readSource(sourcePath) {
   try {
     return await readFile(path.join(projectRoot, sourcePath), "utf8");
   } catch (error) {
-    throw new Error(`Unable to read source ${sourcePath}: ${error.message}`, { cause: error });
+    throw new Error(`Unable to read source ${sourcePath}: ${error.message}`, {
+      cause: error,
+    });
   }
 }
 
@@ -64,17 +68,21 @@ export async function createBundleMap() {
   const complete = `${preset.trim()}\n\n${core.trim()}\n`;
 
   return createNormalAndMinifiedMaps({
-    "state-core.css": withGeneratedHeader("state-core.css", [sourcePaths.core], core),
+    "state-core.css": withGeneratedHeader(
+      "state-core.css",
+      [sourcePaths.core],
+      core,
+    ),
     "standalone-preset.css": withGeneratedHeader(
       "standalone-preset.css",
       [sourcePaths.preset, sourcePaths.core],
-      complete
+      complete,
     ),
     "interactive-surface.css": withGeneratedHeader(
       "interactive-surface.css",
       [sourcePaths.preset, sourcePaths.core],
-      complete
-    )
+      complete,
+    ),
   });
 }
 
@@ -103,7 +111,10 @@ export async function verifyBundles(bundleMap, outputDirectory = projectRoot) {
         continue;
       }
 
-      throw new Error(`Unable to verify generated target ${target}: ${error.message}`, { cause: error });
+      throw new Error(
+        `Unable to verify generated target ${target}: ${error.message}`,
+        { cause: error },
+      );
     }
   }
 
@@ -112,9 +123,12 @@ export async function verifyBundles(bundleMap, outputDirectory = projectRoot) {
   }
 }
 
-export async function verifyPublicBundles(bundleMap, outputDirectory = projectRoot) {
+export async function verifyPublicBundles(
+  bundleMap,
+  outputDirectory = projectRoot,
+) {
   const publicBundles = Object.fromEntries(
-    Object.entries(bundleMap).filter(([target]) => !target.startsWith("dist/"))
+    Object.entries(bundleMap).filter(([target]) => !target.startsWith("dist/")),
   );
 
   await verifyBundles(publicBundles, outputDirectory);
@@ -122,11 +136,19 @@ export async function verifyPublicBundles(bundleMap, outputDirectory = projectRo
 
 function selectTargets(bundleMap, step) {
   if (step === "bundle") {
-    return Object.fromEntries(Object.entries(bundleMap).filter(([target]) => !target.endsWith(".min.css")));
+    return Object.fromEntries(
+      Object.entries(bundleMap).filter(
+        ([target]) => !target.endsWith(".min.css"),
+      ),
+    );
   }
 
   if (step === "minify") {
-    return Object.fromEntries(Object.entries(bundleMap).filter(([target]) => target.endsWith(".min.css")));
+    return Object.fromEntries(
+      Object.entries(bundleMap).filter(([target]) =>
+        target.endsWith(".min.css"),
+      ),
+    );
   }
 
   return bundleMap;
