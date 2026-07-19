@@ -62,6 +62,11 @@ function stateFixtureHtml() {
         --interactive-surface-lift-hover: -7px;
         --interactive-surface-lift-active: -3px;
       }
+
+      /* The persistent fixture must prove reduced motion neutralizes a real active lift. */
+      #selected {
+        --interactive-surface-lift-active: -9px;
+      }
     </style>
     <style>${stateCoreCss}</style>
   </head>
@@ -261,6 +266,7 @@ test.describe("state core user preferences", () => {
     expect(selectedOpacity).toBeGreaterThan(defaultOpacity);
     expect(currentOpacity).toBeGreaterThan(defaultOpacity);
     expect(pressedOpacity).toBeGreaterThan(defaultOpacity);
+    expect(await translateY(page, "#selected")).toBe(0);
 
     await page.locator("#composed").hover();
     expect(await translateY(page, "#composed")).toBe(0);

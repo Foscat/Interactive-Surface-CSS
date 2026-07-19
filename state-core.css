@@ -13,9 +13,8 @@
   /* Preset-only fallbacks keep the core neutral while preserving complete-bundle behavior. */
   --_is-lift-base: var(--interactive-surface-lift-base, var(--_is-preset-lift-base, 0px));
   --_is-lift-hover: var(--interactive-surface-lift-hover, var(--_is-preset-lift-hover, 0px));
-  --_is-hover-lift: var(
-    --interactive-surface-lift-hover,
-    var(--_is-preset-hover-lift, var(--_is-lift-hover))
+  --_is-hover-lift: calc(
+    var(--_is-lift-hover) + var(--_is-preset-hover-lift-offset, 0px)
   );
   --_is-lift-active: var(--interactive-surface-lift-active, var(--_is-preset-lift-active, 0px));
   --_is-base-shadow: var(
@@ -57,6 +56,11 @@
     --interactive-surface-ease-press,
     var(--ease-press, cubic-bezier(0.4, 0, 0.6, 1))
   );
+
+  /* A private tuple lets complete presets preserve timing across competing shorthands. */
+  --_is-transition-duration: var(--_is-motion-default);
+  --_is-transition-timing-function: var(--_is-ease-standard);
+  --_is-transition-delay: 0s;
   --_is-focus-ring-color: var(--interactive-surface-focus-ring-color, var(--focus-ring, rgb(11 99 246)));
   --_is-focus-ring-width: var(--interactive-surface-focus-ring-width, 2px);
   --_is-focus-ring-offset: var(--interactive-surface-focus-ring-offset, 2px);
@@ -71,9 +75,9 @@
   translate: 0 var(--_is-lift-base);
   box-shadow: var(--_is-shadow-base);
   transition:
-    translate var(--_is-motion-default) var(--_is-ease-standard),
-    box-shadow var(--_is-motion-default) var(--_is-ease-standard),
-    outline-color var(--_is-motion-default) linear;
+    translate var(--_is-transition-duration) var(--_is-transition-timing-function) var(--_is-transition-delay),
+    box-shadow var(--_is-transition-duration) var(--_is-transition-timing-function) var(--_is-transition-delay),
+    outline-color var(--_is-transition-duration) linear var(--_is-transition-delay);
   will-change: auto;
 }
 
@@ -154,10 +158,11 @@
 }
 
 .interactive-surface:not(:is(.is-disabled, :disabled, [aria-disabled="true"])):active {
+  --_is-transition-duration: var(--_is-motion-press);
+  --_is-transition-timing-function: var(--_is-ease-press);
+
   translate: 0 var(--_is-lift-base);
   box-shadow: var(--_is-shadow-base);
-  transition-duration: var(--_is-motion-press);
-  transition-timing-function: var(--_is-ease-press);
 }
 
 .interactive-surface:not(:is(.is-disabled, :disabled, [aria-disabled="true"])):active::before {
@@ -171,6 +176,8 @@
  * activation for custom controls that use aria-disabled or the is-disabled class.
  */
 .interactive-surface:is(.is-disabled, :disabled, [aria-disabled="true"]) {
+  --_is-transition-duration: 0s;
+
   cursor: not-allowed;
   pointer-events: none;
   translate: none;
@@ -206,6 +213,8 @@
       [aria-busy="true"],
       .is-loading
     ):not(:is(.is-disabled, :disabled, [aria-disabled="true"])) {
+    --_is-transition-duration: 0s;
+
     translate: none;
     animation: none;
     transition: none;

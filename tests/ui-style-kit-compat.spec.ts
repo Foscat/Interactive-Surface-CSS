@@ -32,6 +32,14 @@ const systems: SystemName[] = ["minimal-saas", "cyberpunk", "brutalism", "retro-
 const geometrySystems: SystemName[] = ["minimal-saas", "brutalism"];
 const modes: ModeName[] = ["light", "dark", "contrast"];
 const importOrders: ImportOrder[] = ["with-bridge-first", "per-style-bridge-after"];
+const liftCases = [
+  { name: "default", selector: "#base", expectedLift: 4 },
+  { name: "small", selector: "#small", expectedLift: 4 },
+  { name: "large", selector: "#large", expectedLift: 8 },
+  { name: "icon-only", selector: "#icon", expectedLift: 3 },
+  { name: "legacy token", selector: "#legacy-lift", expectedLift: 6 },
+  { name: "public token", selector: "#public-lift", expectedLift: 10 }
+] as const;
 
 function readStyle(system: SystemName) {
   return stripCssImports(fs.readFileSync(path.join(uiKitRoot, "styles", styleFilesBySystem[system]), "utf8"));
@@ -56,6 +64,14 @@ function htmlFor(order: ImportOrder, system: SystemName, mode: ModeName, surface
   </head>
   <body data-ui="${system}" data-theme="arctic-indigo" data-mode="${mode}">
     <button id="base" class="interactive-surface">Base</button>
+    <button id="small" class="interactive-surface size-sm">Small</button>
+    <button id="large" class="interactive-surface size-lg">Large</button>
+    <button id="legacy-lift" class="interactive-surface" style="--lift-hover: -6px">Legacy lift</button>
+    <button
+      id="public-lift"
+      class="interactive-surface"
+      style="--interactive-surface-lift-hover: -10px"
+    >Public lift</button>
     <button id="primary" class="interactive-surface variant-primary">Primary</button>
     <button id="bridge-primary" class="interactive-surface" data-surface-variant="primary">Bridge Primary</button>
     <button id="level" class="interactive-surface" data-surface-level="1">Level</button>
@@ -85,8 +101,10 @@ async function computed(page: Page, selector: string) {
       outlineStyle: styles.outlineStyle,
       outlineWidth: styles.outlineWidth,
       pointerEvents: styles.pointerEvents,
+      transitionDelay: styles.transitionDelay,
       transitionDuration: styles.transitionDuration,
       transitionProperty: styles.transitionProperty,
+      transitionTimingFunction: styles.transitionTimingFunction,
       transform: styles.transform,
       translate: styles.getPropertyValue("translate")
     };
@@ -235,33 +253,39 @@ test.describe("ui-style-kit-css 2.0.1 compatibility", () => {
 
     test(`${order} preserves interaction and UI Kit paint transition ownership`, async ({ page }) => {
       await page.setContent(htmlFor(order, "minimal-saas", "dark"));
-      const properties = transitionProperties((await computed(page, "#base")).transitionProperty);
+      const transition = await computed(page, "#base");
 
-      for (const property of [
+      expect(transitionProperties(transition.transitionProperty)).toEqual([
         "background-color",
         "border-color",
         "box-shadow",
         "color",
         "transform",
-        "translate"
-      ]) {
-        expect(properties, `${order} should transition ${property}`).toContain(property);
-      }
+        "translate",
+        "outline-color"
+      ]);
+      expect(transition.transitionDuration).toBe("0.14s");
+      expect(transition.transitionTimingFunction).toBe("cubic-bezier(0.2, 0, 0.2, 1)");
+      expect(transition.transitionDelay).toBe("0s");
     });
 
-    test(`${order} keeps the intended total hover lift across representative UI systems`, async ({ page }) => {
+    test(`${order} keeps every resolved hover lift across representative UI systems`, async ({ page }) => {
       for (const system of geometrySystems) {
         await page.mouse.move(0, 0);
         await page.setContent(htmlFor(order, system, "dark"));
-        await page.addStyleTag({ content: "#base { transition: none !important; }" });
+        await page.addStyleTag({ content: ".interactive-surface { transition: none !important; }" });
 
-        const baseY = await verticalPosition(page, "#base");
-        await page.locator("#base").hover();
-        const hoverY = await verticalPosition(page, "#base");
-        const transformY = await transformTranslateY(page, "#base");
+        for (const liftCase of liftCases) {
+          await page.mouse.move(0, 0);
+          const baseY = await verticalPosition(page, liftCase.selector);
+          await page.locator(liftCase.selector).hover();
+          const hoverY = await verticalPosition(page, liftCase.selector);
+          const transformY = await transformTranslateY(page, liftCase.selector);
+          const context = `${order} ${system} ${liftCase.name}`;
 
-        expect(baseY - hoverY, `${order} ${system} total lift`).toBeCloseTo(4, 1);
-        expect(transformY, `${order} ${system} UI Kit transform`).toBe(-1);
+          expect(baseY - hoverY, `${context} total lift`).toBeCloseTo(liftCase.expectedLift, 1);
+          expect(transformY, `${context} UI Kit transform`).toBe(-1);
+        }
       }
     });
 

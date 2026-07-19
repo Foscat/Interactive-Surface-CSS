@@ -42,11 +42,12 @@
 
 /*
  * UI Style Kit 2.0.1 contributes one pixel of transform-based hover lift and owns paint
- * transitions. The preset supplies the remaining lift and preserves both transition lists.
+ * transitions. The preset offsets the resolved lift and protects the complete transition tuple.
  */
 :where([data-ui][data-theme][data-mode]) .interactive-surface {
-  --_is-preset-hover-lift: var(--lift-hover, -3px);
+  --_is-preset-hover-lift-offset: 1px;
 
+  /* stylelint-disable declaration-block-no-redundant-longhand-properties -- Each longhand must survive companion shorthands in either import order. */
   transition-property:
     background-color,
     border-color,
@@ -55,6 +56,10 @@
     transform,
     translate,
     outline-color !important;
+  transition-duration: var(--_is-transition-duration) !important;
+  transition-timing-function: var(--_is-transition-timing-function) !important;
+  transition-delay: var(--_is-transition-delay) !important;
+  /* stylelint-enable declaration-block-no-redundant-longhand-properties */
 }
 
 /* Surface levels consume bridge tokens while preserving standalone fallbacks. */
