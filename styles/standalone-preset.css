@@ -40,6 +40,23 @@
   background-clip: padding-box;
 }
 
+/*
+ * UI Style Kit 2.0.1 contributes one pixel of transform-based hover lift and owns paint
+ * transitions. The preset supplies the remaining lift and preserves both transition lists.
+ */
+:where([data-ui][data-theme][data-mode]) .interactive-surface {
+  --_is-preset-hover-lift: var(--lift-hover, -3px);
+
+  transition-property:
+    background-color,
+    border-color,
+    box-shadow,
+    color,
+    transform,
+    translate,
+    outline-color !important;
+}
+
 /* Surface levels consume bridge tokens while preserving standalone fallbacks. */
 .interactive-surface[data-surface-level] {
   --_is-bg: var(--interactive-surface-level-bg, var(--_is-base-bg));

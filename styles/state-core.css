@@ -7,6 +7,10 @@
   /* Preset-only fallbacks keep the core neutral while preserving complete-bundle behavior. */
   --_is-lift-base: var(--interactive-surface-lift-base, var(--_is-preset-lift-base, 0px));
   --_is-lift-hover: var(--interactive-surface-lift-hover, var(--_is-preset-lift-hover, 0px));
+  --_is-hover-lift: var(
+    --interactive-surface-lift-hover,
+    var(--_is-preset-hover-lift, var(--_is-lift-hover))
+  );
   --_is-lift-active: var(--interactive-surface-lift-active, var(--_is-preset-lift-active, 0px));
   --_is-base-shadow: var(
     --interactive-surface-shadow-base,
@@ -102,7 +106,8 @@
   opacity: var(--_is-state-layer-focus-opacity);
 }
 
-.interactive-surface:is(
+/* Zero-specificity state branches let later transient and focus selectors retain precedence. */
+.interactive-surface:where(
     .is-active,
     [aria-pressed="true"],
     [aria-pressed="mixed"],
@@ -115,7 +120,7 @@
   box-shadow: var(--_is-shadow-active);
 }
 
-.interactive-surface:is(
+.interactive-surface:where(
     .is-active,
     [aria-pressed="true"],
     [aria-pressed="mixed"],
@@ -133,7 +138,7 @@
   }
 
   .interactive-surface:not(:is(.is-disabled, :disabled, [aria-disabled="true"])):hover {
-    translate: 0 var(--_is-lift-hover);
+    translate: 0 var(--_is-hover-lift);
     box-shadow: var(--_is-shadow-hover);
   }
 
@@ -186,7 +191,7 @@
   .interactive-surface:not(:is(.is-disabled, :disabled, [aria-disabled="true"])):hover,
   .interactive-surface:not(:is(.is-disabled, :disabled, [aria-disabled="true"])):focus-visible,
   .interactive-surface:not(:is(.is-disabled, :disabled, [aria-disabled="true"])):active,
-  .interactive-surface:is(
+  .interactive-surface:where(
       .is-active,
       [aria-pressed="true"],
       [aria-pressed="mixed"],
@@ -211,7 +216,7 @@
     --_is-focus-ring-width: 3px;
   }
 
-  .interactive-surface:is(
+  .interactive-surface:where(
       .is-active,
       [aria-pressed="true"],
       [aria-pressed="mixed"],
@@ -235,6 +240,9 @@
   .interactive-surface {
     --_is-lift-base: 0px;
     --_is-lift-hover: 0px;
+
+    /* Integration offsets must not bypass the forced-colors motion reset. */
+    --_is-hover-lift: 0px;
     --_is-lift-active: 0px;
     --_is-shadow-base: none;
     --_is-shadow-hover: none;
@@ -247,7 +255,7 @@
     display: none;
   }
 
-  .interactive-surface:is(
+  .interactive-surface:where(
       .is-active,
       [aria-pressed="true"],
       [aria-pressed="mixed"],

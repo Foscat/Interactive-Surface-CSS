@@ -46,6 +46,23 @@
   background-clip: padding-box;
 }
 
+/*
+ * UI Style Kit 2.0.1 contributes one pixel of transform-based hover lift and owns paint
+ * transitions. The preset supplies the remaining lift and preserves both transition lists.
+ */
+:where([data-ui][data-theme][data-mode]) .interactive-surface {
+  --_is-preset-hover-lift: var(--lift-hover, -3px);
+
+  transition-property:
+    background-color,
+    border-color,
+    box-shadow,
+    color,
+    transform,
+    translate,
+    outline-color !important;
+}
+
 /* Surface levels consume bridge tokens while preserving standalone fallbacks. */
 .interactive-surface[data-surface-level] {
   --_is-bg: var(--interactive-surface-level-bg, var(--_is-base-bg));
@@ -363,6 +380,10 @@
   /* Preset-only fallbacks keep the core neutral while preserving complete-bundle behavior. */
   --_is-lift-base: var(--interactive-surface-lift-base, var(--_is-preset-lift-base, 0px));
   --_is-lift-hover: var(--interactive-surface-lift-hover, var(--_is-preset-lift-hover, 0px));
+  --_is-hover-lift: var(
+    --interactive-surface-lift-hover,
+    var(--_is-preset-hover-lift, var(--_is-lift-hover))
+  );
   --_is-lift-active: var(--interactive-surface-lift-active, var(--_is-preset-lift-active, 0px));
   --_is-base-shadow: var(
     --interactive-surface-shadow-base,
@@ -458,7 +479,8 @@
   opacity: var(--_is-state-layer-focus-opacity);
 }
 
-.interactive-surface:is(
+/* Zero-specificity state branches let later transient and focus selectors retain precedence. */
+.interactive-surface:where(
     .is-active,
     [aria-pressed="true"],
     [aria-pressed="mixed"],
@@ -471,7 +493,7 @@
   box-shadow: var(--_is-shadow-active);
 }
 
-.interactive-surface:is(
+.interactive-surface:where(
     .is-active,
     [aria-pressed="true"],
     [aria-pressed="mixed"],
@@ -489,7 +511,7 @@
   }
 
   .interactive-surface:not(:is(.is-disabled, :disabled, [aria-disabled="true"])):hover {
-    translate: 0 var(--_is-lift-hover);
+    translate: 0 var(--_is-hover-lift);
     box-shadow: var(--_is-shadow-hover);
   }
 
@@ -542,7 +564,7 @@
   .interactive-surface:not(:is(.is-disabled, :disabled, [aria-disabled="true"])):hover,
   .interactive-surface:not(:is(.is-disabled, :disabled, [aria-disabled="true"])):focus-visible,
   .interactive-surface:not(:is(.is-disabled, :disabled, [aria-disabled="true"])):active,
-  .interactive-surface:is(
+  .interactive-surface:where(
       .is-active,
       [aria-pressed="true"],
       [aria-pressed="mixed"],
@@ -567,7 +589,7 @@
     --_is-focus-ring-width: 3px;
   }
 
-  .interactive-surface:is(
+  .interactive-surface:where(
       .is-active,
       [aria-pressed="true"],
       [aria-pressed="mixed"],
@@ -591,6 +613,9 @@
   .interactive-surface {
     --_is-lift-base: 0px;
     --_is-lift-hover: 0px;
+
+    /* Integration offsets must not bypass the forced-colors motion reset. */
+    --_is-hover-lift: 0px;
     --_is-lift-active: 0px;
     --_is-shadow-base: none;
     --_is-shadow-hover: none;
@@ -603,7 +628,7 @@
     display: none;
   }
 
-  .interactive-surface:is(
+  .interactive-surface:where(
       .is-active,
       [aria-pressed="true"],
       [aria-pressed="mixed"],

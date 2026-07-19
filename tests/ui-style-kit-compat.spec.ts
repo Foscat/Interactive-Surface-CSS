@@ -29,6 +29,7 @@ type ModeName = "light" | "dark" | "contrast";
 type ImportOrder = "with-bridge-first" | "per-style-bridge-after";
 
 const systems: SystemName[] = ["minimal-saas", "cyberpunk", "brutalism", "retro-glass"];
+const geometrySystems: SystemName[] = ["minimal-saas", "brutalism"];
 const modes: ModeName[] = ["light", "dark", "contrast"];
 const importOrders: ImportOrder[] = ["with-bridge-first", "per-style-bridge-after"];
 
@@ -85,6 +86,8 @@ async function computed(page: Page, selector: string) {
       outlineWidth: styles.outlineWidth,
       pointerEvents: styles.pointerEvents,
       transitionDuration: styles.transitionDuration,
+      transitionProperty: styles.transitionProperty,
+      transform: styles.transform,
       translate: styles.getPropertyValue("translate")
     };
   });
@@ -97,6 +100,23 @@ function translateY(value: string) {
 
   const coordinates = value.trim().split(/\s+/);
   return Number.parseFloat(coordinates[1] ?? "0");
+}
+
+function transitionProperties(value: string) {
+  return value.split(",").map((property) => property.trim());
+}
+
+async function verticalPosition(page: Page, selector: string) {
+  const box = await page.locator(selector).boundingBox();
+  expect(box, `${selector} should have rendered geometry`).not.toBeNull();
+  return box!.y;
+}
+
+async function transformTranslateY(page: Page, selector: string) {
+  return page.locator(selector).evaluate((element) => {
+    const transform = window.getComputedStyle(element).transform;
+    return new DOMMatrixReadOnly(transform).m42;
+  });
 }
 
 async function resolvedTokenValue(page: Page, selector: string, tokenName: string, propertyName: string) {
@@ -211,6 +231,47 @@ test.describe("ui-style-kit-css 2.0.1 compatibility", () => {
       expect(reduced.translate).toBe("none");
       // UI Style Kit uses a conventional 1ms cap; both supported orders remain effectively motionless.
       expect(Number.parseFloat(reduced.transitionDuration)).toBeLessThanOrEqual(0.001);
+    });
+
+    test(`${order} preserves interaction and UI Kit paint transition ownership`, async ({ page }) => {
+      await page.setContent(htmlFor(order, "minimal-saas", "dark"));
+      const properties = transitionProperties((await computed(page, "#base")).transitionProperty);
+
+      for (const property of [
+        "background-color",
+        "border-color",
+        "box-shadow",
+        "color",
+        "transform",
+        "translate"
+      ]) {
+        expect(properties, `${order} should transition ${property}`).toContain(property);
+      }
+    });
+
+    test(`${order} keeps the intended total hover lift across representative UI systems`, async ({ page }) => {
+      for (const system of geometrySystems) {
+        await page.mouse.move(0, 0);
+        await page.setContent(htmlFor(order, system, "dark"));
+        await page.addStyleTag({ content: "#base { transition: none !important; }" });
+
+        const baseY = await verticalPosition(page, "#base");
+        await page.locator("#base").hover();
+        const hoverY = await verticalPosition(page, "#base");
+        const transformY = await transformTranslateY(page, "#base");
+
+        expect(baseY - hoverY, `${order} ${system} total lift`).toBeCloseTo(4, 1);
+        expect(transformY, `${order} ${system} UI Kit transform`).toBe(-1);
+      }
+    });
+
+    test(`${order} neutralizes package hover translation in forced colors`, async ({ page }) => {
+      await page.emulateMedia({ forcedColors: "active" });
+      await page.setContent(htmlFor(order, "minimal-saas", "dark"));
+      await page.addStyleTag({ content: "#base { transition: none !important; }" });
+      await page.locator("#base").hover();
+
+      expect(translateY((await computed(page, "#base")).translate)).toBe(0);
     });
 
     test(`${order} lets the state core preserve UI Style Kit paint`, async ({ page }) => {

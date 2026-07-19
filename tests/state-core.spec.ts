@@ -44,6 +44,13 @@ function stateFixtureHtml() {
         --interactive-surface-state-layer-hover-opacity: 0.18;
       }
 
+      #transient,
+      #pressed-true,
+      #current-step {
+        --interactive-surface-motion-default: 0ms;
+        --interactive-surface-motion-press: 0ms;
+      }
+
       .consumer-transform {
         transform: skewX(10deg);
         scale: 1.1;
@@ -227,6 +234,18 @@ test.describe("state core semantics and precedence", () => {
       await page.mouse.up();
     }
   });
+
+  test("transient press overrides persistent state feedback", async ({ page }) => {
+    const currentStep = page.locator("#current-step");
+    await currentStep.hover();
+    await page.mouse.down();
+
+    try {
+      expect(await stateLayerOpacity(page, "#current-step")).toBe(0);
+    } finally {
+      await page.mouse.up();
+    }
+  });
 });
 
 test.describe("state core user preferences", () => {
@@ -309,6 +328,22 @@ test.describe("state core user preferences", () => {
     expect(disabled).toEqual({ color: grayText, style: "solid" });
   });
 
+  test("forced colors prioritizes focus over a persistent state outline", async ({ page }) => {
+    await page.emulateMedia({ forcedColors: "active" });
+    await page.setContent(stateFixtureHtml());
+
+    const highlight = await systemColor(page, "Highlight");
+    const persistentFocus = page.locator("#current-step");
+    await persistentFocus.focus();
+
+    const outline = await persistentFocus.evaluate((element) => {
+      const styles = window.getComputedStyle(element);
+      return { color: styles.outlineColor, style: styles.outlineStyle };
+    });
+
+    expect(outline).toEqual({ color: highlight, style: "solid" });
+  });
+
   test("greater contrast strengthens focus and persistent state distinctions", async ({ page }) => {
     await page.emulateMedia({ contrast: "more" });
     await page.setContent(stateFixtureHtml());
@@ -326,6 +361,19 @@ test.describe("state core user preferences", () => {
     expect(focusWidth).toBeGreaterThanOrEqual(3);
     expect(persistentOutline.style).toBe("solid");
     expect(persistentOutline.width).toBeGreaterThanOrEqual(2);
+  });
+
+  test("greater contrast prioritizes focus over a persistent state outline", async ({ page }) => {
+    await page.emulateMedia({ contrast: "more" });
+    await page.setContent(stateFixtureHtml());
+
+    const persistentFocus = page.locator("#current-step");
+    await persistentFocus.focus();
+    const outlineWidth = await persistentFocus.evaluate((element) =>
+      Number.parseFloat(window.getComputedStyle(element).outlineWidth)
+    );
+
+    expect(outlineWidth).toBeGreaterThanOrEqual(3);
   });
 });
 
