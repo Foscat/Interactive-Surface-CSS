@@ -51,6 +51,16 @@ const expectedScripts = {
   "test:package": "node --test tests/package-contract.test.mjs",
   "check:public": "node ./scripts/build.mjs check-public",
   audit: "npm audit",
+  "validate:node18": [
+    "npm run check:no-hex-colors",
+    "npm run check:public",
+    "npm run build",
+    "npm run check:generated",
+    "npm run test:contracts",
+    "npm run test:package",
+    "npm run pack:dry",
+    "npm run audit"
+  ].join(" && "),
   "validate:publish": [
     "npm run check:no-hex-colors",
     "npm run lint:css",
@@ -245,8 +255,12 @@ test("GitHub workflows pin actions and continuously prove the minimum Node versi
     (workflows.wiki.match(new RegExp(`uses: actions/checkout@${CHECKOUT_V4_SHA} # v4`, "g")) ?? []).length,
     2
   );
-  assert.match(workflows.ci, /matrix:\r?\n\s+node-version: \[18, 24\]/);
+  assert.match(
+    workflows.ci,
+    /matrix:\r?\n\s+include:\r?\n\s+- node-version: 18\r?\n\s+validation-script: validate:node18\r?\n\s+- node-version: 24\r?\n\s+validation-script: validate:ci/
+  );
   assert.match(workflows.ci, /node-version: \$\{\{ matrix\.node-version \}\}/);
+  assert.match(workflows.ci, /run: npm run \$\{\{ matrix\.validation-script \}\}/);
 });
 
 test("the packed tarball contains only public files and resolves every export", async (t) => {

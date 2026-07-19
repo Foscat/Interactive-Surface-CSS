@@ -10,7 +10,7 @@ The deterministic release gate covers static checks, generated-bundle parity, CS
 
 Use this tier for normal CI and before requesting review.
 
-The CI workflow runs this deterministic tier on both the declared minimum Node.js 18 runtime and Node.js 24. Official workflow actions are pinned to reviewed commit revisions.
+CI runs the full deterministic tier on Node.js 24. A Node.js 18 compatibility lane separately proves source checks, generation, contracts, packed-consumer resolution, dry packing, and audit; Stylelint remains in the Node.js 24 gate because its current toolchain requires Node.js 20 or newer. Official workflow actions are pinned to reviewed commit revisions.
 
 ### `npm run validate:browsers`
 

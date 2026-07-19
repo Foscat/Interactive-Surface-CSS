@@ -84,6 +84,7 @@
     "test:install": "playwright install --with-deps chromium firefox webkit",
     "test:install:chromium": "playwright install chromium --with-deps --only-shell",
     "audit": "npm audit",
+    "validate:node18": "npm run check:no-hex-colors && npm run check:public && npm run build && npm run check:generated && npm run test:contracts && npm run test:package && npm run pack:dry && npm run audit",
     "validate:publish": "npm run check:no-hex-colors && npm run lint:css && npm run check:public && npm run build && npm run check:generated && npm run test:contracts && npm run test:package && npm run pack:dry",
     "validate:ci": "npm run validate:publish && npm run audit",
     "validate:browsers": "npm run validate:ci && npm run test:install:chromium && npm run test:chromium",

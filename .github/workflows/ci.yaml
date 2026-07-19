@@ -18,8 +18,13 @@ jobs:
 
     strategy:
       fail-fast: false
+      # The minimum-runtime lane skips Stylelint 17, whose CLI requires Node 20.19+.
       matrix:
-        node-version: [18, 24]
+        include:
+          - node-version: 18
+            validation-script: validate:node18
+          - node-version: 24
+            validation-script: validate:ci
 
     permissions:
       contents: read
@@ -38,4 +43,4 @@ jobs:
         run: npm ci
 
       - name: Validate package
-        run: npm run validate:ci
+        run: npm run ${{ matrix.validation-script }}
