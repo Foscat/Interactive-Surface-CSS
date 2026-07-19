@@ -144,6 +144,34 @@ test.describe("state-first example page", () => {
     await expect(page.getByRole("status")).toHaveText("Action example completed.");
   });
 
+  test("supports wrapping keyboard navigation for the roving state tabs", async ({ page }) => {
+    const restingTab = page.getByRole("tab", { name: "Resting" });
+    const selectedTab = page.getByRole("tab", { name: "Selected" });
+
+    await restingTab.focus();
+    await page.keyboard.press("ArrowRight");
+    await expectFocused(selectedTab);
+    await expect(selectedTab).toHaveAttribute("aria-selected", "true");
+
+    await page.keyboard.press("ArrowRight");
+    await expectFocused(restingTab);
+    await page.keyboard.press("ArrowLeft");
+    await expectFocused(selectedTab);
+
+    await page.keyboard.press("Home");
+    await expectFocused(restingTab);
+    await page.keyboard.press("End");
+    await expectFocused(selectedTab);
+
+    await page.keyboard.press("ArrowDown");
+    await expectFocused(restingTab);
+    await page.keyboard.press("ArrowUp");
+    await expectFocused(selectedTab);
+    await expect(selectedTab).toHaveAttribute("aria-selected", "true");
+    await expect(page.locator("#selected-panel")).toBeVisible();
+    await expect(page.locator("#resting-panel")).toBeHidden();
+  });
+
   test("opens a modal dialog, traps focus, and restores the exact opener", async ({ page }) => {
     const main = page.locator("main");
     const advancedTools = page.locator("#advanced-tools");
@@ -177,17 +205,39 @@ test.describe("state-first example page", () => {
     await expectFocused(cancelOpener);
   });
 
+  test("keeps validation feedback available inside the open token dialog", async ({ page }) => {
+    const advancedTools = page.locator("#advanced-tools");
+    const dialog = page.getByRole("dialog", { name: "Edit --interactive-surface-bg" });
+    const valueField = page.getByLabel("Token value");
+
+    await advancedTools.getByRole("button", { name: "Edit --interactive-surface-bg" }).click();
+    await valueField.fill("not-a-color");
+    await page.getByRole("button", { name: "Apply token" }).click();
+
+    await expect(dialog).toBeVisible();
+    await expect(dialog.getByRole("status")).toHaveText(
+      "Enter a valid CSS color value, such as rgb(16 42 67), and try again."
+    );
+    await expectFocused(valueField);
+  });
+
   test("applies a valid token override from the dialog", async ({ page }) => {
     const advancedTools = page.locator("#advanced-tools");
+    const dialog = page.getByRole("dialog", { name: "Edit --interactive-surface-bg" });
     await advancedTools.getByRole("button", { name: "Edit --interactive-surface-bg" }).click();
     await page.getByLabel("Token value").fill("rgb(250 251 252)");
     await page.getByRole("button", { name: "Apply token" }).click();
 
-    await expect(page.getByRole("status")).toHaveText(
+    await expect(dialog.getByRole("status")).toHaveText(
       "--interactive-surface-bg updated. Close the editor to review the state lab."
     );
     await expect(page.locator('[data-token="--interactive-surface-bg"] [data-token-value]')).toHaveText(
       "rgb(250 251 252)"
+    );
+
+    await page.keyboard.press("Escape");
+    await expect(page.locator("body > #demoStatus")).toHaveText(
+      "--interactive-surface-bg updated. Close the editor to review the state lab."
     );
   });
 

@@ -35,6 +35,10 @@
     return;
   }
 
+  // Keep a stable home for the shared status node while it temporarily joins the native modal's top layer.
+  const statusRegionHome = document.createComment("Shared status region home");
+  statusRegion.parentNode?.insertBefore(statusRegionHome, statusRegion);
+
   // A single live region reports both successful actions and actionable recovery guidance.
   function setStatus(message, options = {}) {
     const { focus = false, tone = "" } = options;
@@ -60,19 +64,51 @@
     }
   });
 
-  tabs.forEach((tab) => {
-    tab.addEventListener("click", () => {
-      tabs.forEach((candidate) => {
-        const isSelected = candidate === tab;
-        candidate.setAttribute("aria-selected", String(isSelected));
-        candidate.tabIndex = isSelected ? 0 : -1;
+  function activateTab(nextTab, { moveFocus = false } = {}) {
+    tabs.forEach((candidate) => {
+      const isSelected = candidate === nextTab;
+      candidate.setAttribute("aria-selected", String(isSelected));
+      candidate.tabIndex = isSelected ? 0 : -1;
 
-        const panelId = candidate.getAttribute("aria-controls");
-        const panel = panelId ? document.getElementById(panelId) : null;
-        if (panel) {
-          panel.hidden = !isSelected;
-        }
-      });
+      const panelId = candidate.getAttribute("aria-controls");
+      const panel = panelId ? document.getElementById(panelId) : null;
+      if (panel) {
+        panel.hidden = !isSelected;
+      }
+    });
+
+    if (moveFocus) {
+      nextTab.focus();
+    }
+  }
+
+  tabs.forEach((tab, tabIndex) => {
+    tab.addEventListener("click", () => activateTab(tab));
+    tab.addEventListener("keydown", (event) => {
+      let nextIndex;
+
+      // Tabs use automatic activation so keyboard focus and the visible panel stay synchronized.
+      switch (event.key) {
+        case "ArrowRight":
+        case "ArrowDown":
+          nextIndex = (tabIndex + 1) % tabs.length;
+          break;
+        case "ArrowLeft":
+        case "ArrowUp":
+          nextIndex = (tabIndex - 1 + tabs.length) % tabs.length;
+          break;
+        case "Home":
+          nextIndex = 0;
+          break;
+        case "End":
+          nextIndex = tabs.length - 1;
+          break;
+        default:
+          return;
+      }
+
+      event.preventDefault();
+      activateTab(tabs[nextIndex], { moveFocus: true });
     });
   });
 
@@ -152,7 +188,12 @@
     );
   }
 
+  function restoreStatusRegion() {
+    statusRegionHome.parentNode?.insertBefore(statusRegion, statusRegionHome.nextSibling);
+  }
+
   function restoreDialogContext() {
+    restoreStatusRegion();
     main.inert = false;
     const openerToRestore = activeOpener;
     activeOpener = null;
@@ -184,6 +225,8 @@
     tokenEditorTitle.textContent = `Edit ${tokenName}`;
     tokenEditorName.value = tokenName;
     tokenEditorValue.value = currentTokenValue(tokenName);
+    // Feedback must be a dialog descendant while showModal() makes the rest of the document inert.
+    tokenEditorDialog.append(statusRegion);
     main.inert = true;
 
     try {
