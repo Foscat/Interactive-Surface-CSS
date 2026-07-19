@@ -683,8 +683,8 @@ The package `main` and `module` fields preserve the CommonJS and ESM entries; bo
 | Loading           | `aria-busy="true"`, `.is-loading`                                                                                                                                |
 | Disabled          | native `:disabled`, `aria-disabled="true"`, `.is-disabled`                                                                                                       |
 | Variant           | `.variant-primary`, `.variant-secondary`, `.variant-accent`, `.variant-subtle`, `.variant-warning`, `.variant-danger`, or matching `data-surface-variant` values |
-| Level             | `data-surface-level="1                                                                                                                                           | 2    | 3"`                                        |
-| Icon              | `.icon-only`; child `data-icon-role="light                                                                                                                       | dark | accessibility"` or the legacy role classes |
+| Level             | `data-surface-level="1"`, `"2"`, or `"3"`                                                                                                                   |
+| Icon              | `.icon-only`; child `data-icon-role="light"`, `"dark"`, `"accessibility"`, or the legacy role classes                                                      |
 | Native subcontrol | `input[type="file"].interactive-surface::file-selector-button` inherits surface paint and hover/active feedback                                                  |
 
 Disabled state has highest visual precedence. The state layer preserves static meaning under reduced motion and uses system-color affordances in forced-colors mode. Interaction lift uses the individual `translate` property, so consumer-owned `transform`, `scale`, and `rotate` declarations can coexist.
