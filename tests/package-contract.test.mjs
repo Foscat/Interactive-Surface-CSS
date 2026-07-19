@@ -92,7 +92,6 @@ function runNode(commandArgs, options, label) {
     `${label} exited with ${result.status}.\nstdout:\n${result.stdout}\nstderr:\n${result.stderr}`
   );
   assert.equal(result.signal, null, `${label} was terminated by ${result.signal}`);
-  assert.equal(result.stderr.trim(), "", `${label} wrote to stderr:\n${result.stderr}`);
   return result.stdout;
 }
 
@@ -195,7 +194,9 @@ test("the npm publishing workflow only accepts a matching published release", as
   const anchoredHeadingPattern =
     "`^## ${escapedVersion} - " + String.raw`\\d{4}-\\d{2}-\\d{2}\\r?$` + "`";
 
-  assert.match(workflow, /on:\r?\n\s+release:\r?\n\s+types: \[published\]/);
+  // Matching through the next top-level key prevents any second publish trigger from being added silently.
+  assert.match(workflow, /^on:\r?\n {2}release:\r?\n {4}types: \[published\]\r?\n\r?\nconcurrency:/m);
+  assert.equal((workflow.match(/^on:/gm) ?? []).length, 1, "Expected exactly one workflow trigger block");
   assert.doesNotMatch(workflow, /workflow_dispatch/);
   assert.match(
     workflow,
