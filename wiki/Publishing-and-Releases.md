@@ -1,65 +1,78 @@
 # Publishing and Releases
 
-This page documents the release workflow for Interactive Surface CSS.
+Interactive Surface CSS 1.4.0 is a release candidate until the package is published. Preparing this branch does not authorize an npm publish, Git tag, or GitHub Release.
 
-## Publish Path
+## Release ownership
 
-Primary path: GitHub Release -> GitHub Actions -> npm publish.
+The repository's intended path is:
 
-Workflow file:
+1. Merge an approved, fully verified release candidate.
+2. Create the matching GitHub Release and version tag.
+3. Let the npm publish workflow validate the release identity and publish with provenance.
+4. Verify npm and pinned CDN distribution.
 
-- `.github/workflows/npm-publish.yml`
+See the [npm publish workflow](https://github.com/Foscat/Interactive-Surface-CSS/blob/main/.github/workflows/npm-publish.yml) for the executable release rules.
 
-## Required Repository Secret
+## 1.4.0 release-candidate checklist
 
-Add this secret in GitHub repository settings:
+1. Confirm `package.json` and `package-lock.json` identify `1.4.0`.
+2. Confirm the 1.4.0 changelog entry describes entry points, state behavior, compatibility, accessibility, demo, and documentation.
+3. Build public stylesheets and verify generated parity.
+4. Run deterministic validation:
 
-- `NPM_TOKEN`: npm token with publish rights for the package
+    ```bash
+    npm run validate
+    ```
 
-## Release Checklist
+5. Run the supported browser matrix:
 
-1. Update code and docs.
-2. Bump `version` in `package.json`.
-3. Update `CHANGELOG.md`.
-4. Run local checks:
+    ```bash
+    npm run validate:full
+    ```
 
-```bash
-npm run validate
-```
+6. Inspect the actual packed tarball and confirm only intended public files are present.
+7. Review the final branch diff and resolve every release-blocking finding.
+8. Obtain explicit approval before publishing, tagging, or creating the GitHub Release.
 
-5. Push changes to `main`.
-6. Create and publish a GitHub Release for that version tag (for example `v1.2.3`).
-7. Confirm `Publish to npm` workflow succeeds.
-8. Verify distribution:
+## Validation tiers
+
+- `validate` and `validate:ci`: deterministic static, generated, contract, package, and audit checks.
+- `validate:browsers`: deterministic checks plus Chromium.
+- `validate:full`: deterministic checks plus Chromium, Firefox, and WebKit.
+
+The publish guard avoids downloading browser binaries. Browser verification must already be complete before the irreversible release step.
+
+## Release identity
+
+The tag, GitHub Release, package version, lockfile version, and changelog heading must agree. For this candidate, the expected tag is `v1.4.0`.
+
+## Distribution verification
+
+After an approved publish, verify:
 
 - `https://registry.npmjs.org/interactive-surface-css`
-- `https://cdn.jsdelivr.net/npm/interactive-surface-css@<version>/interactive-surface.css`
-- `https://unpkg.com/interactive-surface-css@<version>/interactive-surface.css`
+- `https://cdn.jsdelivr.net/npm/interactive-surface-css@1.4.0/interactive-surface.css`
+- `https://cdn.jsdelivr.net/npm/interactive-surface-css@1.4.0/state-core.css`
+- `https://cdn.jsdelivr.net/npm/interactive-surface-css@1.4.0/standalone-preset.css`
+- `https://unpkg.com/interactive-surface-css@1.4.0/interactive-surface.css`
+- `https://unpkg.com/interactive-surface-css@1.4.0/state-core.css`
+- `https://unpkg.com/interactive-surface-css@1.4.0/standalone-preset.css`
 
-## Manual Fallback
+Do not treat a local pack or a successful workflow validation as proof that these live URLs are available.
 
-If GitHub Actions is unavailable, publish from a trusted local machine:
+## Manual fallback
+
+If the automated release path is unavailable, publishing from a trusted local machine still requires the same verification and explicit approval:
 
 ```bash
 npm adduser
 npm publish --access public
 ```
 
-The `prepublishOnly` guard intentionally avoids browser downloads so `npm publish` does not stall on a fresh Playwright cache. Use `npm run validate` for the full local release check, including Playwright browser installation and tests.
+## Versioning
 
-## Versioning Guidance
+- Patch: backward-compatible fixes.
+- Minor: backward-compatible capabilities or entry points.
+- Major: intentional breaking changes.
 
-Use semantic versioning:
-
-- `x.y.z` patch for fixes
-- minor for backward-compatible additions
-- major for breaking behavior
-
-## Release Notes
-
-For each release, include:
-
-- summary of changes
-- API/token behavior changes
-- accessibility notes
-- migration notes for breaking changes
+The 1.4.0 minor release adds focused entry points and semantic-state coverage while preserving the 1.x contract.

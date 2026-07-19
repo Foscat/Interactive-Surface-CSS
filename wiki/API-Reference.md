@@ -1,127 +1,138 @@
 # API Reference
 
-Interactive Surface CSS exposes a class-based API. The package is intentionally small and does not ship JavaScript behavior beyond importing the stylesheet.
+Interactive Surface CSS 1.4.0 is a CSS state primitive. It exports stylesheets and compatibility JavaScript entries, but it does not ship state-management or component-runtime behavior.
 
-## Core class
+## Entry points
+
+| Package path | Contract |
+| --- | --- |
+| `interactive-surface-css/state-core.css` | State selectors, focus, precedence, motion preferences, forced-colors behavior, and neutral interaction token fallbacks |
+| `interactive-surface-css/standalone-preset.css` | State core plus neutral paint, variants, levels, icon roles, target geometry, and preset defaults |
+| `interactive-surface-css/interactive-surface.css` | Preserved complete 1.x compatibility bundle |
+| `interactive-surface-css` | Preserved JavaScript entry that imports the compatibility bundle |
+
+The preset and compatibility stylesheet are generated from the same authored modules and are behaviorally equivalent in 1.4.0.
+
+Package metadata keeps established resolution intact: `main` points to the CommonJS entry, `module` points to the ESM entry, and both load `interactive-surface.css`. The `style`, `unpkg`, and `jsdelivr` fields point directly to that complete compatibility bundle.
+
+## Base selector
 
 ### `.interactive-surface`
 
-Base interaction primitive. Apply this class to any interactive host element that should receive the package's shared state behavior.
+Apply the base class to a native interactive host when possible.
 
-Provides:
+The state core provides:
 
-- base surface appearance
-- hover elevation
-- focus-visible ring
-- pressed feedback
-- active/toggled styling
-- disabled handling
+- state-layer containment
+- pointer-capability-aware hover
+- visible keyboard focus
+- transient press feedback
+- persistent-state feedback
+- disabled-state precedence
+- reduced-motion, higher-contrast, and forced-colors handling
+- composable motion through the individual `translate` property
+
+The standalone preset additionally provides neutral paint, borders, radii, variants, levels, icon sizing, and default lift and shadows.
+
+## Transient states
+
+| Selector | Meaning |
+| --- | --- |
+| `:hover` | Pointer hover, limited to hover-capable fine pointers |
+| `:focus-visible` | Keyboard-visible focus; `:focus` is the compatibility fallback |
+| `:active` | Transient native press while the control activates |
+
+Disabled state overrides every transient state.
+
+## Persistent states
+
+| Selector or hook | Meaning |
+| --- | --- |
+| `.is-active` | Established application-controlled active state |
+| `aria-pressed="true"` | Pressed toggle |
+| `aria-pressed="mixed"` | Indeterminate or mixed toggle |
+| `[aria-current]:not([aria-current="false"])` | Any valid non-false current value, including `page`, `step`, `location`, `date`, `time`, and `true` |
+| `aria-selected="true"` | Selected item in a composite widget such as a tablist |
+| `aria-busy="true"` | Semantic busy or loading state |
+| `.is-loading` | Established class-based loading hook |
+
+Applications must update these values. The package only styles the resulting state.
+
+## Disabled states
+
+| Selector or hook | Behavior |
+| --- | --- |
+| `:disabled` | Preferred native disabled state; the browser suppresses focus and activation |
+| `aria-disabled="true"` | Visual disabled state for a custom control that may remain focusable |
+| `.is-disabled` | Established class-based visual disabled state |
+
+All three suppress pointer interaction in the stylesheet and override pressed, selected, current, busy, loading, active, hover, and motion feedback. Only native `disabled` suppresses all activation automatically. Consumers must suppress keyboard and programmatic activation when using `aria-disabled="true"` or `.is-disabled`.
+
+Focusable ARIA- or class-disabled widgets retain a visible focus ring without receiving activatable state feedback.
 
 ## Size modifiers
 
-### `.size-sm`
+- `.size-sm`: compact lift and shadow profile.
+- Default medium: no size class required.
+- `.size-lg`: stronger lift and shadow profile.
 
-Reduces hover and active lift values and uses a smaller shadow profile.
+These modifiers supply preset motion values. They do not create layout containers.
 
-### `.size-lg`
+## Variants
 
-Increases hover and active lift values and uses a larger shadow profile.
+Class and data-hook variants are equivalent:
 
-### Default medium size
+| Class | Data hook |
+| --- | --- |
+| `.variant-primary` | `data-surface-variant="primary"` |
+| `.variant-secondary` | `data-surface-variant="secondary"` |
+| `.variant-accent` | `data-surface-variant="accent"` |
+| `.variant-subtle` | `data-surface-variant="subtle"` |
+| `.variant-warning` | `data-surface-variant="warning"` |
+| `.variant-danger` | `data-surface-variant="danger"` |
 
-There is no `.size-md` class requirement. Medium behavior is the base default when no size modifier is applied.
-
-## State helpers
-
-### `.is-active`
-
-Applies the active/toggled state styling.
-
-### `.is-disabled`
-
-Applies disabled styling and disables interaction by setting `pointer-events: none`.
-
-## Semantic state attributes
-
-### `[aria-pressed="true"]`
-
-Receives the same active styling as `.is-active`.
-
-### `[aria-disabled="true"]`
-
-Receives the same visual disabled styling as `.is-disabled` (reduced opacity, no transform or shadow, `cursor: not-allowed`, `pointer-events: none`). Unlike native `:disabled` controls, `[aria-disabled="true"]` elements can still receive keyboard focus, so the focus ring remains visible when the element is focused via Tab.
-
-### `:disabled`
-
-Native disabled controls also receive disabled styling.
-
-## Visual variants
-
-These classes and matching data attributes tune variant color and state behavior. They do not define complete color themes by themselves.
-
-- `.variant-primary`
-- `.variant-secondary`
-- `.variant-accent`
-- `.variant-subtle`
-- `.variant-warning`
-- `.variant-danger`
-
-The equivalent data attribute API is available for bridge-generated or runtime-assigned markup:
-
-```html
-<button class="interactive-surface" data-surface-variant="primary">Save</button>
-```
-
-Supported values are `primary`, `secondary`, `accent`, `subtle`, `warning`, and `danger`.
-
-These are best understood as behavioral modifiers layered on top of your own theme tokens.
+Variant paint defaults belong to the standalone preset. A state-core consumer may still use the hooks for bridge or application CSS.
 
 ## Surface levels
 
-### `data-surface-level="1|2|3"`
+`data-surface-level="1|2|3"` expresses semantic depth.
 
-Applies semantic depth without requiring a layout or theme library. Level `1` keeps a quiet default surface, level `2` adds a raised state, and level `3` adds the strongest default depth.
+- Level 1: quiet surface.
+- Level 2: raised surface.
+- Level 3: strongest preset depth.
 
-Bridge styles can override these defaults through the public level tokens while Interactive Surface keeps the interaction behavior.
+The standalone preset supplies background, border, shadow, and state-opacity defaults. Bridges can override generic or per-level public tokens.
 
-## Icon micro pattern
+## Icon controls and roles
 
-### `.icon-only`
+`.icon-only` identifies an icon-only control. In the standalone preset it supplies centered inline-flex presentation and a 44 × 44px minimum target. The state core intentionally does not own that geometry.
 
-Optimizes the host element for icon-only controls.
+Icon children can use data hooks:
 
-Behavior includes:
+- `data-icon-role="light"`
+- `data-icon-role="dark"`
+- `data-icon-role="accessibility"`
 
-- 44px minimum width
-- 44px minimum height
-- centered inline-flex layout
-- adjusted lift and shadow profile
-- tighter radius profile
+The preserved class aliases are `.light-icon`, `.dark-icon`, and `.accessibility-icon`. Role color defaults belong to the preset.
 
-## State model summary
+An icon-only control still needs an accessible name:
 
-The CSS state model is:
+```html
+<button class="interactive-surface icon-only" type="button" aria-label="Open settings">
+  <svg aria-hidden="true" data-icon-role="dark" viewBox="0 0 24 24">…</svg>
+</button>
+```
 
-- base
-- hover / focus-visible
-- active / toggled
-- press
-- disabled
-
-## Exported package entry points
+## Exported package paths
 
 - `interactive-surface-css`
 - `interactive-surface-css/interactive-surface.css`
+- `interactive-surface-css/state-core.css`
+- `interactive-surface-css/standalone-preset.css`
+- `interactive-surface-css/index.html`
+- `interactive-surface-css/index.cjs`
 - `interactive-surface-css/package.json`
-- `interactive-surface-css/index.html` (primary demo/customization app)
-- `interactive-surface-css/example.html` (backward-compatible alias to `index.html`)
 
 ## Non-goals
 
-This package does not provide:
-
-- JavaScript state management
-- component rendering helpers
-- framework bindings
-- layout utilities
-- global design tokens
+The package does not provide component rendering, JavaScript state management, framework bindings, page-layout utilities, or a global application theme.

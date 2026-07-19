@@ -1,33 +1,41 @@
 # Roadmap
 
-This page captures sensible next steps for the package without over-expanding its scope.
+Interactive Surface CSS 1.4.0 is a release candidate. The work in this branch focuses the package on a durable interaction-state contract without expanding into layout or theme ownership.
 
-## Near-term improvements
+## 1.4.0 release candidate
 
-- Expand example coverage for links, toggles, and card-like surfaces
-- Add more documentation around semantic usage patterns
-- Add package badges and npm usage guidance after publish
-- Add visual regression snapshots if the package grows in complexity
+- Preserve every existing 1.x import, selector, hook, and token fallback.
+- Add `state-core.css` for design-system integrations.
+- Add `standalone-preset.css` for complete standalone use.
+- Generate the compatibility bundle from the same authored modules.
+- Cover pressed mixed, non-false current, selected, busy, loading, and disabled precedence.
+- Preserve state meaning under reduced motion, higher contrast, and forced colors.
+- Compose interaction `translate` with consumer `transform`, `scale`, and `rotate`.
+- Turn the demo into a state-first interaction lab.
+- Publish an npm-first README and aligned wiki.
+- Lock the package, audit, Chromium, and full-browser release gates.
 
-## Possible future enhancements
+Publication, tagging, and a GitHub Release remain separate approval-gated steps.
 
-- Additional documented size profiles if demand is real
-- More formal migration notes for token evolution
-- Optional companion examples for React, Vue, and Svelte integrations
-- Theme recipe examples for light, dark, and brand-accent variants
+## After 1.4.0
 
-## Guardrails for future work
+Potential follow-up work must be driven by demonstrated consumer need:
+
+- add targeted visual-regression baselines if state combinations become difficult to review
+- expand framework examples without shipping framework wrappers
+- add migration notes only when token evolution requires them
+- add state recipes for new semantic platform behavior when browsers expose stable primitives
+
+## Permanent guardrails
 
 The package should remain:
 
-- small
-- framework-agnostic
+- small and framework-agnostic
+- compatible with plain HTML and existing design systems
 - accessibility-forward
 - token-driven
-- focused on interaction surfaces rather than becoming a full utility framework
+- independently useful
+- complementary to `ui-style-kit-css` and `layout-style-css`
+- focused on interaction states rather than page layout or application theming
 
-## What should probably stay out
-
-- large bundles of unrelated helper classes
-- framework-specific wrappers in the main package
-- brittle visual flourishes that reduce accessibility or predictability
+The [Interface Systems Lab](https://foscat.github.io/interface-systems-lab/) remains the canonical proof of the three-library composition.

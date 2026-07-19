@@ -1,1 +1,1 @@
-﻿[GitHub Repository](https://github.com/Foscat/Interactive-Surface-CSS) | [README](https://github.com/Foscat/Interactive-Surface-CSS/blob/main/README.md)
+[GitHub Repository](https://github.com/Foscat/Interactive-Surface-CSS) · [README](https://github.com/Foscat/Interactive-Surface-CSS/blob/main/README.md) · [Wiki Home](https://github.com/Foscat/Interactive-Surface-CSS/wiki/Home) · [Standalone Demo](https://foscat.github.io/Interactive-Surface-CSS/) · [Interface Systems Lab](https://foscat.github.io/interface-systems-lab/)

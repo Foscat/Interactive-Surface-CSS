@@ -1,6 +1,6 @@
 # Getting Started
 
-This page covers the fastest path to using Interactive Surface CSS in a real project.
+This is the shortest reliable path to the Interactive Surface CSS 1.4.0 release candidate.
 
 ## Install
 
@@ -8,110 +8,71 @@ This page covers the fastest path to using Interactive Surface CSS in a real pro
 npm install interactive-surface-css
 ```
 
-## Import
-
-### JavaScript or bundler import
+## Import the standalone preset
 
 ```js
-import "interactive-surface-css";
+import "interactive-surface-css/standalone-preset.css";
 ```
 
-### Direct stylesheet import
+The preset combines the interaction state core with neutral paint, variants, surface levels, icon roles, and useful standalone geometry.
 
-```js
-import "interactive-surface-css/interactive-surface.css";
+## Add a native control
+
+```html
+<button class="interactive-surface variant-primary" type="button">Save changes</button>
 ```
 
-### CSS import
+Use `<button>` for actions and `<a href>` for navigation. Native elements already provide keyboard and activation behavior that CSS cannot create.
 
-```css
-@import "interactive-surface-css/interactive-surface.css";
+## Add persistent state
+
+```html
+<button class="interactive-surface" type="button" aria-pressed="true">Pinned</button>
+
+<a class="interactive-surface" href="/account" aria-current="page">Account</a>
+
+<button class="interactive-surface" role="tab" aria-selected="true">Details</button>
+
+<button class="interactive-surface" type="button" aria-busy="true">Saving…</button>
 ```
 
-### CDN usage
+Update the ARIA value whenever application state changes. For an indeterminate toggle, `aria-pressed="mixed"` is also supported.
+
+## Disable controls correctly
+
+```html
+<button class="interactive-surface" type="button" disabled>Unavailable</button>
+```
+
+Native `disabled` is preferred. If a custom widget must remain focusable and uses `aria-disabled="true"` or `.is-disabled`, application code must suppress pointer, keyboard, and programmatic activation.
+
+## No-build setup
+
+Pin the release candidate version:
 
 ```html
 <link
   rel="stylesheet"
-  href="https://cdn.jsdelivr.net/npm/interactive-surface-css@latest/interactive-surface.css"
+  href="https://cdn.jsdelivr.net/npm/interactive-surface-css@1.4.0/standalone-preset.css"
 />
 ```
 
-```html
-<link
-  rel="stylesheet"
-  href="https://unpkg.com/interactive-surface-css@latest/interactive-surface.css"
-/>
+The unpkg equivalent is `https://unpkg.com/interactive-surface-css@1.4.0/standalone-preset.css`. Use `https://cdn.jsdelivr.net/npm/interactive-surface-css@latest/standalone-preset.css` — unpinned opt-in — only when automatically following future releases is intentional.
+
+## Already have a design system?
+
+Import only the interaction layer:
+
+```js
+import "interactive-surface-css/state-core.css";
 ```
 
-## Minimal usage
+The core does not provide standalone colors, borders, spacing, radii, variants, level paint, or icon geometry. Supply those through your own CSS or a companion bridge.
 
-```html
-<button class="interactive-surface">Save</button>
-```
+## See it working
 
-That one class gives the element:
-
-- base surface styling
-- hover elevation on capable pointers
-- keyboard-visible focus styles
-- press feedback
-- disabled handling
-- token-based theming hooks
-
-## Recommended first patterns
-
-### Button
-
-```html
-<button class="interactive-surface variant-primary">Save changes</button>
-```
-
-### Larger primary action
-
-```html
-<button class="interactive-surface size-lg variant-primary">Continue</button>
-```
-
-### Runtime-assigned surface intent
-
-```html
-<button class="interactive-surface" data-surface-variant="primary" data-surface-level="2">
-  Continue
-</button>
-```
-
-### Icon-only control
-
-```html
-<button class="interactive-surface icon-only" aria-label="Open settings">
-  <svg aria-hidden="true" viewBox="0 0 24 24">...</svg>
-</button>
-```
-
-### Toggle-style control
-
-```html
-<button class="interactive-surface is-active" aria-pressed="true">Selected</button>
-```
-
-## First theme override
-
-```css
-:root {
-  --interactive-surface-bg: rgb(15 23 42);
-  --interactive-surface-fg: rgb(226 232 240);
-  --interactive-surface-border-color: rgb(51 65 85);
-  --interactive-surface-focus-ring-color: rgb(56 189 248);
-  --interactive-surface-radius: 12px;
-}
-```
-
-## Best practice
-
-Use native interactive elements whenever possible:
-
-- `<button>` for actions
-- `<a>` for navigation
-
-The package will work with non-semantic elements, but semantics and keyboard behavior still need to be provided by your application code.
+- [Standalone state lab](https://foscat.github.io/Interactive-Surface-CSS/)
+- [Interface Systems Lab](https://foscat.github.io/interface-systems-lab/)
+- [Complete installation options](https://github.com/Foscat/Interactive-Surface-CSS/wiki/Installation-and-Usage)
+- [Semantic API](https://github.com/Foscat/Interactive-Surface-CSS/wiki/API-Reference)
+- [Accessibility responsibilities](https://github.com/Foscat/Interactive-Surface-CSS/wiki/Accessibility)

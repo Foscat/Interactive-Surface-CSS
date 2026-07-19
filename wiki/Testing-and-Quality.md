@@ -1,87 +1,76 @@
 # Testing and Quality
 
-The repository includes both CSS linting and Playwright-based behavioral tests.
+The 1.4.0 release candidate uses layered gates so contributors can choose fast deterministic checks or the complete cross-browser suite without confusing the two.
 
-## Available scripts
+## Validation tiers
 
-```bash
-npm run check:no-hex-colors
-npm run lint:css
-npm run test:install
-npm test
-npm run test:chromium
-npm run pack:dry
-npm run validate
-```
+### `npm run validate` and `npm run validate:ci`
 
-## What each script does
+The deterministic release gate covers static checks, generated-bundle parity, CSS linting, documentation and public contracts, the packed-package contract, a dry package inspection, and the npm audit. It does not install or launch browsers.
 
-### `npm run check:no-hex-colors`
+Use this tier for normal CI and before requesting review.
 
-Runs a guard script that fails if hex color literals are present in `interactive-surface.css`.
+### `npm run validate:browsers`
 
-### `npm run lint:css`
+This runs the deterministic validation tier plus browser installation and the Chromium Playwright project. It is the focused rendered-behavior gate.
 
-Runs Stylelint against `interactive-surface.css`.
+### `npm run validate:full`
 
-### `npm run test:install`
+This runs the deterministic validation tier plus the complete Playwright matrix in Chromium, Firefox, and WebKit. It is the final local release gate when all supported browser binaries are available.
 
-Installs the Chromium, Firefox, and WebKit browser binaries (and their OS-level dependencies) required by the Playwright projects. Run this before the browser tests on a fresh machine or CI environment.
+## Focused commands
 
-### `npm test`
+| Command | Purpose |
+| --- | --- |
+| `npm run check:no-hex-colors` | Reject disallowed hex color literals |
+| `npm run check:generated` | Verify committed public bundles match authored CSS |
+| `npm run lint:css` | Run Stylelint over authored, generated, and demo CSS |
+| `npm run test:contracts` | Run deterministic public, build, and documentation contracts |
+| `npm run test:chromium` | Run the selected Playwright tests in Chromium |
+| `npm test` | Run the configured Chromium, Firefox, and WebKit projects |
+| `npm run pack:dry` | Inspect the npm tarball allowlist without publishing |
+| `npm audit` | Check the dependency tree against the npm advisory database |
 
-Runs the Playwright suite using the project config.
+The exact script graph is finalized as part of the 1.4.0 release candidate before publication. Browser downloads intentionally remain outside `prepublishOnly`.
 
-### `npm run test:chromium`
+## Contract coverage
 
-Runs the Playwright suite in Chromium only. Useful for quick local verification.
+Deterministic tests verify:
 
-### `npm run pack:dry`
+- preserved 1.x selectors, JavaScript entries, stylesheet paths, data hooks, ARIA hooks, and token families
+- resolvable `state-core.css`, `standalone-preset.css`, and compatibility bundles
+- generated-root and distribution parity
+- state-core ownership boundaries
+- packed-package contents
+- npm-safe README and wiki guidance
+- exact README and embedded demo-fallback parity
 
-Runs `npm pack --dry-run` using the local npm cache folder so the final published package contents can be inspected before release.
+## Rendered behavior coverage
 
-### `npm run validate`
+Playwright verifies:
 
-Runs the full release validation sequence: color guard, CSS linting, Playwright browser installation, Playwright tests, and the dry package check.
-
-## Behavioral test coverage in the repo
-
-Current Playwright tests validate:
-
-- standalone fallback style resolution
+- fine-pointer hover and transient press
 - keyboard focus visibility
-- `aria-pressed` active styling
-- `aria-disabled` non-interactivity
-- `data-surface-variant` parity with `.variant-*` classes
-- `data-surface-level` standalone depth and state defaults
-- reduced-motion transform removal
-- icon-only minimum target size
-- index demo page rendering and control count
+- pressed true and mixed, non-false current, selected, busy, loading, and established active states
+- native, ARIA, and class-disabled precedence
+- static state meaning under reduced motion
+- forced-colors and higher-contrast affordances
+- consumer transform composition
+- coarse-pointer behavior
+- standalone icon target sizing
+- UI Style Kit integration in supported import orders
+- demo responsiveness, semantic state workflows, dialog focus containment, and error reporting
 
-## Relevant test files
+## Documentation URL policy
 
-- `tests/interactive-surface.spec.ts`
-- `tests/example.spec.ts`
+Documentation tests validate URL shape locally and never fetch live pages. README wiki links use absolute GitHub Wiki URLs because npm renders the README outside the repository. Repository files excluded from the package use absolute GitHub blob URLs.
 
-## Why Playwright is used here
+## Before publishing
 
-This library is visual and state-driven. Browser-level validation is more useful than unit-testing implementation details because the value of the package is expressed through computed styles and real browser interaction behavior.
-
-## Recommended local release check
-
-Run this sequence before publishing:
+Run:
 
 ```bash
-npm run validate
+npm run validate:full
 ```
 
-## Package contents check
-
-Review the dry-run output and confirm that only intended public files are included:
-
-- `index.js`
-- `interactive-surface.css`
-- `README.md`
-- `CHANGELOG.md`
-- `LICENSE`
-- `index.html`
+Then review the packed-file list and any environment-specific browser skips. A green local gate does not publish, tag, or create a GitHub Release.
