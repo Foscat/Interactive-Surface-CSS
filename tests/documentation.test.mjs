@@ -13,6 +13,7 @@ const read = (...segments) =>
 
 const readme = read("README.md");
 const index = read("index.html");
+const manifest = JSON.parse(read("package.json"));
 const wiki = {
   home: read("wiki", "Home.md"),
   gettingStarted: read("wiki", "Getting-Started.md"),
@@ -52,6 +53,16 @@ function assertAppearsInOrder(source, values) {
     assert.ok(next > cursor, `${value} must appear in the documented npm-reader order`);
     cursor = next;
   }
+}
+
+// The machine-readable table keeps human-facing package resolution guidance synchronized with npm.
+function readPackageResolutionRows(source) {
+  const match = source.match(
+    /<!-- package-resolution-contract:start -->\n([\s\S]*?)\n<!-- package-resolution-contract:end -->/
+  );
+  assert.ok(match, "API reference must contain the package resolution contract table");
+
+  return [...match[1].matchAll(/^\| `([^`]+)` \| `([^`]+)` \|$/gm)].map(([, key, value]) => [key, value]);
 }
 
 test("README is an npm-first guide with durable project links", () => {
@@ -95,14 +106,37 @@ test("README documents every supported entry point and a pinned CDN setup", () =
     'import "interactive-surface-css/interactive-surface.css";',
     'import "interactive-surface-css/state-core.css";',
     'import "interactive-surface-css/standalone-preset.css";',
-    "interactive-surface-css@1.4.0/standalone-preset.css"
+    `${manifest.name}@${manifest.version}/standalone-preset.css`
   ].forEach((value) => assert.ok(readme.includes(value), `README is missing: ${value}`));
+
+  const pinnedVersions = [...readme.matchAll(/interactive-surface-css@(\d+\.\d+\.\d+)\//g)].map((match) => match[1]);
+  assert.ok(pinnedVersions.length >= 2, "README must show pinned jsDelivr and unpkg examples");
+  pinnedVersions.forEach((version) => assert.equal(version, manifest.version));
+  ["https://cdn.jsdelivr.net/npm/", "https://unpkg.com/"].forEach((host) =>
+    assert.ok(
+      readme.includes(`${host}${manifest.name}@${manifest.version}/standalone-preset.css`),
+      `README is missing the ${host} manifest-version CDN pin`
+    )
+  );
 
   assert.match(readme, /@latest[^\n]*(opt-in|unpinned)|(opt-in|unpinned)[^\n]*@latest/i);
   assert.doesNotMatch(readme, /all three companion CSS libraries/i);
   ["`main`", "`module`", "`style`", "`unpkg`", "`jsdelivr`"].forEach((field) =>
     assert.ok(wiki.api.includes(field), `API reference is missing package metadata field: ${field}`)
   );
+});
+
+test("API package resolution matches package.json exactly", () => {
+  const manifestFields = ["main", "module", "style", "unpkg", "jsdelivr"];
+  const expectedRows = [
+    ...manifestFields.map((field) => [field, manifest[field]]),
+    ...Object.entries(manifest.exports).map(([key, target]) => [
+      `exports[${JSON.stringify(key)}]`,
+      typeof target === "string" ? target : JSON.stringify(target)
+    ])
+  ];
+
+  assert.deepEqual(readPackageResolutionRows(wiki.api), expectedRows);
 });
 
 test("README teaches the complete semantic and ecosystem contract", () => {
@@ -134,6 +168,12 @@ test("README teaches the complete semantic and ecosystem contract", () => {
 });
 
 test("wiki API, token, and accessibility references cover the 1.4.0 contract", () => {
+  assert.ok(
+    wiki.api.includes("`.size-sm`: default lift with a compact shadow profile."),
+    "API reference must describe the size-sm lift accurately"
+  );
+  assert.doesNotMatch(wiki.api, /\.size-sm[^\n]*compact lift/i);
+
   [
     'aria-pressed="mixed"',
     "[aria-current]:not([aria-current=\"false\"])",

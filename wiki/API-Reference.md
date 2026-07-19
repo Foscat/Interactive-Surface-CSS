@@ -15,6 +15,27 @@ The preset and compatibility stylesheet are generated from the same authored mod
 
 Package metadata keeps established resolution intact: `main` points to the CommonJS entry, `module` points to the ESM entry, and both load `interactive-surface.css`. The `style`, `unpkg`, and `jsdelivr` fields point directly to that complete compatibility bundle.
 
+### Exact package resolution
+
+The following table is contract-tested against `package.json`; it includes every public export and resolution field.
+
+<!-- package-resolution-contract:start -->
+| Manifest key | Exact value |
+| --- | --- |
+| `main` | `./index.cjs` |
+| `module` | `./index.js` |
+| `style` | `./interactive-surface.css` |
+| `unpkg` | `./interactive-surface.css` |
+| `jsdelivr` | `./interactive-surface.css` |
+| `exports["."]` | `{"require":"./index.cjs","import":"./index.js","default":"./index.js","style":"./interactive-surface.css"}` |
+| `exports["./interactive-surface.css"]` | `./interactive-surface.css` |
+| `exports["./state-core.css"]` | `./state-core.css` |
+| `exports["./standalone-preset.css"]` | `./standalone-preset.css` |
+| `exports["./index.html"]` | `./index.html` |
+| `exports["./index.cjs"]` | `./index.cjs` |
+| `exports["./package.json"]` | `./package.json` |
+<!-- package-resolution-contract:end -->
+
 ## Base selector
 
 ### `.interactive-surface`
@@ -72,7 +93,7 @@ Focusable ARIA- or class-disabled widgets retain a visible focus ring without re
 
 ## Size modifiers
 
-- `.size-sm`: compact lift and shadow profile.
+- `.size-sm`: default lift with a compact shadow profile.
 - Default medium: no size class required.
 - `.size-lg`: stronger lift and shadow profile.
 
