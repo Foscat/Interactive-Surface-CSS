@@ -375,9 +375,39 @@ test("every maintained wiki surface points at current documentation", () => {
     },
   );
 
-  assert.ok(wiki.sidebar.includes(labUrl));
-  assert.ok(wiki.footer.includes(labUrl));
+  assert.ok(
+    markdownContainsExactPublicUrl(wiki.sidebar, labUrl),
+    "Wiki sidebar must include lab URL as an exact Markdown link destination",
+  );
+  assert.ok(
+    markdownContainsExactPublicUrl(wiki.footer, labUrl),
+    "Wiki footer must include lab URL as an exact Markdown link destination",
+  );
 });
+
+const markdownContainsExactPublicUrl = (document, expectedUrl) => {
+  const expected = new URL(expectedUrl);
+
+  for (const [, destination] of document.matchAll(/\]\(([^)]+)\)/g)) {
+    let parsed;
+    try {
+      parsed = new URL(destination);
+    } catch {
+      continue;
+    }
+
+    if (
+      parsed.origin === expected.origin &&
+      parsed.pathname === expected.pathname &&
+      parsed.search === "" &&
+      parsed.hash === ""
+    ) {
+      return true;
+    }
+  }
+
+  return false;
+};
 
 test("public Markdown links have deterministic absolute URL shapes", () => {
   let linkCount = 0;
