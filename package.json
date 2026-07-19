@@ -78,13 +78,15 @@
     "build": "node ./scripts/build.mjs",
     "test": "playwright test --config=./playwright.config.mjs",
     "test:contracts": "node --test tests/public-contract.test.mjs tests/build.test.mjs tests/documentation.test.mjs",
+    "test:package": "node --test tests/package-contract.test.mjs",
     "test:chromium": "playwright test --config=./playwright.config.mjs --project=chromium",
     "test:install": "playwright install --with-deps chromium firefox webkit",
     "test:install:chromium": "playwright install chromium --with-deps --only-shell",
-    "validate:publish": "npm run check:no-hex-colors && npm run lint:css && npm run build && npm run pack:dry",
-    "validate:ci": "npm run validate:publish",
-    "validate:browsers": "npm run validate:publish && npm run test:install:chromium && npm run test:chromium",
-    "validate:full": "npm run validate:publish && npm run test:install && npm test",
+    "audit": "npm audit",
+    "validate:publish": "npm run check:no-hex-colors && npm run lint:css && npm run check:generated && npm run build && npm run check:generated && npm run test:contracts && npm run test:package && npm run pack:dry",
+    "validate:ci": "npm run validate:publish && npm run audit",
+    "validate:browsers": "npm run validate:ci && npm run test:install:chromium && npm run test:chromium",
+    "validate:full": "npm run validate:ci && npm run test:install && npm test",
     "validate": "npm run validate:ci",
     "prepublishOnly": "npm run validate:publish"
   },
@@ -99,7 +101,6 @@
     "access": "public"
   },
   "directories": {
-    "doc": "docs",
     "test": "tests"
   }
 }
