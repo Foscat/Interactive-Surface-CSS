@@ -1,6 +1,6 @@
 {
   "name": "interactive-surface-css",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "A framework-agnostic, accessible CSS interaction primitive for buttons, cards, and icon controls with token-driven theming.",
   "keywords": [
     "css",
@@ -40,6 +40,8 @@
       "style": "./interactive-surface.css"
     },
     "./interactive-surface.css": "./interactive-surface.css",
+    "./state-core.css": "./state-core.css",
+    "./standalone-preset.css": "./standalone-preset.css",
     "./index.html": "./index.html",
     "./index.cjs": "./index.cjs",
     "./package.json": "./package.json"
@@ -47,35 +49,61 @@
   "sideEffects": [
     "./index.js",
     "./index.cjs",
-    "*.css"
+    "*.css",
+    "./demo/demo.css"
   ],
   "files": [
     "index.js",
     "index.cjs",
     "interactive-surface.css",
+    "state-core.css",
+    "standalone-preset.css",
+    "assets/android-chrome-192x192.png",
+    "assets/android-chrome-512x512.png",
+    "assets/apple-touch-icon.png",
+    "assets/browserconfig.xml",
+    "assets/favicon-16x16.png",
+    "assets/favicon-32x32.png",
+    "assets/favicon-48x48.png",
+    "assets/favicon-64x64.png",
+    "assets/favicon.ico",
+    "assets/maskable-icon-192x192.png",
+    "assets/maskable-icon-512x512.png",
+    "assets/mstile-150x150.png",
+    "assets/site.webmanifest",
+    "demo/demo.css",
+    "demo/demo.js",
     "index.html",
     "README.md",
     "CHANGELOG.md",
     "LICENSE"
   ],
   "engines": {
-    "node": ">=18"
+    "node": ">=20"
   },
   "scripts": {
     "check:no-hex-colors": "node ./scripts/check-no-hex-colors.mjs",
-    "lint:css": "stylelint interactive-surface.css",
+    "check:generated": "node ./scripts/build.mjs check",
+    "check:public": "node ./scripts/build.mjs check-public",
+    "lint:css": "stylelint \"styles/**/*.css\" \"*.css\" \"demo/**/*.css\"",
     "pack:dry": "npm pack --dry-run --cache ./.npm-cache",
     "bundle": "node ./scripts/build.mjs bundle",
     "minify": "node ./scripts/build.mjs minify",
     "build": "node ./scripts/build.mjs",
     "test": "playwright test --config=./playwright.config.mjs",
+    "test:contracts": "node --test tests/public-contract.test.mjs tests/build.test.mjs tests/documentation.test.mjs",
+    "test:package": "node --test tests/package-contract.test.mjs",
     "test:chromium": "playwright test --config=./playwright.config.mjs --project=chromium",
     "test:install": "playwright install --with-deps chromium firefox webkit",
     "test:install:chromium": "playwright install chromium --with-deps --only-shell",
-    "validate:publish": "npm run check:no-hex-colors && npm run lint:css && npm run build && npm run pack:dry",
-    "validate:ci": "npm run validate:publish",
-    "validate:browsers": "npm run validate:publish && npm run test:install:chromium && npm run test:chromium",
-    "validate:full": "npm run validate:publish && npm run test:install && npm test",
+    "audit": "npm audit",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "validate:node20": "npm run validate:ci",
+    "validate:publish": "npm run check:no-hex-colors && npm run lint:css && npm run check:public && npm run build && npm run check:generated && npm run test:contracts && npm run test:package && npm run pack:dry",
+    "validate:ci": "npm run validate:publish && npm run audit",
+    "validate:browsers": "npm run validate:ci && npm run test:install:chromium && npm run test:chromium",
+    "validate:full": "npm run validate:ci && npm run test:install && npm test",
     "validate": "npm run validate:ci",
     "prepublishOnly": "npm run validate:publish"
   },
@@ -84,13 +112,13 @@
     "clean-css": "~5.3.3",
     "stylelint": "^17.14.0",
     "stylelint-config-standard": "^40.0.0",
+    "prettier": "3.9.5",
     "ui-style-kit-css": "2.0.1"
   },
   "publishConfig": {
     "access": "public"
   },
   "directories": {
-    "doc": "docs",
     "test": "tests"
   }
 }

@@ -1,87 +1,39 @@
-/*
+/*!
  * interactive-surface.css
- *
- * Purpose:
- * - Provide a standalone interaction primitive for clickable surfaces.
- * - Keep behavior consistent across buttons, cards, and icon controls.
- * - Allow zero-config usage with optional token-driven theming.
- *
- * State model:
- * - base -> hover/focus-visible -> active -> press -> disabled
+ * Generated from: styles/standalone-preset.css, styles/state-core.css
+ * Do not edit directly; run node scripts/build.mjs.
  */
 
 /*
- * 1) Token contract
- *
- * Preferred token namespace:
- * - --interactive-surface-*
- *
- * Legacy fallback tokens are still supported:
- * - --lift-*, --shadow-*, --surface-darken-*, --motion-*, --ease-*
- *
- * Implementation note:
- * - No global :root token defaults are set in this file.
- * - Defaults are resolved inline to avoid import-order conflicts.
+ * Standalone paint and geometry for interactive surfaces.
+ * The generated preset appends state-core.css to this authored module.
  */
 
-/* 2) Base primitive and token resolution */
-
-.interactive-surface {
-  /* Internal resolved tokens (public + legacy + hard fallback). */
-  --_is-lift-base: var(--interactive-surface-lift-base, var(--lift-base, 0px));
-  --_is-lift-hover: var(--interactive-surface-lift-hover, var(--lift-hover, -4px));
-  --_is-lift-active: var(--interactive-surface-lift-active, var(--lift-active, -2px));
-
-  --_is-base-shadow: var(--interactive-surface-shadow-base, var(--shadow-base, 0 0 0 rgba(0, 0, 0, 0)));
-  --_is-shadow-base: var(--_is-base-shadow);
-  --_is-shadow-hover: var(
-    --interactive-surface-shadow-hover,
-    var(--shadow-hover, 0 10px 28px rgba(0, 0, 0, 0.35), 0 2px 8px rgba(0, 0, 0, 0.25))
+:is(.interactive-surface) {
+  /* Complete bundles retain the established lift and shadow fallbacks without imposing them on the core. */
+  --_is-preset-lift-base: var(--lift-base, 0px);
+  --_is-preset-lift-hover: var(--lift-hover, -4px);
+  --_is-preset-lift-active: var(--lift-active, -2px);
+  --_is-preset-shadow-base: var(--shadow-base, 0 0 0 rgb(0 0 0 / 0));
+  --_is-preset-shadow-hover: var(
+    --shadow-hover,
+    0 10px 28px rgb(0 0 0 / 0.35),
+    0 2px 8px rgb(0 0 0 / 0.25)
   );
-  --_is-shadow-active: var(
-    --interactive-surface-shadow-active,
-    var(--shadow-active, 0 6px 18px rgba(0, 0, 0, 0.3), 0 1px 4px rgba(0, 0, 0, 0.2))
+  --_is-preset-shadow-active: var(
+    --shadow-active,
+    0 6px 18px rgb(0 0 0 / 0.3),
+    0 1px 4px rgb(0 0 0 / 0.2)
   );
-
-  /*
-   * Legacy brightness tokens are preserved, but state rendering now uses
-   * a ::before state-layer pseudo-element instead of host-level filters so
-   * text and icons are less likely to lose contrast in consumer themes.
-   * The state layer is decoupled from box-shadow so shadow tokens set to
-   * `none` (e.g. in prefers-contrast: more) cannot invalidate the
-   * box-shadow declaration.
-   */
-  --_is-darken-hover: var(--interactive-surface-darken-hover, var(--surface-darken-hover, 0.96));
-  --_is-darken-active: var(--interactive-surface-darken-active, var(--surface-darken-active, 0.98));
-  --_is-state-layer-base-opacity: var(--interactive-surface-state-layer-opacity, 0);
-  --_is-state-layer-hover-opacity: var(
-    --interactive-surface-state-layer-hover-opacity,
-    var(--interactive-surface-state-layer-opacity-hover, calc(1 - var(--_is-darken-hover)))
+  --_is-base-bg: var(
+    --interactive-surface-bg,
+    var(--surface-bg, var(--bg-surface, rgb(248 250 252)))
   );
-  --_is-state-layer-active-opacity: var(
-    --interactive-surface-state-layer-active-opacity,
-    var(--interactive-surface-state-layer-opacity-active, calc(1 - var(--_is-darken-active)))
-  );
-  --_is-state-layer-focus-opacity: var(
-    --interactive-surface-state-layer-focus-opacity,
-    var(--interactive-surface-state-layer-opacity-focus, var(--_is-state-layer-hover-opacity))
-  );
-  --_is-state-layer-color: var(--interactive-surface-state-layer-color, rgb(0 0 0));
-
-  --_is-motion-default: var(--interactive-surface-motion-default, var(--motion-default, 140ms));
-  --_is-motion-press: var(--interactive-surface-motion-press, var(--motion-press, 60ms));
-  --_is-ease-standard: var(
-    --interactive-surface-ease-standard,
-    var(--ease-standard, cubic-bezier(0.2, 0, 0.2, 1))
-  );
-  --_is-ease-press: var(
-    --interactive-surface-ease-press,
-    var(--ease-press, cubic-bezier(0.4, 0, 0.6, 1))
-  );
-
-  --_is-base-bg: var(--interactive-surface-bg, var(--surface-bg, var(--bg-surface, rgb(248 250 252))));
   --_is-bg: var(--_is-base-bg);
-  --_is-fg: var(--interactive-surface-fg, var(--surface-fg, var(--text-primary, rgb(17 24 39))));
+  --_is-fg: var(
+    --interactive-surface-fg,
+    var(--surface-fg, var(--text-primary, rgb(17 24 39)))
+  );
   --_is-base-border-color: var(
     --interactive-surface-border-color,
     var(--surface-border, var(--border-color, rgba(15, 23, 42, 0.2)))
@@ -90,99 +42,139 @@
   --_is-border-width: var(--interactive-surface-border-width, 1px);
   --_is-radius: var(--interactive-surface-radius, 0.75rem);
 
-  --_is-focus-ring-color: var(--interactive-surface-focus-ring-color, var(--focus-ring, rgb(11 99 246)));
-  --_is-focus-ring-width: var(--interactive-surface-focus-ring-width, 2px);
-  --_is-focus-ring-offset: var(--interactive-surface-focus-ring-offset, 2px);
-  --_is-disabled-opacity: var(--interactive-surface-disabled-opacity, 0.72);
-  --_is-tap-highlight: var(--interactive-surface-tap-highlight-color, rgb(11 99 246 / 0.18));
-
-  position: relative;
-  isolation: isolate;
   box-sizing: border-box;
   border: var(--_is-border-width) solid var(--_is-border-color);
   border-radius: var(--_is-radius);
   background-color: var(--_is-bg);
   color: var(--_is-fg);
-  cursor: pointer;
   text-decoration: none;
   font: inherit;
   -webkit-appearance: none;
   appearance: none;
-  touch-action: manipulation;
-  -webkit-tap-highlight-color: var(--_is-tap-highlight);
   background-clip: padding-box;
-  transform: translateY(var(--_is-lift-base)) translateZ(0) !important;
-  box-shadow: var(--_is-shadow-base);
-  transition:
-    transform var(--_is-motion-default) var(--_is-ease-standard),
-    box-shadow var(--_is-motion-default) var(--_is-ease-standard),
-    background-color var(--_is-motion-default) linear,
-    border-color var(--_is-motion-default) linear,
-    color var(--_is-motion-default) linear,
-    outline-color var(--_is-motion-default) linear;
-  will-change: auto;
 }
 
 /*
- * UI Style Kit 2.x exposes surface depth through bridge level tokens.
- * The attribute gates keep default surfaces on the existing base contract while
- * letting bridge or standalone markup opt into semantic depth.
+ * UI Style Kit 2.0.1 contributes one pixel of transform-based hover lift and owns paint
+ * transitions. The preset offsets the resolved lift and protects the complete transition tuple.
  */
+:where([data-ui][data-theme][data-mode]) .interactive-surface {
+  --_is-preset-hover-lift-offset: 1px;
+
+  /* stylelint-disable declaration-block-no-redundant-longhand-properties -- Each longhand must survive companion shorthands in either import order. */
+  transition-property:
+    background-color, border-color, box-shadow, color, transform, translate,
+    outline-color !important;
+  transition-duration: var(--_is-transition-duration) !important;
+  transition-timing-function: var(--_is-transition-timing-function) !important;
+  transition-delay: var(--_is-transition-delay) !important;
+  /* stylelint-enable declaration-block-no-redundant-longhand-properties */
+}
+
+/* Surface levels consume bridge tokens while preserving standalone fallbacks. */
 .interactive-surface[data-surface-level] {
   --_is-bg: var(--interactive-surface-level-bg, var(--_is-base-bg));
-  --_is-border-color: var(--interactive-surface-level-border-color, var(--_is-base-border-color));
-  --_is-shadow-base: var(--interactive-surface-level-shadow, var(--_is-base-shadow));
+  --_is-border-color: var(
+    --interactive-surface-level-border-color,
+    var(--_is-base-border-color)
+  );
+  --_is-shadow-base: var(
+    --interactive-surface-level-shadow,
+    var(--_is-base-shadow)
+  );
 }
 
 .interactive-surface[data-surface-level="1"] {
-  --_is-bg: var(--interactive-surface-level-bg, var(--interactive-surface-level-1-bg, var(--_is-base-bg)));
-  --_is-border-color: var(--interactive-surface-level-border-color, var(--interactive-surface-level-1-border-color, var(--_is-base-border-color)));
-  --_is-shadow-base: var(--interactive-surface-level-shadow, var(--interactive-surface-level-1-shadow, var(--_is-base-shadow)));
-  --_is-state-layer-hover-opacity: var(--interactive-surface-state-layer-hover-opacity, var(--interactive-surface-level-1-hover-opacity, 0.08));
-  --_is-state-layer-active-opacity: var(--interactive-surface-state-layer-active-opacity, var(--interactive-surface-level-1-active-opacity, 0.14));
-  --_is-state-layer-focus-opacity: var(--interactive-surface-state-layer-focus-opacity, var(--interactive-surface-level-1-focus-opacity, 0.18));
+  --_is-bg: var(
+    --interactive-surface-level-bg,
+    var(--interactive-surface-level-1-bg, var(--_is-base-bg))
+  );
+  --_is-border-color: var(
+    --interactive-surface-level-border-color,
+    var(
+      --interactive-surface-level-1-border-color,
+      var(--_is-base-border-color)
+    )
+  );
+  --_is-shadow-base: var(
+    --interactive-surface-level-shadow,
+    var(--interactive-surface-level-1-shadow, var(--_is-base-shadow))
+  );
+  --_is-state-layer-hover-opacity: var(
+    --interactive-surface-state-layer-hover-opacity,
+    var(--interactive-surface-level-1-hover-opacity, 0.08)
+  );
+  --_is-state-layer-active-opacity: var(
+    --interactive-surface-state-layer-active-opacity,
+    var(--interactive-surface-level-1-active-opacity, 0.14)
+  );
+  --_is-state-layer-focus-opacity: var(
+    --interactive-surface-state-layer-focus-opacity,
+    var(--interactive-surface-level-1-focus-opacity, 0.18)
+  );
 }
 
 .interactive-surface[data-surface-level="2"] {
-  --_is-bg: var(--interactive-surface-level-bg, var(--interactive-surface-level-2-bg, var(--_is-base-bg)));
-  --_is-border-color: var(--interactive-surface-level-border-color, var(--interactive-surface-level-2-border-color, var(--_is-base-border-color)));
-  --_is-shadow-base: var(--interactive-surface-level-shadow, var(
-    --interactive-surface-level-2-shadow,
-    0 8px 20px rgb(0 0 0 / 0.22)
-  ));
-  --_is-state-layer-hover-opacity: var(--interactive-surface-state-layer-hover-opacity, var(--interactive-surface-level-2-hover-opacity, 0.11));
-  --_is-state-layer-active-opacity: var(--interactive-surface-state-layer-active-opacity, var(--interactive-surface-level-2-active-opacity, 0.18));
-  --_is-state-layer-focus-opacity: var(--interactive-surface-state-layer-focus-opacity, var(--interactive-surface-level-2-focus-opacity, 0.22));
+  --_is-bg: var(
+    --interactive-surface-level-bg,
+    var(--interactive-surface-level-2-bg, var(--_is-base-bg))
+  );
+  --_is-border-color: var(
+    --interactive-surface-level-border-color,
+    var(
+      --interactive-surface-level-2-border-color,
+      var(--_is-base-border-color)
+    )
+  );
+  --_is-shadow-base: var(
+    --interactive-surface-level-shadow,
+    var(--interactive-surface-level-2-shadow, 0 8px 20px rgb(0 0 0 / 0.22))
+  );
+  --_is-state-layer-hover-opacity: var(
+    --interactive-surface-state-layer-hover-opacity,
+    var(--interactive-surface-level-2-hover-opacity, 0.11)
+  );
+  --_is-state-layer-active-opacity: var(
+    --interactive-surface-state-layer-active-opacity,
+    var(--interactive-surface-level-2-active-opacity, 0.18)
+  );
+  --_is-state-layer-focus-opacity: var(
+    --interactive-surface-state-layer-focus-opacity,
+    var(--interactive-surface-level-2-focus-opacity, 0.22)
+  );
 }
 
 .interactive-surface[data-surface-level="3"] {
-  --_is-bg: var(--interactive-surface-level-bg, var(--interactive-surface-level-3-bg, var(--_is-base-bg)));
-  --_is-border-color: var(--interactive-surface-level-border-color, var(--interactive-surface-level-3-border-color, var(--_is-base-border-color)));
-  --_is-shadow-base: var(--interactive-surface-level-shadow, var(
-    --interactive-surface-level-3-shadow,
-    0 14px 34px rgb(0 0 0 / 0.3)
-  ));
-  --_is-state-layer-hover-opacity: var(--interactive-surface-state-layer-hover-opacity, var(--interactive-surface-level-3-hover-opacity, 0.14));
-  --_is-state-layer-active-opacity: var(--interactive-surface-state-layer-active-opacity, var(--interactive-surface-level-3-active-opacity, 0.24));
-  --_is-state-layer-focus-opacity: var(--interactive-surface-state-layer-focus-opacity, var(--interactive-surface-level-3-focus-opacity, 0.28));
+  --_is-bg: var(
+    --interactive-surface-level-bg,
+    var(--interactive-surface-level-3-bg, var(--_is-base-bg))
+  );
+  --_is-border-color: var(
+    --interactive-surface-level-border-color,
+    var(
+      --interactive-surface-level-3-border-color,
+      var(--_is-base-border-color)
+    )
+  );
+  --_is-shadow-base: var(
+    --interactive-surface-level-shadow,
+    var(--interactive-surface-level-3-shadow, 0 14px 34px rgb(0 0 0 / 0.3))
+  );
+  --_is-state-layer-hover-opacity: var(
+    --interactive-surface-state-layer-hover-opacity,
+    var(--interactive-surface-level-3-hover-opacity, 0.14)
+  );
+  --_is-state-layer-active-opacity: var(
+    --interactive-surface-state-layer-active-opacity,
+    var(--interactive-surface-level-3-active-opacity, 0.24)
+  );
+  --_is-state-layer-focus-opacity: var(
+    --interactive-surface-state-layer-focus-opacity,
+    var(--interactive-surface-level-3-focus-opacity, 0.28)
+  );
 }
 
-/* 2a) State-layer pseudo-element */
-
-.interactive-surface::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background-color: var(--_is-state-layer-color);
-  opacity: var(--_is-state-layer-base-opacity);
-  pointer-events: none;
-  z-index: -1;
-  transition: opacity var(--_is-motion-default) var(--_is-ease-standard);
-}
-
-/* 2b) UI Style Kit compatibility ownership */
-
+/* UI Style Kit hosts retain explicit ownership-compatible paint declarations. */
 [data-ui] .interactive-surface {
   border: var(--_is-border-width) solid var(--_is-border-color);
   border-radius: var(--_is-radius);
@@ -191,95 +183,37 @@
   font: inherit;
 }
 
-/* 3) Keyboard focus visibility */
-
-.interactive-surface:focus {
-  outline: var(--_is-focus-ring-width) solid var(--_is-focus-ring-color);
-  outline-offset: var(--_is-focus-ring-offset);
+/* File inputs have a native selector button; the preset maps it into the same surface token contract. */
+:is(input[type="file"].interactive-surface) {
+  min-height: 2.75rem;
 }
 
-@supports selector(:focus-visible) {
-  .interactive-surface:focus {
-    outline: none;
-  }
+:is(input[type="file"].interactive-surface)::file-selector-button {
+  margin-inline-end: 0.75rem;
+  padding: 0.55rem 0.85rem;
+  border: var(--_is-border-width) solid var(--_is-border-color);
+  border-radius: calc(var(--_is-radius) * 0.75);
+  background-color: var(--_is-bg);
+  color: var(--_is-fg);
+  font: inherit;
+  font-weight: 700;
 }
-
-.interactive-surface:not(.is-disabled, :disabled, [aria-disabled="true"]):focus-visible {
-  transform: translateY(var(--_is-lift-hover)) translateZ(0) !important;
-  box-shadow: var(--_is-shadow-hover);
-  outline: var(--_is-focus-ring-width) solid var(--_is-focus-ring-color);
-  outline-offset: var(--_is-focus-ring-offset);
-}
-
-.interactive-surface:not(.is-disabled, :disabled, [aria-disabled="true"]):focus-visible::before {
-  opacity: var(--_is-state-layer-focus-opacity);
-}
-
-.interactive-surface[aria-disabled="true"]:focus-visible {
-  outline: var(--_is-focus-ring-width) solid var(--_is-focus-ring-color);
-  outline-offset: var(--_is-focus-ring-offset);
-}
-
-/* 4) Active and toggled states */
-
-.interactive-surface.is-active:not(.is-disabled, [aria-disabled="true"]),
-.interactive-surface[aria-pressed="true"]:not(.is-disabled, :disabled, [aria-disabled="true"]),
-.interactive-surface[aria-current="page"]:not(.is-disabled, :disabled, [aria-disabled="true"]) {
-  transform: translateY(var(--_is-lift-active)) translateZ(0) !important;
-  box-shadow: var(--_is-shadow-active);
-}
-
-.interactive-surface.is-active:not(.is-disabled, [aria-disabled="true"])::before,
-.interactive-surface[aria-pressed="true"]:not(.is-disabled, :disabled, [aria-disabled="true"])::before,
-.interactive-surface[aria-current="page"]:not(.is-disabled, :disabled, [aria-disabled="true"])::before {
-  opacity: var(--_is-state-layer-active-opacity);
-}
-
-/* 5) Pointer hover and press feedback */
-
-@media (hover: hover) and (pointer: fine) {
-  .interactive-surface {
-    will-change: transform, box-shadow;
-  }
-
-  .interactive-surface:not(.is-disabled, :disabled, [aria-disabled="true"]):hover {
-    transform: translateY(var(--_is-lift-hover)) translateZ(0) !important;
-    box-shadow: var(--_is-shadow-hover);
-  }
-
-  .interactive-surface:not(.is-disabled, :disabled, [aria-disabled="true"]):hover::before {
-    opacity: var(--_is-state-layer-hover-opacity);
-  }
-}
-
-.interactive-surface:not(.is-disabled, :disabled, [aria-disabled="true"]):active {
-  transform: translateY(var(--_is-lift-base)) translateZ(0) !important;
-  box-shadow: var(--_is-shadow-base);
-  transition-duration: var(--_is-motion-press);
-  transition-timing-function: var(--_is-ease-press);
-}
-
-.interactive-surface:not(.is-disabled, :disabled, [aria-disabled="true"]):active::before {
-  opacity: 0;
-}
-
-/* 6) Size modifiers */
 
 .interactive-surface.size-sm {
   --interactive-surface-lift-hover: -4px;
   --interactive-surface-lift-active: -2px;
-  --interactive-surface-shadow-hover: 0 6px 16px rgba(0, 0, 0, 0.28), 0 1px 4px rgba(0, 0, 0, 0.2);
+  --interactive-surface-shadow-hover:
+    0 6px 16px rgba(0, 0, 0, 0.28), 0 1px 4px rgba(0, 0, 0, 0.2);
   --interactive-surface-shadow-active: 0 4px 10px rgba(0, 0, 0, 0.25);
 }
 
 .interactive-surface.size-lg {
   --interactive-surface-lift-hover: -8px;
   --interactive-surface-lift-active: -4px;
-  --interactive-surface-shadow-hover: 0 14px 36px rgba(0, 0, 0, 0.38), 0 3px 10px rgba(0, 0, 0, 0.3);
+  --interactive-surface-shadow-hover:
+    0 14px 36px rgba(0, 0, 0, 0.38), 0 3px 10px rgba(0, 0, 0, 0.3);
   --interactive-surface-shadow-active: 0 8px 22px rgba(0, 0, 0, 0.32);
 }
-
-/* 7) Icon-only modifier */
 
 .interactive-surface.icon-only {
   --interactive-surface-lift-hover: -3px;
@@ -296,58 +230,128 @@
   border-radius: 0.5rem;
 }
 
-/* Optional icon-role hooks for theme toggles and accessibility controls. */
+/* Icon-role hooks provide useful standalone defaults while remaining token-driven. */
 .interactive-surface.icon-only .light-icon,
 .interactive-surface.icon-only [data-icon-role="light"] {
-  color: var(--interactive-surface-light-icon-color, var(--icon-light, rgb(212 175 55)));
+  color: var(
+    --interactive-surface-light-icon-color,
+    var(--icon-light, rgb(212 175 55))
+  );
 }
 
 .interactive-surface.icon-only .dark-icon,
 .interactive-surface.icon-only [data-icon-role="dark"] {
-  color: var(--interactive-surface-dark-icon-color, var(--icon-dark, rgb(0 0 0)));
+  color: var(
+    --interactive-surface-dark-icon-color,
+    var(--icon-dark, rgb(0 0 0))
+  );
 }
 
 .interactive-surface.icon-only .accessibility-icon,
 .interactive-surface.icon-only [data-icon-role="accessibility"] {
-  color: var(--interactive-surface-accessibility-icon-color, var(--icon-accessibility, rgb(59 130 246)));
+  color: var(
+    --interactive-surface-accessibility-icon-color,
+    var(--icon-accessibility, rgb(59 130 246))
+  );
   border-radius: 0;
 }
 
 @media (prefers-color-scheme: dark) {
   .interactive-surface.icon-only .light-icon,
   .interactive-surface.icon-only [data-icon-role="light"] {
-    color: var(--interactive-surface-light-icon-color-dark, var(--icon-light-dark, rgb(255 255 255)));
+    color: var(
+      --interactive-surface-light-icon-color-dark,
+      var(--icon-light-dark, rgb(255 255 255))
+    );
   }
 
   .interactive-surface.icon-only .dark-icon,
   .interactive-surface.icon-only [data-icon-role="dark"] {
-    color: var(--interactive-surface-dark-icon-color-dark, var(--icon-dark-dark, rgb(30 58 138)));
+    color: var(
+      --interactive-surface-dark-icon-color-dark,
+      var(--icon-dark-dark, rgb(30 58 138))
+    );
   }
 
   .interactive-surface.icon-only .accessibility-icon,
   .interactive-surface.icon-only [data-icon-role="accessibility"] {
-    color: var(--interactive-surface-accessibility-icon-color-dark, var(--icon-accessibility-dark, rgb(156 163 175)));
+    color: var(
+      --interactive-surface-accessibility-icon-color-dark,
+      var(--icon-accessibility-dark, rgb(156 163 175))
+    );
   }
 }
 
-:where([data-theme="dark"], [data-mode="dark"], [data-mode="contrast"], .theme-dark, .dark-mode, .dark) .interactive-surface.icon-only .light-icon,
-:where([data-theme="dark"], [data-mode="dark"], [data-mode="contrast"], .theme-dark, .dark-mode, .dark)
+:where(
+    [data-theme="dark"],
+    [data-mode="dark"],
+    [data-mode="contrast"],
+    .theme-dark,
+    .dark-mode,
+    .dark
+  )
+  .interactive-surface.icon-only
+  .light-icon,
+:where(
+    [data-theme="dark"],
+    [data-mode="dark"],
+    [data-mode="contrast"],
+    .theme-dark,
+    .dark-mode,
+    .dark
+  )
   .interactive-surface.icon-only
   [data-icon-role="light"] {
-  color: var(--interactive-surface-light-icon-color-dark, var(--icon-light-dark, rgb(255 255 255)));
+  color: var(
+    --interactive-surface-light-icon-color-dark,
+    var(--icon-light-dark, rgb(255 255 255))
+  );
 }
 
-:where([data-theme="dark"], [data-mode="dark"], [data-mode="contrast"], .theme-dark, .dark-mode, .dark) .interactive-surface.icon-only .dark-icon,
-:where([data-theme="dark"], [data-mode="dark"], [data-mode="contrast"], .theme-dark, .dark-mode, .dark)
+:where(
+    [data-theme="dark"],
+    [data-mode="dark"],
+    [data-mode="contrast"],
+    .theme-dark,
+    .dark-mode,
+    .dark
+  )
+  .interactive-surface.icon-only
+  .dark-icon,
+:where(
+    [data-theme="dark"],
+    [data-mode="dark"],
+    [data-mode="contrast"],
+    .theme-dark,
+    .dark-mode,
+    .dark
+  )
   .interactive-surface.icon-only
   [data-icon-role="dark"] {
-  color: var(--interactive-surface-dark-icon-color-dark, var(--icon-dark-dark, rgb(30 58 138)));
+  color: var(
+    --interactive-surface-dark-icon-color-dark,
+    var(--icon-dark-dark, rgb(30 58 138))
+  );
 }
 
-:where([data-theme="dark"], [data-mode="dark"], [data-mode="contrast"], .theme-dark, .dark-mode, .dark)
+:where(
+    [data-theme="dark"],
+    [data-mode="dark"],
+    [data-mode="contrast"],
+    .theme-dark,
+    .dark-mode,
+    .dark
+  )
   .interactive-surface.icon-only
   .accessibility-icon,
-:where([data-theme="dark"], [data-mode="dark"], [data-mode="contrast"], .theme-dark, .dark-mode, .dark)
+:where(
+    [data-theme="dark"],
+    [data-mode="dark"],
+    [data-mode="contrast"],
+    .theme-dark,
+    .dark-mode,
+    .dark
+  )
   .interactive-surface.icon-only
   [data-icon-role="accessibility"] {
   color: var(
@@ -355,8 +359,6 @@
     var(--icon-accessibility-dark, rgb(156 163 175))
   );
 }
-
-/* 8) Visual variant token modifiers */
 
 .interactive-surface.variant-primary,
 .interactive-surface[data-surface-variant="primary"] {
@@ -466,89 +468,412 @@
   --interactive-surface-darken-active: 0.94;
 }
 
-/* 9) Disabled states */
+/* System paint remains part of the standalone preset while core owns forced-color interaction mechanics. */
+@media (forced-colors: active) {
+  :is(.interactive-surface) {
+    background-color: ButtonFace;
+    color: ButtonText;
+    border-color: ButtonText;
+  }
 
-.interactive-surface.is-disabled,
-.interactive-surface:disabled {
+  :is(.interactive-surface).is-disabled,
+  :is(.interactive-surface):disabled,
+  :is(.interactive-surface)[aria-disabled="true"] {
+    color: GrayText;
+    border-color: GrayText;
+  }
+
+  :is(.interactive-surface[type="file"])::file-selector-button {
+    border-color: ButtonText;
+    background-color: ButtonFace;
+    color: ButtonText;
+  }
+
+  :is(.interactive-surface[type="file"]):is(
+      .is-disabled,
+      :disabled,
+      [aria-disabled="true"]
+    )::file-selector-button {
+    border-color: GrayText;
+    color: GrayText;
+  }
+}
+
+/*
+ * Interaction mechanics for interactive surfaces.
+ * Standalone paint and component geometry belong to the companion preset.
+ */
+
+.interactive-surface {
+  /* Preset-only fallbacks keep the core neutral while preserving complete-bundle behavior. */
+  --_is-lift-base: var(
+    --interactive-surface-lift-base,
+    var(--_is-preset-lift-base, 0px)
+  );
+  --_is-lift-hover: var(
+    --interactive-surface-lift-hover,
+    var(--_is-preset-lift-hover, 0px)
+  );
+  --_is-hover-lift: calc(
+    var(--_is-lift-hover) + var(--_is-preset-hover-lift-offset, 0px)
+  );
+  --_is-lift-active: var(
+    --interactive-surface-lift-active,
+    var(--_is-preset-lift-active, 0px)
+  );
+  --_is-base-shadow: var(
+    --interactive-surface-shadow-base,
+    var(--interactive-surface-level-shadow, var(--_is-preset-shadow-base, none))
+  );
+  --_is-shadow-base: var(--_is-base-shadow);
+  --_is-shadow-hover: var(
+    --interactive-surface-shadow-hover,
+    var(--_is-preset-shadow-hover, var(--_is-base-shadow))
+  );
+  --_is-shadow-active: var(
+    --interactive-surface-shadow-active,
+    var(--_is-preset-shadow-active, var(--_is-base-shadow))
+  );
+  --_is-darken-hover: var(
+    --interactive-surface-darken-hover,
+    var(--surface-darken-hover, 0.96)
+  );
+  --_is-darken-active: var(
+    --interactive-surface-darken-active,
+    var(--surface-darken-active, 0.98)
+  );
+  --_is-state-layer-base-opacity: var(
+    --interactive-surface-state-layer-opacity,
+    0
+  );
+  --_is-state-layer-hover-opacity: var(
+    --interactive-surface-state-layer-hover-opacity,
+    var(
+      --interactive-surface-state-layer-opacity-hover,
+      calc(1 - var(--_is-darken-hover))
+    )
+  );
+  --_is-state-layer-active-opacity: var(
+    --interactive-surface-state-layer-active-opacity,
+    var(
+      --interactive-surface-state-layer-opacity-active,
+      calc(1 - var(--_is-darken-active))
+    )
+  );
+  --_is-state-layer-focus-opacity: var(
+    --interactive-surface-state-layer-focus-opacity,
+    var(
+      --interactive-surface-state-layer-opacity-focus,
+      var(--_is-state-layer-hover-opacity)
+    )
+  );
+  --_is-state-layer-color: var(
+    --interactive-surface-state-layer-color,
+    rgb(0 0 0)
+  );
+  --_is-motion-default: var(
+    --interactive-surface-motion-default,
+    var(--motion-default, 140ms)
+  );
+  --_is-motion-press: var(
+    --interactive-surface-motion-press,
+    var(--motion-press, 60ms)
+  );
+  --_is-ease-standard: var(
+    --interactive-surface-ease-standard,
+    var(--ease-standard, cubic-bezier(0.2, 0, 0.2, 1))
+  );
+  --_is-ease-press: var(
+    --interactive-surface-ease-press,
+    var(--ease-press, cubic-bezier(0.4, 0, 0.6, 1))
+  );
+
+  /* A private tuple lets complete presets preserve timing across competing shorthands. */
+  --_is-transition-duration: var(--_is-motion-default);
+  --_is-transition-timing-function: var(--_is-ease-standard);
+  --_is-transition-delay: 0s;
+  --_is-focus-ring-color: var(
+    --interactive-surface-focus-ring-color,
+    var(--focus-ring, rgb(11 99 246))
+  );
+  --_is-focus-ring-width: var(--interactive-surface-focus-ring-width, 2px);
+  --_is-focus-ring-offset: var(--interactive-surface-focus-ring-offset, 2px);
+  --_is-disabled-opacity: var(--interactive-surface-disabled-opacity, 0.72);
+  --_is-tap-highlight: var(
+    --interactive-surface-tap-highlight-color,
+    rgb(11 99 246 / 0.18)
+  );
+
+  position: relative;
+  isolation: isolate;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: var(--_is-tap-highlight);
+  translate: 0 var(--_is-lift-base);
+  box-shadow: var(--_is-shadow-base);
+  transition:
+    translate var(--_is-transition-duration)
+      var(--_is-transition-timing-function) var(--_is-transition-delay),
+    box-shadow var(--_is-transition-duration)
+      var(--_is-transition-timing-function) var(--_is-transition-delay),
+    outline-color var(--_is-transition-duration) linear
+      var(--_is-transition-delay);
+  will-change: auto;
+}
+
+/* The isolated state layer changes interaction emphasis without filtering content. */
+.interactive-surface::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background-color: var(--_is-state-layer-color);
+  opacity: var(--_is-state-layer-base-opacity);
+  pointer-events: none;
+  z-index: -1;
+  transition: opacity var(--_is-motion-default) var(--_is-ease-standard);
+}
+
+.interactive-surface:focus {
+  outline: var(--_is-focus-ring-width) solid var(--_is-focus-ring-color);
+  outline-offset: var(--_is-focus-ring-offset);
+}
+
+@supports selector(:focus-visible) {
+  .interactive-surface:focus {
+    outline: none;
+  }
+}
+
+.interactive-surface:not(
+    :is(.is-disabled, :disabled, [aria-disabled="true"])
+  ):focus-visible {
+  translate: 0 var(--_is-lift-hover);
+  box-shadow: var(--_is-shadow-hover);
+  outline: var(--_is-focus-ring-width) solid var(--_is-focus-ring-color);
+  outline-offset: var(--_is-focus-ring-offset);
+}
+
+.interactive-surface:not(
+    :is(.is-disabled, :disabled, [aria-disabled="true"])
+  ):focus-visible::before {
+  opacity: var(--_is-state-layer-focus-opacity);
+}
+
+/* Native file inputs expose an inner button that needs the same interaction feedback as the host. */
+:where(input[type="file"].interactive-surface)::file-selector-button {
+  cursor: pointer;
+  transition:
+    background-color var(--_is-transition-duration)
+      var(--_is-transition-timing-function) var(--_is-transition-delay),
+    border-color var(--_is-transition-duration)
+      var(--_is-transition-timing-function) var(--_is-transition-delay),
+    box-shadow var(--_is-transition-duration)
+      var(--_is-transition-timing-function) var(--_is-transition-delay),
+    color var(--_is-transition-duration) var(--_is-transition-timing-function)
+      var(--_is-transition-delay);
+}
+
+:where(input[type="file"].interactive-surface):not(
+    :is(.is-disabled, :disabled, [aria-disabled="true"])
+  ):focus-visible::file-selector-button {
+  box-shadow: inset 0 0 0 999px
+    rgb(0 0 0 / var(--_is-state-layer-focus-opacity));
+}
+
+/* Zero-specificity state branches let later transient and focus selectors retain precedence. */
+.interactive-surface:where(
+    .is-active,
+    [aria-pressed="true"],
+    [aria-pressed="mixed"],
+    [aria-current]:not([aria-current="false"]),
+    [aria-selected="true"],
+    [aria-busy="true"],
+    .is-loading
+  ):not(:is(.is-disabled, :disabled, [aria-disabled="true"])) {
+  translate: 0 var(--_is-lift-active);
+  box-shadow: var(--_is-shadow-active);
+}
+
+.interactive-surface:where(
+    .is-active,
+    [aria-pressed="true"],
+    [aria-pressed="mixed"],
+    [aria-current]:not([aria-current="false"]),
+    [aria-selected="true"],
+    [aria-busy="true"],
+    .is-loading
+  ):not(:is(.is-disabled, :disabled, [aria-disabled="true"]))::before {
+  opacity: var(--_is-state-layer-active-opacity);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .interactive-surface {
+    will-change: translate, box-shadow;
+  }
+
+  .interactive-surface:not(
+      :is(.is-disabled, :disabled, [aria-disabled="true"])
+    ):hover {
+    translate: 0 var(--_is-hover-lift);
+    box-shadow: var(--_is-shadow-hover);
+  }
+
+  .interactive-surface:not(
+      :is(.is-disabled, :disabled, [aria-disabled="true"])
+    ):hover::before {
+    opacity: var(--_is-state-layer-hover-opacity);
+  }
+
+  :where(input[type="file"].interactive-surface):not(
+      :is(.is-disabled, :disabled, [aria-disabled="true"])
+    ):hover::file-selector-button {
+    box-shadow: inset 0 0 0 999px
+      rgb(0 0 0 / var(--_is-state-layer-hover-opacity));
+  }
+}
+
+.interactive-surface:not(
+    :is(.is-disabled, :disabled, [aria-disabled="true"])
+  ):active {
+  --_is-transition-duration: var(--_is-motion-press);
+  --_is-transition-timing-function: var(--_is-ease-press);
+
+  translate: 0 var(--_is-lift-base);
+  box-shadow: var(--_is-shadow-base);
+}
+
+.interactive-surface:not(
+    :is(.is-disabled, :disabled, [aria-disabled="true"])
+  ):active::before {
+  opacity: 0;
+  transition-duration: var(--_is-motion-press);
+  transition-timing-function: var(--_is-ease-press);
+}
+
+:where(input[type="file"].interactive-surface):not(
+    :is(.is-disabled, :disabled, [aria-disabled="true"])
+  ):active::file-selector-button {
+  box-shadow: inset 0 0 0 999px
+    rgb(0 0 0 / var(--_is-state-layer-active-opacity));
+  transition-duration: var(--_is-motion-press);
+  transition-timing-function: var(--_is-ease-press);
+}
+
+/*
+ * Disabled styling is visual only. Consumers must still suppress programmatic and keyboard
+ * activation for custom controls that use aria-disabled or the is-disabled class.
+ */
+.interactive-surface:is(.is-disabled, :disabled, [aria-disabled="true"]) {
+  --_is-transition-duration: 0s;
+
   cursor: not-allowed;
   pointer-events: none;
-  transform: none !important;
+  translate: none;
   box-shadow: none;
   opacity: var(--_is-disabled-opacity);
+  animation: none;
   transition: none;
 }
 
-.interactive-surface[aria-disabled="true"] {
+.interactive-surface:is(
+    .is-disabled,
+    :disabled,
+    [aria-disabled="true"]
+  )::before {
+  opacity: 0;
+  animation: none;
+  transition: none;
+}
+
+:where(input[type="file"].interactive-surface):is(
+    .is-disabled,
+    :disabled,
+    [aria-disabled="true"]
+  )::file-selector-button {
   cursor: not-allowed;
-  pointer-events: none;
-  transform: none !important;
   box-shadow: none;
-  opacity: var(--_is-disabled-opacity);
+  transition: none;
 }
 
-/* Guardrail: this class owns motion on the host element. */
-.interactive-surface,
-.interactive-surface:hover,
-.interactive-surface:focus-visible,
-.interactive-surface:active,
-.interactive-surface.is-active,
-.interactive-surface[aria-current="page"] {
-  scale: 1 !important;
-  rotate: 0deg !important;
-  translate: 0 0 !important;
+/* Focus remains visible on custom disabled widgets that stay in the keyboard tab order. */
+.interactive-surface:is(.is-disabled, [aria-disabled="true"]):focus-visible {
+  outline: var(--_is-focus-ring-width) solid var(--_is-focus-ring-color);
+  outline-offset: var(--_is-focus-ring-offset);
 }
-
-/* 10) Reduced motion */
 
 @media (prefers-reduced-motion: reduce) {
-  .interactive-surface {
-    transform: none !important;
+  .interactive-surface,
+  .interactive-surface:not(
+      :is(.is-disabled, :disabled, [aria-disabled="true"])
+    ):hover,
+  .interactive-surface:not(
+      :is(.is-disabled, :disabled, [aria-disabled="true"])
+    ):focus-visible,
+  .interactive-surface:not(
+      :is(.is-disabled, :disabled, [aria-disabled="true"])
+    ):active,
+  .interactive-surface:where(
+      .is-active,
+      [aria-pressed="true"],
+      [aria-pressed="mixed"],
+      [aria-current]:not([aria-current="false"]),
+      [aria-selected="true"],
+      [aria-busy="true"],
+      .is-loading
+    ):not(:is(.is-disabled, :disabled, [aria-disabled="true"])) {
+    --_is-transition-duration: 0s;
+
+    translate: none;
+    animation: none;
     transition: none;
   }
 
   .interactive-surface::before {
+    animation: none;
     transition: none;
-  }
-
-  .interactive-surface:not(.is-disabled, :disabled, [aria-disabled="true"]):hover,
-  .interactive-surface:not(.is-disabled, :disabled, [aria-disabled="true"]):focus-visible,
-  .interactive-surface:not(.is-disabled, :disabled, [aria-disabled="true"]):active,
-  .interactive-surface.is-active:not(.is-disabled, [aria-disabled="true"]),
-  .interactive-surface[aria-pressed="true"]:not(.is-disabled, :disabled, [aria-disabled="true"]),
-  .interactive-surface[aria-current="page"]:not(.is-disabled, :disabled, [aria-disabled="true"]) {
-    transform: none !important;
-    box-shadow: none;
-  }
-
-  .interactive-surface:hover::before,
-  .interactive-surface:focus-visible::before,
-  .interactive-surface:active::before,
-  .interactive-surface.is-active::before,
-  .interactive-surface[aria-pressed="true"]::before,
-  .interactive-surface[aria-current="page"]::before {
-    opacity: 0;
   }
 }
 
-/* 11) Contrast and forced-colors support */
-
 @media (prefers-contrast: more) {
   .interactive-surface {
-    --interactive-surface-darken-hover: 1;
-    --interactive-surface-darken-active: 1;
-    --interactive-surface-focus-ring-width: 3px;
-    --interactive-surface-border-width: 2px;
-    --interactive-surface-shadow-base: none;
-    --interactive-surface-shadow-hover: none;
-    --interactive-surface-shadow-active: none;
+    --_is-focus-ring-width: 3px;
+  }
+
+  .interactive-surface:where(
+      .is-active,
+      [aria-pressed="true"],
+      [aria-pressed="mixed"],
+      [aria-current]:not([aria-current="false"]),
+      [aria-selected="true"],
+      [aria-busy="true"],
+      .is-loading
+    ):not(:is(.is-disabled, :disabled, [aria-disabled="true"])) {
+    outline: 2px solid currentcolor;
+    outline-offset: 2px;
+  }
+
+  .interactive-surface:focus,
+  .interactive-surface:not(
+      :is(.is-disabled, :disabled, [aria-disabled="true"])
+    ):focus-visible,
+  .interactive-surface[aria-disabled="true"]:focus-visible {
+    outline: var(--_is-focus-ring-width) solid var(--_is-focus-ring-color);
   }
 }
 
 @media (forced-colors: active) {
   .interactive-surface {
-    background-color: ButtonFace;
-    color: ButtonText;
-    border-color: ButtonText;
+    --_is-lift-base: 0px;
+    --_is-lift-hover: 0px;
+
+    /* Integration offsets must not bypass the forced-colors motion reset. */
+    --_is-hover-lift: 0px;
+    --_is-lift-active: 0px;
+    --_is-shadow-base: none;
+    --_is-shadow-hover: none;
+    --_is-shadow-active: none;
+
     box-shadow: none;
   }
 
@@ -556,27 +881,35 @@
     display: none;
   }
 
-  .interactive-surface:hover,
-  .interactive-surface:focus-visible,
-  .interactive-surface.is-active,
-  .interactive-surface[aria-pressed="true"],
-  .interactive-surface[aria-current="page"],
-  .interactive-surface:active {
-    transform: none !important;
-    box-shadow: none;
+  .interactive-surface:where(
+      .is-active,
+      [aria-pressed="true"],
+      [aria-pressed="mixed"],
+      [aria-current]:not([aria-current="false"]),
+      [aria-selected="true"],
+      [aria-busy="true"],
+      .is-loading
+    ):not(:is(.is-disabled, :disabled, [aria-disabled="true"])) {
+    outline: 2px solid ButtonText;
+    outline-offset: 2px;
   }
 
   .interactive-surface:focus,
-  .interactive-surface:focus-visible {
+  .interactive-surface:not(
+      :is(.is-disabled, :disabled, [aria-disabled="true"])
+    ):focus-visible {
     outline: 2px solid Highlight;
     outline-offset: 2px;
   }
 
-  .interactive-surface.is-disabled,
-  .interactive-surface:disabled,
-  .interactive-surface[aria-disabled="true"] {
-    color: GrayText;
-    border-color: GrayText;
+  .interactive-surface:is(.is-disabled, :disabled, [aria-disabled="true"]) {
+    outline: 1px solid GrayText;
+    outline-offset: 2px;
     opacity: 1;
+  }
+
+  .interactive-surface[aria-disabled="true"]:focus-visible {
+    outline: 2px solid GrayText;
+    outline-offset: 2px;
   }
 }

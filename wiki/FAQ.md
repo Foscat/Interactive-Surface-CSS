@@ -2,46 +2,50 @@
 
 ## Is this a component library?
 
-No. It is a CSS interaction primitive.
+No. It is a CSS interaction-state primitive. It does not render components, ship framework wrappers, or manage state.
 
-It gives you consistent surface behavior, but it does not ship prebuilt UI components, framework wrappers, or runtime logic.
+## Which entry point should I use?
 
-## Does it work with React, Vue, or Svelte?
+Use `interactive-surface-css/standalone-preset.css` for a complete neutral surface. Use `interactive-surface-css/state-core.css` when an application or design system already owns paint and geometry. Existing `interactive-surface-css` and `interactive-surface-css/interactive-surface.css` imports remain supported.
 
-Yes. The package is framework-agnostic and can be imported into any stack that can consume CSS.
+See the [installation guide](https://github.com/Foscat/Interactive-Surface-CSS/wiki/Installation-and-Usage).
+
+## Does it work with React, Vue, Svelte, or server rendering?
+
+Yes. The package is framework-agnostic. Import the appropriate stylesheet through the toolchain and render semantic HTML.
 
 ## Does it define global design tokens?
 
-No. The stylesheet does not declare global `:root` tokens. It resolves values inline through fallback chains instead.
+No. Public values resolve through fallback chains on `.interactive-surface`; the package does not declare a global `:root` token layer.
 
-## Do the variant classes create full themes?
+## Can I use only the state behavior?
 
-No. The variant classes primarily tune brightness behavior. They are designed to sit on top of your own color tokens.
+Yes. `state-core.css` intentionally omits standalone theme paint, component spacing, variants, levels, icon geometry, and layout recipes.
 
-## Is there a safe way to customize tokens without manual copy/paste errors?
+## Can I combine it with the other CSS libraries?
 
-Yes. Use the package demo app at `index.html`.
+Yes. Use one library, use two compatible libraries, or use all three. UI Style Kit CSS owns paint, Layout Style CSS owns structure, and Interactive Surface CSS owns state behavior. See the [Interface Systems Lab](https://foscat.github.io/interface-systems-lab/).
 
-It includes token editing controls and CSS import/export helpers so you can generate a token stylesheet without hand-editing every variable.
+## Does CSS disable custom controls?
 
-## Can I use it on cards as well as buttons?
+No. Native `disabled` is preferred because the browser suppresses activation. For `aria-disabled="true"` and `.is-disabled`, application code must suppress pointer, keyboard, and programmatic activation.
 
-Yes. That is one of the intended use cases.
+## Which persistent states are supported?
 
-The primitive is meant to work across buttons, cards, icon controls, toggles, and similar interactive surfaces.
+The state layer supports `.is-active`, `aria-pressed="true"`, `aria-pressed="mixed"`, any non-false `aria-current`, `aria-selected="true"`, `aria-busy="true"`, and `.is-loading`.
 
-## Does it handle custom JavaScript interactions?
+## Can application transforms coexist with interaction motion?
 
-No. It only handles styling. State semantics such as toggling `aria-pressed`, keyboard behavior for non-semantic elements, and application logic remain your responsibility.
+Yes. Interactive Surface uses the individual `translate` longhand for lift and preserves consumer-owned `transform`, `scale`, and `rotate`.
 
-## What does `icon-only` do?
+## What does `.icon-only` do?
 
-It adjusts the primitive for compact icon controls and enforces a minimum 44px hit target.
+In the standalone preset and compatibility bundle it supplies centered icon presentation and a 44 × 44px minimum target. A core-only consumer owns that geometry. Every icon-only control still needs an accessible name.
 
-## Why does the package warn against extra transforms on the same element?
+## Is 1.4.0 published?
 
-Because the primitive owns motion on the host node. Additional transforms on the same element can conflict with built-in hover and press behavior.
+The repository describes 1.4.0 as a release candidate until npm publication is explicitly approved and completed. Pinned CDN URLs are distribution checks, not proof of publication.
 
 ## What browsers are tested?
 
-The repository includes Playwright coverage for Chromium, Firefox, and WebKit.
+The focused rendered gate uses Chromium. The full gate covers Chromium, Firefox, and WebKit. See [Testing and Quality](https://github.com/Foscat/Interactive-Surface-CSS/wiki/Testing-and-Quality).

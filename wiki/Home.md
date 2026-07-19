@@ -1,82 +1,60 @@
 # Interactive Surface CSS
 
-Interactive Surface CSS is a framework-agnostic CSS library for building accessible, reusable interactive surfaces with consistent state behavior and token-driven theming.
+Interactive Surface CSS is a framework-agnostic interaction-state layer for buttons, links, toggles, tabs, cards, icon controls, and similar interactive hosts. It provides consistent focus, hover, press, current, selected, loading, disabled, reduced-motion, and forced-colors treatment without requiring a component runtime.
 
-It is intentionally small. The package focuses on one job: giving buttons, cards, icon controls, and similar click targets a consistent interaction model without forcing a framework, component runtime, or opinionated design system structure.
+Version 1.4.0 is a release candidate until it is published. It preserves every established 1.x import and selector while adding focused `state-core.css` and `standalone-preset.css` entry points.
 
-## What this package solves
+## Choose the layer you need
 
-Many projects end up duplicating the same interaction rules in multiple places:
+| Library                   | Responsibility                                                                 |
+| ------------------------- | ------------------------------------------------------------------------------ |
+| `interactive-surface-css` | Interaction states, focus visibility, state precedence, and interaction motion |
+| `ui-style-kit-css`        | Theme paint, modes, component appearance, and visual tokens                    |
+| `layout-style-css`        | Page structure, layout recipes, and geometry                                   |
 
-- one set of hover styles for buttons
-- another elevation treatment for cards
-- separate pressed styles for toggles
-- inconsistent focus rings and disabled states
-- ad hoc motion rules that fight each other over time
+Use one library, use two compatible libraries, or use all three. None of the packages is a prerequisite for another.
 
-Interactive Surface CSS centralizes that logic into a single reusable primitive: `.interactive-surface`.
+## 1.4.0 entry points
 
-## Core capabilities
+- `interactive-surface-css/standalone-preset.css`: complete state behavior plus neutral standalone paint and geometry.
+- `interactive-surface-css/state-core.css`: state behavior and the public interaction token contract without theme paint or consumer-facing layout.
+- `interactive-surface-css/interactive-surface.css`: preserved complete 1.x compatibility stylesheet.
+- `interactive-surface-css`: preserved JavaScript entry that imports the compatibility stylesheet.
 
-- Accessible focus-visible behavior with fallback handling
-- Consistent hover, active, pressed, and disabled states
-- ARIA-aware toggled and disabled styling
-- Token-driven theming with CSS custom properties
-- Reduced-motion, high-contrast, and forced-colors support
-- Touch-friendly icon-only target sizing
-- Framework-agnostic usage across plain HTML, React, Vue, Svelte, and server-rendered applications
+## Quick start
 
-## Package details
+```bash
+npm install interactive-surface-css
+```
 
-- **Package name:** `interactive-surface-css`
-- **Entry style file:** `interactive-surface.css`
-- **JS entry:** `index.js` (imports the stylesheet)
-- **Demo/customization page:** `index.html`
-- **License:** MIT
-- **Current version in repo:** `1.3.0`
-- **Release tag:** `v1.3.0`
+```js
+import "interactive-surface-css/standalone-preset.css";
+```
+
+```html
+<button class="interactive-surface variant-primary" type="button">Save</button>
+```
+
+## Live references
+
+- [Standalone state lab](https://foscat.github.io/Interactive-Surface-CSS/)
+- [Interface Systems Lab](https://foscat.github.io/interface-systems-lab/) — the canonical integration with all three libraries
+- [npm package](https://www.npmjs.com/package/interactive-surface-css)
+- [GitHub repository](https://github.com/Foscat/Interactive-Surface-CSS)
 
 ## Documentation map
 
-- [Getting Started](Getting-Started)
-- [Installation and Usage](Installation-and-Usage)
-- [API Reference](API-Reference)
-- [Token Reference](Token-Reference)
-- [Accessibility](Accessibility)
-- [Testing and Quality](Testing-and-Quality)
-- [Publishing and Releases](Publishing-and-Releases)
-- [Contributing](Contributing)
-- [FAQ](FAQ)
-- [Roadmap](Roadmap)
+- [Getting Started](https://github.com/Foscat/Interactive-Surface-CSS/wiki/Getting-Started)
+- [Installation and Usage](https://github.com/Foscat/Interactive-Surface-CSS/wiki/Installation-and-Usage)
+- [API Reference](https://github.com/Foscat/Interactive-Surface-CSS/wiki/API-Reference)
+- [Token Reference](https://github.com/Foscat/Interactive-Surface-CSS/wiki/Token-Reference)
+- [Accessibility](https://github.com/Foscat/Interactive-Surface-CSS/wiki/Accessibility)
+- [Testing and Quality](https://github.com/Foscat/Interactive-Surface-CSS/wiki/Testing-and-Quality)
+- [Publishing and Releases](https://github.com/Foscat/Interactive-Surface-CSS/wiki/Publishing-and-Releases)
+- [Contributing](https://github.com/Foscat/Interactive-Surface-CSS/wiki/Contributing)
+- [FAQ](https://github.com/Foscat/Interactive-Surface-CSS/wiki/FAQ)
+- [Roadmap](https://github.com/Foscat/Interactive-Surface-CSS/wiki/Roadmap)
 
-## Quick example
+## Scope
 
-```html
-<button class="interactive-surface">Save</button>
-```
-
-```html
-<button class="interactive-surface size-lg variant-primary">
-  Continue
-</button>
-```
-
-```html
-<button class="interactive-surface" data-surface-variant="primary" data-surface-level="2">
-  Continue
-</button>
-```
-
-```html
-<button class="interactive-surface icon-only" aria-label="Settings">
-  <svg aria-hidden="true" viewBox="0 0 24 24">...</svg>
-</button>
-```
-
-## Design philosophy
-
-This library is not trying to be a full component system.
-
-It is a lower-level interaction primitive intended to sit underneath a design system or application UI layer. That makes it useful when you want consistency and accessibility without taking on the API surface of a large framework-specific component library.
-
-In the companion CSS ecosystem, `layout-style-css` owns structure, `ui-style-kit-css` owns visual paint and themes, and Interactive Surface CSS owns interaction states.
+The package styles state. It does not render components, manage application state, create page layouts, or supply an application-wide theme. Applications remain responsible for semantic HTML, state updates, keyboard behavior, and suppressing activation on custom disabled controls.

@@ -1,266 +1,214 @@
-# Interactive Surface
+# Interactive Surface CSS
 
-Interactive Surface is a framework-agnostic CSS interaction primitive for buttons, cards, icon controls, and similar click targets.
+[![npm version](https://img.shields.io/npm/v/interactive-surface-css.svg)](https://www.npmjs.com/package/interactive-surface-css)
+[![license](https://img.shields.io/npm/l/interactive-surface-css.svg)](https://github.com/Foscat/Interactive-Surface-CSS/blob/main/LICENSE)
 
-It provides consistent hover, focus-visible, active, press, and disabled behavior with token-driven theming, accessibility guardrails, and minimal integration friction.
+Framework-agnostic CSS for reliable hover, focus, press, selected, current, loading, disabled, and motion affordances on interactive controls. Use it alone or as the interaction layer beside your existing layout and theme system.
 
-## Documentation
+Version 1.4.0 is a release candidate in this repository until its npm release is published. Existing 1.x imports, selectors, data hooks, ARIA hooks, and tokens remain supported.
 
-Project docs live in this repository:
+The package targets Node.js 20+ for npm installs and local validation. CI proves the minimum Node 20 lane and the preferred Node 22 lane before release.
 
-- [Wiki Home](./wiki/Home.md)
-- [Getting Started](./wiki/Getting-Started.md)
-- [Installation and Usage](./wiki/Installation-and-Usage.md)
-- [API Reference](./wiki/API-Reference.md)
-- [Token Reference](./wiki/Token-Reference.md)
-- [Accessibility](./wiki/Accessibility.md)
-- [Testing and Quality](./wiki/Testing-and-Quality.md)
-- [Publishing and Releases](./wiki/Publishing-and-Releases.md)
-- [FAQ](./wiki/FAQ.md)
-- [Roadmap](./wiki/Roadmap.md)
+## Start here
 
-Community and governance docs:
+- [Live standalone demo](https://foscat.github.io/Interactive-Surface-CSS/)
+- [Interface Systems Lab](https://foscat.github.io/interface-systems-lab/) — integrated proof with all three CSS libraries
+- [GitHub Wiki](https://github.com/Foscat/Interactive-Surface-CSS/wiki/Home)
+- [Installation guide](https://github.com/Foscat/Interactive-Surface-CSS/wiki/Installation-and-Usage)
+- [API reference](https://github.com/Foscat/Interactive-Surface-CSS/wiki/API-Reference)
+- [Token reference](https://github.com/Foscat/Interactive-Surface-CSS/wiki/Token-Reference)
+- [Accessibility guide](https://github.com/Foscat/Interactive-Surface-CSS/wiki/Accessibility)
 
-- [Contributing](./CONTRIBUTING.md)
-- [Code of Conduct](./CODE_OF_CONDUCT.md)
-- [Security Policy](./SECURITY.md)
+## Ownership
 
-## Package
+Each package remains independently useful. Use one library, use two compatible libraries, or use all three according to the layers your application needs.
 
-- Package name: `interactive-surface-css`
-- Primary stylesheet: `interactive-surface.css`
-- JavaScript entry: `index.js` (imports CSS for bundler-friendly usage)
-- Live demo: `https://foscat.github.io/Interactive-Surface-CSS/`
+| Library                   | Owns                                                                           | Does not own                        |
+| ------------------------- | ------------------------------------------------------------------------------ | ----------------------------------- |
+| `interactive-surface-css` | Interaction states, focus visibility, state precedence, and interaction motion | Page layout or an application theme |
+| `ui-style-kit-css`        | Theme paint, modes, component appearance, and visual tokens                    | Page layout or interaction behavior |
+| `layout-style-css`        | Page structure, layout recipes, and geometry                                   | Theme paint or interaction behavior |
 
-Install:
+## 60-second standalone setup
+
+Install the package:
 
 ```bash
 npm install interactive-surface-css
 ```
 
-Import:
+Import the portable, direct CSS preset. It includes the neutral standalone presentation and the complete state layer:
 
 ```js
-import "interactive-surface-css";
+import "interactive-surface-css/standalone-preset.css";
 ```
 
-Or import CSS directly:
-
-```js
-import "interactive-surface-css/interactive-surface.css";
-```
-
-Note: The JavaScript entry imports CSS, so it should be used in bundlers or toolchains that support CSS imports. If you want the most portable, framework-agnostic path, import `interactive-surface-css/interactive-surface.css` directly. The package supports both approaches to accommodate different project setups and preferences.
-
-Webpack:
-
-1. Install loaders:
-
-    ```bash
-    npm install -D css-loader style-loader
-    ```
-
-2. Configure `webpack.config.js`:
-
-    ```js
-    module.exports = {
-      module: {
-        rules: [
-          {
-            test: /\.css$/i,
-            use: ["style-loader", "css-loader"]
-          }
-        ]
-      }
-    };
-    ```
-
-3. Import in your app entry:
-
-    ```js
-    import "interactive-surface-css";
-    ```
-
-CDN:
+Add the base class to a native control:
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/interactive-surface-css@latest/interactive-surface.css" />
-<link rel="stylesheet" href="https://unpkg.com/interactive-surface-css@latest/interactive-surface.css" />
+<button class="interactive-surface variant-primary" type="button">
+  Save changes
+</button>
 ```
 
-## Quick Start
+For a no-build page, pin the release:
 
 ```html
-<button class="interactive-surface">Save</button>
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/interactive-surface-css@1.4.0/standalone-preset.css"
+/>
 ```
 
-```html
-<button class="interactive-surface size-lg variant-primary">Continue</button>
-```
+The equivalent unpkg URL is `https://unpkg.com/interactive-surface-css@1.4.0/standalone-preset.css`. To follow future releases deliberately, use `https://cdn.jsdelivr.net/npm/interactive-surface-css@latest/standalone-preset.css` — unpinned opt-in.
+
+## Semantic recipes
+
+Prefer native elements, then reflect persistent application state through ARIA:
 
 ```html
-<button class="interactive-surface" data-surface-variant="primary" data-surface-level="2">
+<!-- Action -->
+<button class="interactive-surface variant-primary" type="button">
+  Publish
+</button>
+
+<!-- Toggle: update aria-pressed when the value changes -->
+<button class="interactive-surface" type="button" aria-pressed="true">
+  Pinned
+</button>
+
+<!-- Current navigation item: any non-false aria-current value is supported -->
+<a class="interactive-surface" href="/account" aria-current="page">Account</a>
+
+<!-- Selected item in a composite widget -->
+<button class="interactive-surface" role="tab" aria-selected="true">
+  Details
+</button>
+
+<!-- Loading: update the accessible label or nearby status text as needed -->
+<button class="interactive-surface" type="button" aria-busy="true">
+  Saving…
+</button>
+
+<!-- Prefer native disabled when the control cannot activate -->
+<button class="interactive-surface" type="button" disabled>Unavailable</button>
+
+<!-- Native file inputs opt in on the host; the selector button follows the same tokens -->
+<input class="interactive-surface variant-subtle" type="file" />
+
+<!-- Variant and level hooks are safe for renderers and companion bridges -->
+<button
+  class="interactive-surface"
+  type="button"
+  data-surface-variant="accent"
+  data-surface-level="2"
+>
   Continue
 </button>
-```
 
-```html
-<button class="interactive-surface icon-only" aria-label="Settings">
-  <svg aria-hidden="true" viewBox="0 0 24 24">...</svg>
+<!-- Icon-only controls need an accessible name; the icon itself is decorative -->
+<button
+  class="interactive-surface icon-only"
+  type="button"
+  aria-label="Open settings"
+>
+  <svg aria-hidden="true" data-icon-role="dark" viewBox="0 0 24 24">…</svg>
 </button>
 ```
 
-Live demo: [Interactive Surface Demo](https://foscat.github.io/Interactive-Surface-CSS/)
+Native `disabled` is preferred because the browser suppresses focus and activation. CSS can only communicate disabled-looking state: consumers must suppress activation for `aria-disabled="true"` and `.is-disabled` controls in their event handling.
 
-The demo page is a practical customization playground for this library:
+## Entry points
 
-- It provides guided token editing controls instead of freehand CSS typing.
-- It supports importing and exporting token CSS so teams can reuse exact values.
-- It helps reduce manual entry mistakes when creating app-level theme overrides.
+| Import                                                      | Presentation                                                                            | Best for                                                    |
+| ----------------------------------------------------------- | --------------------------------------------------------------------------------------- | ----------------------------------------------------------- |
+| `import "interactive-surface-css/standalone-preset.css";`   | State core plus neutral paint, variants, levels, icon sizing, and preset token defaults | New standalone integrations                                 |
+| `import "interactive-surface-css/state-core.css";`          | Interaction mechanics and neutral core token fallbacks only                             | Existing design systems that already own paint and geometry |
+| `import "interactive-surface-css/interactive-surface.css";` | Complete standalone compatibility bundle                                                | Existing direct-CSS 1.x consumers                           |
+| `import "interactive-surface-css";`                         | JavaScript entry that imports the complete compatibility bundle                         | Existing bundlers configured for CSS imports                |
 
-## Class API
+`standalone-preset.css` and `interactive-surface.css` are generated from the same authored modules and are behaviorally equivalent in 1.4.0. The compatibility paths remain stable; no 1.x migration is required.
 
-Base:
+The package `main` and `module` fields preserve the CommonJS and ESM entries; both load `interactive-surface.css`. The `style`, `unpkg`, and `jsdelivr` fields also resolve to that complete compatibility bundle.
 
-- `.interactive-surface`
+## Compact API
 
-Size modifiers:
+| Kind              | Public hooks                                                                                                                                                     |
+| ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Base              | `.interactive-surface`                                                                                                                                           |
+| Size              | `.size-sm`, default medium, `.size-lg`                                                                                                                           |
+| Transient         | pointer `:hover`, keyboard `:focus-visible`, `:active`                                                                                                           |
+| Persistent        | `.is-active`, `aria-pressed="true"`, `aria-pressed="mixed"`, any non-false `aria-current`, `aria-selected="true"`                                                |
+| Loading           | `aria-busy="true"`, `.is-loading`                                                                                                                                |
+| Disabled          | native `:disabled`, `aria-disabled="true"`, `.is-disabled`                                                                                                       |
+| Variant           | `.variant-primary`, `.variant-secondary`, `.variant-accent`, `.variant-subtle`, `.variant-warning`, `.variant-danger`, or matching `data-surface-variant` values |
+| Level             | `data-surface-level="1"`, `"2"`, or `"3"`                                                                                                                   |
+| Icon              | `.icon-only`; child `data-icon-role="light"`, `"dark"`, `"accessibility"`, or the legacy role classes                                                      |
+| Native subcontrol | `input[type="file"].interactive-surface::file-selector-button` inherits surface paint and hover/active feedback                                                  |
 
-- `.size-sm`
-- `.size-lg`
-- medium is default when no size class is set
+Disabled state has highest visual precedence. The state layer preserves static meaning under reduced motion and uses system-color affordances in forced-colors mode. Interaction lift uses the individual `translate` property, so consumer-owned `transform`, `scale`, and `rotate` declarations can coexist.
 
-State helpers:
+For selector details and responsibilities, see the [complete API reference](https://github.com/Foscat/Interactive-Surface-CSS/wiki/API-Reference).
 
-- `.is-active`
-- `.is-disabled`
+## Customize tokens
 
-Semantic states:
+`state-core.css` provides neutral defaults for state-layer color and opacity, focus rings, motion, persistent states, disabled state, and loading state. `standalone-preset.css` additionally supplies base paint, lift and shadows, variants, surface levels, icon roles, and the 44 × 44px icon-control geometry.
 
-- `[aria-pressed="true"]`
-- `[aria-disabled="true"]`
-- `:disabled`
+```css
+.save-action {
+  --interactive-surface-focus-ring-color: rgb(0 95 115);
+  --interactive-surface-state-layer-color: rgb(0 45 55);
+  --interactive-surface-state-layer-hover-opacity: 0.1;
+  --interactive-surface-motion-default: 120ms;
+}
+```
 
-Visual variants:
+All public custom properties use the `--interactive-surface-*` namespace. Established legacy and semantic fallback tokens remain supported. See the [token ownership tables and full reference](https://github.com/Foscat/Interactive-Surface-CSS/wiki/Token-Reference).
 
-- `.variant-primary`
-- `.variant-secondary`
-- `.variant-accent`
-- `.variant-subtle`
-- `.variant-warning`
-- `.variant-danger`
+## Accessibility responsibilities
 
-Data attribute aliases:
+The CSS package provides visible keyboard focus, persistent-state treatment, disabled precedence, reduced-motion behavior, higher-contrast behavior, forced-colors affordances, hover gating for capable pointers, and standalone icon target sizing.
 
-- `data-surface-variant="primary|secondary|accent|subtle|warning|danger"`
-- `data-surface-level="1|2|3"`
+Applications still own semantics and behavior:
 
-Use the class API when you prefer compact standalone markup. Use the data attributes when another library or runtime assigns semantic surface hooks.
+- Use `<button>` for actions and `<a href>` for navigation.
+- Update `aria-pressed`, `aria-current`, `aria-selected`, and `aria-busy` when application state changes.
+- Prefer native `disabled`. If a custom control uses `aria-disabled="true"` or `.is-disabled`, suppress pointer, keyboard, and programmatic activation.
+- Give icon-only controls an accessible name, normally with `aria-label`, and hide decorative SVG content from assistive technology.
+- Implement the keyboard model for composite widgets such as tabs; CSS does not add runtime behavior.
 
-Icon pattern:
+Read the [accessibility guide](https://github.com/Foscat/Interactive-Surface-CSS/wiki/Accessibility) for complete examples.
 
-- `.icon-only`
+## Pair with UI Style Kit CSS
 
-## Token Contract
-
-Preferred token namespace:
-
-- `--interactive-surface-*`
-
-The package also supports legacy fallback tokens and semantic fallback tokens. Full details and examples are in [Token Reference](./wiki/Token-Reference.md).
-
-## Ecosystem Integration
-
-The three CSS libraries have separate ownership boundaries:
-
-- `layout-style-css` owns structural layout recipes and page geometry.
-- `ui-style-kit-css` owns visual themes, style systems, and mode-aware paint.
-- `interactive-surface-css` owns interaction behavior on `.interactive-surface`.
-
-Use one, two, or all three packages based on the layer you need. Interactive Surface does not require either companion library.
-
-## Integration with UI Style Kit CSS
-
-`interactive-surface-css` and `ui-style-kit-css` are designed to work separately and complementarily.
-
-UI Style Kit owns visual theme tokens. Interactive Surface owns interaction behavior on `.interactive-surface`.
-
-With `ui-style-kit-css` 2.x, the default full bundle does not include the bridge. Use the opt-in bridge bundle when you want UI Style Kit's runtime style switcher and Interactive Surface token mapping in one import:
+When UI Style Kit owns visual paint, import its opt-in bridge and the state-only core:
 
 ```js
 import "ui-style-kit-css/with-bridge.css";
-import "interactive-surface-css/interactive-surface.css";
+import "interactive-surface-css/state-core.css";
 ```
 
-If you use per-style UI Style Kit imports, include the bridge. This order is supported:
+The bridge maps active UI Style Kit theme and mode values into the `--interactive-surface-*` contract. Interactive Surface keeps ownership of focus, hover, pressed, selected, current, loading, disabled, and motion behavior.
+
+## Use all three libraries
+
+Use the established order so paint, interaction, and structure retain clear ownership:
 
 ```js
-import "ui-style-kit-css/styles/minimal-saas.css";
-import "ui-style-kit-css/interactive-surface-bridge";
-import "interactive-surface-css/interactive-surface.css";
+import "ui-style-kit-css/with-bridge.css";
+import "interactive-surface-css/state-core.css";
+import "layout-style-css/bridge.css";
+import "layout-style-css";
 ```
 
-So is the order shown in the UI Style Kit docs:
+The [Interface Systems Lab](https://foscat.github.io/interface-systems-lab/) is the canonical integrated example. Each package remains optional: use one library, use two compatible libraries, or use all three.
 
-```js
-import "interactive-surface-css/interactive-surface.css";
-import "ui-style-kit-css/styles/minimal-saas.css";
-import "ui-style-kit-css/interactive-surface-bridge";
-```
+## Support and project links
 
-The bridge maps active `data-ui`, `data-theme`, and `data-mode` tokens to Interactive Surface's public token contract, including variant, icon-role, state-layer, and optional surface-level hooks. Interactive Surface now also treats `data-surface-variant` and `data-surface-level` as standalone public hooks, so bridge-generated markup keeps useful behavior even without style-specific class names. UI Style Kit owns the bridge token mapping; Interactive Surface keeps ownership of `.interactive-surface` interaction behavior.
-
-## Accessibility
-
-Built-in support includes:
-
-- `:focus-visible` behavior with fallback handling
-- reduced-motion preference handling
-- high-contrast and forced-colors handling
-- ARIA pressed/disabled styling
-- 44x44 minimum target size for `.icon-only`
-
-See [Accessibility](./wiki/Accessibility.md) for implementation guidance.
-
-## Testing
-
-```bash
-npm run check:no-hex-colors
-npm run lint:css
-npm run test:install
-npm test
-npm run test:chromium
-npm run pack:dry
-npm run validate
-```
-
-## Publishing
-
-This repo is configured for release-driven npm publish through GitHub Actions at `.github/workflows/npm-publish.yml`.
-
-Release checklist:
-
-1. Add repository secret `NPM_TOKEN` (npm token with publish rights).
-2. Bump `version` in `package.json`.
-3. Update `CHANGELOG.md`.
-4. Push to `main`.
-5. Create and publish a GitHub Release tag (for example `v1.3.0`).
-6. Verify the `Publish to npm` workflow succeeds.
-7. Verify CDN availability:
-   - `https://cdn.jsdelivr.net/npm/interactive-surface-css@<version>/interactive-surface.css`
-   - `https://unpkg.com/interactive-surface-css@<version>/interactive-surface.css`
-
-Manual fallback:
-
-```bash
-npm adduser
-npm publish --access public
-```
-
-The `prepublishOnly` guard intentionally avoids browser downloads so `npm publish` does not stall on a fresh Playwright cache. Run `npm run validate` before publishing when you want the full local release check, including Playwright browser installation and tests.
-
-## Guardrail
-
-`interactive-surface` should be the only transform-based motion owner on its host element.
-
-Avoid applying additional `transform`, `translate`, `scale`, or `rotate` rules to the same node. If you need extra animation, apply it to a child element.
+- Browser behavior: current Chromium, Firefox, and WebKit are covered by the full Playwright gate; forced-colors and platform-specific behavior are tested where supported.
+- [Testing and quality guide](https://github.com/Foscat/Interactive-Surface-CSS/wiki/Testing-and-Quality)
+- [Changelog](https://github.com/Foscat/Interactive-Surface-CSS/blob/main/CHANGELOG.md)
+- [Contributing](https://github.com/Foscat/Interactive-Surface-CSS/blob/main/CONTRIBUTING.md)
+- [Code of Conduct](https://github.com/Foscat/Interactive-Surface-CSS/blob/main/CODE_OF_CONDUCT.md)
+- [Security policy](https://github.com/Foscat/Interactive-Surface-CSS/blob/main/SECURITY.md)
+- [MIT License](https://github.com/Foscat/Interactive-Surface-CSS/blob/main/LICENSE)

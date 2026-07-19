@@ -71,7 +71,7 @@ test.describe("interactive surface package behavior", () => {
       return {
         background: computed.backgroundColor,
         borderWidth: computed.borderWidth,
-        color: computed.color
+        color: computed.color,
       };
     });
 
@@ -89,7 +89,7 @@ test.describe("interactive surface package behavior", () => {
       const computed = window.getComputedStyle(el);
       return {
         outlineStyle: computed.outlineStyle,
-        outlineWidth: computed.outlineWidth
+        outlineWidth: computed.outlineWidth,
       };
     });
 
@@ -113,90 +113,132 @@ test.describe("interactive surface package behavior", () => {
     expect(pointerEvents).toBe("none");
   });
 
-  test("data-surface-variant aliases class-based visual variants", async ({ page }) => {
-    const variantNames = ["primary", "secondary", "accent", "subtle", "warning", "danger"];
+  test("data-surface-variant aliases class-based visual variants", async ({
+    page,
+  }) => {
+    const variantNames = [
+      "primary",
+      "secondary",
+      "accent",
+      "subtle",
+      "warning",
+      "danger",
+    ];
 
     for (const variantName of variantNames) {
-      const { classStyles, dataStyles, dataVariant } = await page.evaluate((value) => {
-        const classButton = document.createElement("button");
-        classButton.className = `interactive-surface variant-${value}`;
-        classButton.textContent = "Class variant";
+      const { classStyles, dataStyles, dataVariant } = await page.evaluate(
+        (value) => {
+          const classButton = document.createElement("button");
+          classButton.className = `interactive-surface variant-${value}`;
+          classButton.textContent = "Class variant";
 
-        const dataButton = document.createElement("button");
-        dataButton.className = "interactive-surface";
-        dataButton.setAttribute("data-surface-variant", value);
-        dataButton.textContent = "Data variant";
+          const dataButton = document.createElement("button");
+          dataButton.className = "interactive-surface";
+          dataButton.setAttribute("data-surface-variant", value);
+          dataButton.textContent = "Data variant";
 
-        document.body.append(classButton, dataButton);
+          document.body.append(classButton, dataButton);
 
-        const getSurfaceStyles = (el: HTMLElement) => {
-          const computed = window.getComputedStyle(el);
+          const getSurfaceStyles = (el: HTMLElement) => {
+            const computed = window.getComputedStyle(el);
 
-          return {
-            background: computed.backgroundColor,
-            borderColor: computed.borderColor,
-            color: computed.color
+            return {
+              background: computed.backgroundColor,
+              borderColor: computed.borderColor,
+              color: computed.color,
+            };
           };
-        };
 
-        const comparison = {
-          classStyles: getSurfaceStyles(classButton),
-          dataStyles: getSurfaceStyles(dataButton),
-          dataVariant: dataButton.getAttribute("data-surface-variant")
-        };
+          const comparison = {
+            classStyles: getSurfaceStyles(classButton),
+            dataStyles: getSurfaceStyles(dataButton),
+            dataVariant: dataButton.getAttribute("data-surface-variant"),
+          };
 
-        classButton.remove();
-        dataButton.remove();
+          classButton.remove();
+          dataButton.remove();
 
-        return comparison;
-      }, variantName);
+          return comparison;
+        },
+        variantName,
+      );
 
       expect(dataVariant).toBe(variantName);
-      expect(dataStyles, `data-surface-variant="${variantName}"`).toEqual(classStyles);
+      expect(dataStyles, `data-surface-variant="${variantName}"`).toEqual(
+        classStyles,
+      );
     }
   });
 
-  test("data-surface-level exposes distinct standalone depth and state defaults", async ({ page }) => {
-    const levelStyles = await page.locator("[data-surface-level]").evaluateAll((elements) =>
-      elements.map((el) => {
-        const computed = window.getComputedStyle(el);
+  test("data-surface-level exposes distinct standalone depth and state defaults", async ({
+    page,
+  }) => {
+    const levelStyles = await page
+      .locator("[data-surface-level]")
+      .evaluateAll((elements) =>
+        elements.map((el) => {
+          const computed = window.getComputedStyle(el);
 
-        const resolveOpacity = (varName: string) => {
-          const probe = document.createElement("span");
-          el.appendChild(probe);
-          (probe as HTMLSpanElement).style.opacity = `var(${varName})`;
-          const val = parseFloat(window.getComputedStyle(probe).opacity).toFixed(2);
-          probe.remove();
-          return val;
-        };
+          const resolveOpacity = (varName: string) => {
+            const probe = document.createElement("span");
+            el.appendChild(probe);
+            (probe as HTMLSpanElement).style.opacity = `var(${varName})`;
+            const val = parseFloat(
+              window.getComputedStyle(probe).opacity,
+            ).toFixed(2);
+            probe.remove();
+            return val;
+          };
 
-        return {
-          level: el.getAttribute("data-surface-level"),
-          boxShadow: computed.boxShadow,
-          hoverOpacity: resolveOpacity("--_is-state-layer-hover-opacity"),
-          activeOpacity: resolveOpacity("--_is-state-layer-active-opacity"),
-          focusOpacity: resolveOpacity("--_is-state-layer-focus-opacity")
-        };
-      })
-    );
+          return {
+            level: el.getAttribute("data-surface-level"),
+            boxShadow: computed.boxShadow,
+            hoverOpacity: resolveOpacity("--_is-state-layer-hover-opacity"),
+            activeOpacity: resolveOpacity("--_is-state-layer-active-opacity"),
+            focusOpacity: resolveOpacity("--_is-state-layer-focus-opacity"),
+          };
+        }),
+      );
 
     expect(levelStyles.map(({ level }) => level)).toEqual(["1", "2", "3"]);
     expect(new Set(levelStyles.map(({ boxShadow }) => boxShadow)).size).toBe(3);
     expect(levelStyles).toEqual([
-      expect.objectContaining({ hoverOpacity: "0.08", activeOpacity: "0.14", focusOpacity: "0.18" }),
-      expect.objectContaining({ hoverOpacity: "0.11", activeOpacity: "0.18", focusOpacity: "0.22" }),
-      expect.objectContaining({ hoverOpacity: "0.14", activeOpacity: "0.24", focusOpacity: "0.28" })
+      expect.objectContaining({
+        hoverOpacity: "0.08",
+        activeOpacity: "0.14",
+        focusOpacity: "0.18",
+      }),
+      expect.objectContaining({
+        hoverOpacity: "0.11",
+        activeOpacity: "0.18",
+        focusOpacity: "0.22",
+      }),
+      expect.objectContaining({
+        hoverOpacity: "0.14",
+        activeOpacity: "0.24",
+        focusOpacity: "0.28",
+      }),
     ]);
   });
 
-  test("reduced motion disables movement transform", async ({ page }) => {
+  test("reduced motion disables individual translation and transition timing", async ({
+    page,
+  }) => {
     await page.emulateMedia({ reducedMotion: "reduce" });
     await page.setContent(html);
     const target = page.locator("#target");
     await target.hover();
 
-    const transform = await target.evaluate((el) => window.getComputedStyle(el).transform);
-    expect(transform).toBe("none");
+    const motion = await target.evaluate((el) => {
+      const computed = window.getComputedStyle(el);
+      return {
+        transitionDuration: computed.transitionDuration,
+        translate: computed.getPropertyValue("translate"),
+      };
+    });
+
+    expect(motion.translate).toBe("none");
+    expect(motion.transitionDuration).toBe("0s");
   });
 
   test("icon-only enforces minimum target size", async ({ page }) => {
@@ -204,7 +246,7 @@ test.describe("interactive surface package behavior", () => {
       const computed = window.getComputedStyle(el);
       return {
         minWidth: computed.minWidth,
-        minHeight: computed.minHeight
+        minHeight: computed.minHeight,
       };
     });
 
@@ -213,24 +255,34 @@ test.describe("interactive surface package behavior", () => {
   });
 
   test("data-mode dark and contrast containers apply dark icon-role colors without changing baseline colors", async ({
-    page
+    page,
   }) => {
     await page.emulateMedia({ colorScheme: "light" });
     await page.setContent(html);
 
     const getColor = async (selector: string) =>
-      page.locator(selector).evaluate((el) => window.getComputedStyle(el).color);
+      page
+        .locator(selector)
+        .evaluate((el) => window.getComputedStyle(el).color);
 
     expect(await getColor("#icon-light-default")).toBe("rgb(212, 175, 55)");
     expect(await getColor("#icon-dark-default")).toBe("rgb(0, 0, 0)");
-    expect(await getColor("#icon-accessibility-default")).toBe("rgb(59, 130, 246)");
+    expect(await getColor("#icon-accessibility-default")).toBe(
+      "rgb(59, 130, 246)",
+    );
 
     expect(await getColor("#icon-light-dark-mode")).toBe("rgb(255, 255, 255)");
     expect(await getColor("#icon-dark-dark-mode")).toBe("rgb(30, 58, 138)");
-    expect(await getColor("#icon-accessibility-dark-mode")).toBe("rgb(156, 163, 175)");
+    expect(await getColor("#icon-accessibility-dark-mode")).toBe(
+      "rgb(156, 163, 175)",
+    );
 
-    expect(await getColor("#icon-light-contrast-mode")).toBe("rgb(255, 255, 255)");
+    expect(await getColor("#icon-light-contrast-mode")).toBe(
+      "rgb(255, 255, 255)",
+    );
     expect(await getColor("#icon-dark-contrast-mode")).toBe("rgb(30, 58, 138)");
-    expect(await getColor("#icon-accessibility-contrast-mode")).toBe("rgb(156, 163, 175)");
+    expect(await getColor("#icon-accessibility-contrast-mode")).toBe(
+      "rgb(156, 163, 175)",
+    );
   });
 });

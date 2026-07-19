@@ -6,6 +6,46 @@ All notable changes to this package are documented in this file.
 
 ## Unreleased
 
+## 1.4.0 - 2026-07-19
+
+### Added
+
+- Added the state-only `state-core.css` entry point for consumers whose design system already owns paint and geometry.
+- Added the complete `standalone-preset.css` entry point while preserving every established 1.x root, CSS, CommonJS, and ESM import.
+- Added a state-first interaction lab with live action, toggle, navigation, selection, loading, disabled, variant, level, and icon-control examples.
+
+### Changed
+
+- Raised the npm engine contract and release validation matrix to Node.js 20+ with explicit Node.js 20 and Node.js 22 CI lanes.
+- Split authored CSS into focused state-core and standalone-preset modules, then generate all public and distribution bundles from those sources.
+- Made interaction lift composable with consumer and companion-library transforms by using token-driven individual translation.
+- Reorganized the npm README, demo, and wiki around entry-point choice, semantic state recipes, and clear ecosystem ownership.
+
+### Fixed
+
+- Fixed native file input selector-button styling by mapping `input[type="file"].interactive-surface::file-selector-button` into the same token, hover, focus, active, and disabled state contract as the host surface.
+- Fixed disabled-state precedence so native, ARIA, and class-based disabled surfaces cannot retain active, persistent, or loading feedback.
+- Fixed UI Style Kit motion composition across supported bridge modifiers and stylesheet import orders.
+- Fixed token-dialog focus containment, focus restoration, and stale status feedback between editing sessions.
+
+### Accessibility
+
+- Added semantic coverage for mixed pressed, non-false current, selected, busy, and loading states.
+- Preserved static state meaning with reduced motion and strengthened focus and persistent-state affordances in forced-colors and greater-contrast modes.
+- Kept hover feedback gated to hover-capable pointers while retaining press, focus, and persistent feedback for coarse-pointer users.
+
+### Documentation
+
+- Rebuilt the README as an npm-first guide with durable wiki links, pinned 1.4.0 examples, accessibility responsibilities, and migration-free compatibility guidance.
+- Updated the wiki API, tokens, installation, testing, publishing, roadmap, FAQ, and contribution guidance to match the 1.4.0 package contract.
+- Linked the Interface Systems Lab as the canonical integrated proof with `ui-style-kit-css` and `layout-style-css`.
+
+### Testing
+
+- Added generated-bundle, documentation, public-selector, state-core, and entry-point contract coverage.
+- Expanded rendered browser coverage for semantic states, motion preferences, forced colors, pointer capabilities, companion-library integration, and the responsive demo.
+- Added actual packed-tarball inspection and temporary-consumer resolution checks for every legacy and new public export.
+
 ## 1.3.0 - 2026-07-08
 
 ### Added
