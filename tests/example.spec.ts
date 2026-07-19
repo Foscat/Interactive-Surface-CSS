@@ -60,6 +60,7 @@ test.describe("state-first example page", () => {
     expect(sourceHtml).toContain('<script src="./demo/demo.js" defer></script>');
     expect(sourceHtml).not.toContain('id="demoThemeStyles"');
     expect(sourceHtml).not.toMatch(/<link[^>]+href="[^"]*ISC(?:%20| )logo\.png"/i);
+    expect(sourceHtml).toMatch(/<link rel="icon" href="data:image\/svg\+xml,[^"]+" \/>/);
     expect(sourceHtml).toContain('<script type="application/ld+json">');
     expect(sourceHtml).toContain('<script id="embeddedReadme" type="text/markdown">');
     expect(demoCss.length).toBeGreaterThan(0);
