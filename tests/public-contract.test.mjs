@@ -95,6 +95,13 @@ test("the state core exposes the public transition tuple with legacy fallbacks",
   );
 });
 
+test("the state core disables file selector motion under reduced motion", () => {
+  assert.match(
+    stateCoreSource,
+    /@media\s*\(prefers-reduced-motion:\s*reduce\)[\s\S]*:where\(input\[type="file"\]\.interactive-surface\)::file-selector-button\s*{\s*animation:\s*none;\s*transition:\s*none;\s*}/,
+  );
+});
+
 test("the standalone preset has no UI-host hover compensation or transition override", () => {
   assert.doesNotMatch(standalonePresetSource, /_is-preset-hover-lift-offset/);
   assert.doesNotMatch(
@@ -102,6 +109,21 @@ test("the standalone preset has no UI-host hover compensation or transition over
     /\[data-ui\]\[data-theme\]\[data-mode\][\s\S]*transition-(?:property|duration|timing-function|delay)/,
   );
   assert.doesNotMatch(standalonePresetSource, /!important/);
+});
+
+test("the standalone preset scopes file selector forced-color paint to file inputs", () => {
+  assert.match(
+    standalonePresetSource,
+    /:is\(input\[type="file"\]\.interactive-surface\)::file-selector-button/,
+  );
+  assert.match(
+    standalonePresetSource,
+    /:is\(input\[type="file"\]\.interactive-surface\):is\(/,
+  );
+  assert.doesNotMatch(
+    standalonePresetSource,
+    /:is\(\.interactive-surface\[type="file"\]\)/,
+  );
 });
 
 test("legacy complete and companion entry points remain exported", () => {

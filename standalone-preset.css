@@ -466,13 +466,13 @@
     border-color: GrayText;
   }
 
-  :is(.interactive-surface[type="file"])::file-selector-button {
+  :is(input[type="file"].interactive-surface)::file-selector-button {
     border-color: ButtonText;
     background-color: ButtonFace;
     color: ButtonText;
   }
 
-  :is(.interactive-surface[type="file"]):is(
+  :is(input[type="file"].interactive-surface):is(
       .is-disabled,
       :disabled,
       [aria-disabled="true"]
@@ -869,6 +869,11 @@ input[type="file"].interactive-surface.interactive-surface:where(
   }
 
   .interactive-surface::before {
+    animation: none;
+    transition: none;
+  }
+
+  :where(input[type="file"].interactive-surface)::file-selector-button {
     animation: none;
     transition: none;
   }

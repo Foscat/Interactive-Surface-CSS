@@ -388,6 +388,11 @@ input[type="file"].interactive-surface.interactive-surface:where(
     animation: none;
     transition: none;
   }
+
+  :where(input[type="file"].interactive-surface)::file-selector-button {
+    animation: none;
+    transition: none;
+  }
 }
 
 @media (prefers-contrast: more) {
