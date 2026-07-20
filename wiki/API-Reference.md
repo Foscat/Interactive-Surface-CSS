@@ -1,6 +1,6 @@
 # API Reference
 
-Interactive Surface CSS 1.4.0 is a CSS state primitive. It exports stylesheets and compatibility JavaScript entries, but it does not ship state-management or component-runtime behavior.
+Interactive Surface CSS 1.5.0 is a CSS state primitive. It exports stylesheets and compatibility JavaScript entries, but it does not ship state-management or component-runtime behavior.
 
 ## Entry points
 
@@ -11,7 +11,7 @@ Interactive Surface CSS 1.4.0 is a CSS state primitive. It exports stylesheets a
 | `interactive-surface-css/interactive-surface.css` | Preserved complete 1.x compatibility bundle                                                                             |
 | `interactive-surface-css`                         | Preserved JavaScript entry that imports the compatibility bundle                                                        |
 
-The preset and compatibility stylesheet are generated from the same authored modules and are behaviorally equivalent in 1.4.0.
+The preset and compatibility stylesheet are generated from the same authored modules and are behaviorally equivalent in 1.5.0.
 
 Package metadata keeps established resolution intact: `main` points to the CommonJS entry, `module` points to the ESM entry, and both load `interactive-surface.css`. The `style`, `unpkg`, and `jsdelivr` fields point directly to that complete compatibility bundle.
 
@@ -21,20 +21,20 @@ The following table is contract-tested against `package.json`; it includes every
 
 <!-- package-resolution-contract:start -->
 
-| Manifest key | Exact value |
-| --- | --- |
-| `main` | `./index.cjs` |
-| `module` | `./index.js` |
-| `style` | `./interactive-surface.css` |
-| `unpkg` | `./interactive-surface.css` |
-| `jsdelivr` | `./interactive-surface.css` |
-| `exports["."]` | `{"require":"./index.cjs","import":"./index.js","default":"./index.js","style":"./interactive-surface.css"}` |
-| `exports["./interactive-surface.css"]` | `./interactive-surface.css` |
-| `exports["./state-core.css"]` | `./state-core.css` |
-| `exports["./standalone-preset.css"]` | `./standalone-preset.css` |
-| `exports["./index.html"]` | `./index.html` |
-| `exports["./index.cjs"]` | `./index.cjs` |
-| `exports["./package.json"]` | `./package.json` |
+| Manifest key                           | Exact value                                                                                                  |
+| -------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| `main`                                 | `./index.cjs`                                                                                                |
+| `module`                               | `./index.js`                                                                                                 |
+| `style`                                | `./interactive-surface.css`                                                                                  |
+| `unpkg`                                | `./interactive-surface.css`                                                                                  |
+| `jsdelivr`                             | `./interactive-surface.css`                                                                                  |
+| `exports["."]`                         | `{"require":"./index.cjs","import":"./index.js","default":"./index.js","style":"./interactive-surface.css"}` |
+| `exports["./interactive-surface.css"]` | `./interactive-surface.css`                                                                                  |
+| `exports["./state-core.css"]`          | `./state-core.css`                                                                                           |
+| `exports["./standalone-preset.css"]`   | `./standalone-preset.css`                                                                                    |
+| `exports["./index.html"]`              | `./index.html`                                                                                               |
+| `exports["./index.cjs"]`               | `./index.cjs`                                                                                                |
+| `exports["./package.json"]`            | `./package.json`                                                                                             |
 
 <!-- package-resolution-contract:end -->
 
@@ -54,8 +54,15 @@ The state core provides:
 - disabled-state precedence
 - reduced-motion, higher-contrast, and forced-colors handling
 - composable motion through the individual `translate` property
+- public interaction transition property, duration, easing, and delay tokens
 
 The standalone preset additionally provides neutral paint, borders, radii, variants, levels, icon sizing, and default lift and shadows.
+
+### Interaction precedence
+
+Disabled > busy/loading > transient `:active` > pressed/selected/current > `:hover` > base. The `:focus-visible` ring is orthogonal to this ordering: it remains visible on every focusable non-disabled state without replacing the active state-layer, lift, or shadow feedback.
+
+The host transition tuple is controlled by `--interactive-surface-transition-property`, `--interactive-surface-transition-duration`, `--interactive-surface-transition-easing`, and `--interactive-surface-transition-delay`. Existing public motion/easing tokens and their generic fallbacks remain supported.
 
 ### Native file inputs
 
@@ -77,7 +84,7 @@ The selector button is not styled globally; this keeps unrelated file inputs und
 
 Disabled state overrides every transient state.
 
-## Persistent states
+## Persistent and busy states
 
 | Selector or hook                             | Meaning                                                                                             |
 | -------------------------------------------- | --------------------------------------------------------------------------------------------------- |
@@ -90,6 +97,8 @@ Disabled state overrides every transient state.
 | `.is-loading`                                | Established class-based loading hook                                                                |
 
 Applications must update these values. The package only styles the resulting state.
+
+Busy and loading feedback outranks transient `:active`; the other persistent hooks outrank hover but remain below transient `:active`.
 
 ## Disabled states
 

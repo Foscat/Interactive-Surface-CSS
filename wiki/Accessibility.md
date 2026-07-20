@@ -8,7 +8,7 @@ Use `<button>` for actions and `<a href>` for navigation. Native elements bring 
 
 ## Focus visibility
 
-The package uses an outline-based `:focus` fallback and limits the modern treatment to `:focus-visible` where supported. Relevant tokens are:
+The package uses an outline-based `:focus` fallback and limits the modern treatment to `:focus-visible` where supported. The `:focus-visible` ring is orthogonal to interaction paint and mechanics, so it stays visible without replacing hover, pressed, selected, current, busy, or loading feedback. Relevant tokens are:
 
 - `--interactive-surface-focus-ring-color`
 - `--interactive-surface-focus-ring-width`
@@ -64,11 +64,11 @@ function activateControl(event) {
 }
 ```
 
-Disabled state has highest visual precedence over hover, active, pressed, selected, current, busy, loading, and `.is-active`.
+Disabled > busy/loading > transient `:active` > pressed/selected/current > `:hover` > base. This order prevents hover from erasing persistent meaning, prevents a transient press from erasing busy feedback, and makes every disabled form authoritative.
 
 ## Reduced motion
 
-Under `prefers-reduced-motion: reduce`, transitions and movement stop, but state-layer opacity, outlines, and static shadows continue to distinguish meaningful state. Reduced motion never removes state meaning.
+Under `prefers-reduced-motion: reduce`, transitions and movement stop, but state-layer opacity, outlines, and static shadows continue to distinguish meaningful pressed, selected, current, busy, and loading state. Reduced motion never removes state meaning.
 
 ## Higher contrast
 
@@ -79,7 +79,7 @@ Under `prefers-contrast: more`, the focus ring becomes wider and persistent stat
 Under `forced-colors: active`, the state layer is replaced with system-color outlines:
 
 - `Highlight` for focus
-- `ButtonText` for enabled persistent state
+- `ButtonText` for enabled persistent, busy, and loading state
 - `GrayText` for disabled state
 
 The standalone preset additionally uses `ButtonFace`, `ButtonText`, and `GrayText` for component paint.

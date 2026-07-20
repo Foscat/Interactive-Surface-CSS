@@ -6,6 +6,41 @@ All notable changes to this package are documented in this file.
 
 ## Unreleased
 
+## 1.5.0 - 2026-07-20
+
+### Added
+
+- Added public transition tuple tokens for interaction properties, duration, easing, and delay while retaining the established motion and easing fallback chains.
+- Added rendered precedence coverage for combined hover, persistent, transient active, busy, loading, disabled, and focus-visible states.
+
+### Changed
+
+- Made disabled, busy/loading, transient active, persistent, hover, and base feedback follow one deterministic precedence order.
+- Kept `:focus-visible` as an orthogonal outline so keyboard focus remains visible without replacing the active interaction state.
+- Made the public hover lift token resolve directly, without hidden host-specific compensation.
+
+### Fixed
+
+- Removed the UI-host `+1px` hover adjustment that changed authored lift values when packages were combined.
+- Removed the UI-specific transition override and cross-package `!important` repair from the standalone preset.
+- Fixed persistent state feedback being replaced by hover and busy/loading feedback being replaced during a transient press.
+
+### Accessibility
+
+- Preserved a visible focus ring across base, pressed, selected, current, busy, and loading states.
+- Kept disabled feedback authoritative while retaining reduced-motion state meaning and forced-colors system affordances.
+
+### Documentation
+
+- Documented the exact state precedence, transition tuple, legacy fallbacks, and optional UI Style Kit integration boundary across the README and wiki.
+- Updated release-facing package, CDN, testing, publishing, and roadmap guidance for `1.5.0`.
+
+### Testing
+
+- Added static contracts for transition tokens, legacy entry points, and the absence of UI-specific offset and importance rules.
+- Added exact computed-style assertions for transition tuples, transform composition, state precedence, focus-visible overlays, and native file selector behavior.
+- Stabilized Playwright worker counts and exercised the package contract in Chromium, Firefox, and WebKit.
+
 ## 1.4.0 - 2026-07-19
 
 ### Added

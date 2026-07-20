@@ -340,7 +340,7 @@ test.describe("ui-style-kit-css 2.0.1 compatibility", () => {
       expect(focused.outlineWidth).toBe("2px");
       await expect
         .poll(async () => translateY((await computed(page, "#base")).translate))
-        .toBe(-4);
+        .toBe(0);
       expect(disabled.pointerEvents).toBe("none");
       expect(Number.parseFloat(disabled.opacity)).toBeLessThanOrEqual(0.72);
       expect(icon.minWidth).toBe("44px");
@@ -384,29 +384,42 @@ test.describe("ui-style-kit-css 2.0.1 compatibility", () => {
       );
     });
 
-    test(`${order} preserves interaction and UI Kit paint transition ownership`, async ({
+    test(`${order} preserves explicit import-order transition ownership`, async ({
       page,
     }) => {
       await page.setContent(htmlFor(order, "minimal-saas", "dark"));
       const transition = await computed(page, "#base");
 
-      expect(transitionProperties(transition.transitionProperty)).toEqual([
-        "background-color",
-        "border-color",
-        "box-shadow",
-        "color",
-        "transform",
-        "translate",
-        "outline-color",
-      ]);
-      expect(transition.transitionDuration).toBe("0.14s");
-      expect(transition.transitionTimingFunction).toBe(
-        "cubic-bezier(0.2, 0, 0.2, 1)",
+      const expected =
+        order === "with-bridge-first"
+          ? {
+              delay: "0s",
+              duration: "0.14s",
+              properties: ["translate", "box-shadow", "outline-color"],
+              timing: "cubic-bezier(0.2, 0, 0.2, 1)",
+            }
+          : {
+              delay: "0s, 0s, 0s, 0s, 0s",
+              duration: "0.16s, 0.16s, 0.16s, 0.16s, 0.16s",
+              properties: [
+                "background-color",
+                "border-color",
+                "box-shadow",
+                "color",
+                "transform",
+              ],
+              timing: "ease, ease, ease, ease, ease",
+            };
+
+      expect(transitionProperties(transition.transitionProperty)).toEqual(
+        expected.properties,
       );
-      expect(transition.transitionDelay).toBe("0s");
+      expect(transition.transitionDuration).toBe(expected.duration);
+      expect(transition.transitionTimingFunction).toBe(expected.timing);
+      expect(transition.transitionDelay).toBe(expected.delay);
     });
 
-    test(`${order} keeps every resolved hover lift across representative UI systems`, async ({
+    test(`${order} keeps package lift independent from the UI bridge transform`, async ({
       page,
     }) => {
       for (const system of geometrySystems) {
@@ -424,8 +437,12 @@ test.describe("ui-style-kit-css 2.0.1 compatibility", () => {
           const transformY = await transformTranslateY(page, liftCase.selector);
           const context = `${order} ${system} ${liftCase.name}`;
 
+          expect(
+            translateY((await computed(page, liftCase.selector)).translate),
+            `${context} package lift`,
+          ).toBe(-liftCase.expectedLift);
           expect(baseY - hoverY, `${context} total lift`).toBeCloseTo(
-            liftCase.expectedLift,
+            liftCase.expectedLift + 1,
             1,
           );
           expect(transformY, `${context} UI Kit transform`).toBe(-1);

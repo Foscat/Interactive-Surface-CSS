@@ -1,23 +1,22 @@
 # Roadmap
 
-Interactive Surface CSS 1.4.0 is a release candidate. The work in this branch focuses the package on a durable interaction-state contract without expanding into layout or theme ownership.
+Interactive Surface CSS 1.5.0 is a release candidate. The work in this branch focuses the package on a durable interaction-state contract without expanding into layout or theme ownership.
 
-## 1.4.0 release candidate
+## 1.5.0 release candidate
 
-- Preserve every existing 1.x import, selector, hook, and token fallback.
-- Add `state-core.css` for design-system integrations.
-- Add `standalone-preset.css` for complete standalone use.
-- Generate the compatibility bundle from the same authored modules.
-- Cover pressed mixed, non-false current, selected, busy, loading, and disabled precedence.
+- Preserve every existing 1.x import, selector, hook, token fallback, and complete or companion stylesheet entry point.
+- Expose public transition property, duration, easing, and delay tokens from `state-core.css`.
+- Remove implicit UI-host lift compensation and cross-package transition importance from the standalone preset.
+- Enforce disabled, busy/loading, transient active, persistent, hover, and base precedence while keeping focus-visible orthogonal.
 - Preserve state meaning under reduced motion, higher contrast, and forced colors.
 - Compose interaction `translate` with consumer `transform`, `scale`, and `rotate`.
-- Turn the demo into a state-first interaction lab.
-- Publish an npm-first README and aligned wiki.
+- Keep UI Style Kit optional and preserve standalone package behavior.
+- Align generated artifacts, package metadata, README, wiki, changelog, and release assertions.
 - Lock the package, audit, Chromium, and full-browser release gates.
 
 Publication, tagging, and a GitHub Release remain separate approval-gated steps.
 
-## After 1.4.0
+## After 1.5.0
 
 Potential follow-up work must be driven by demonstrated consumer need:
 

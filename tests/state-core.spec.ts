@@ -53,7 +53,9 @@ function stateFixtureHtml() {
 
       #transient,
       #pressed-true,
-      #current-step {
+      #current-step,
+      #busy,
+      #loading {
         --interactive-surface-motion-default: 0ms;
         --interactive-surface-motion-press: 0ms;
       }
@@ -68,6 +70,29 @@ function stateFixtureHtml() {
         --interactive-surface-lift-base: 0px;
         --interactive-surface-lift-hover: -7px;
         --interactive-surface-lift-active: -3px;
+      }
+
+      #precedence {
+        --interactive-surface-lift-base: 0px;
+        --interactive-surface-lift-hover: -8px;
+        --interactive-surface-lift-active: -3px;
+        --interactive-surface-shadow-base: 0 1px 0 rgb(10 20 30);
+        --interactive-surface-shadow-hover: 0 2px 0 rgb(40 50 60);
+        --interactive-surface-shadow-active: 0 3px 0 rgb(70 80 90);
+        --interactive-surface-motion-default: 0ms;
+        --interactive-surface-motion-press: 0ms;
+      }
+
+      #custom-transition {
+        --interactive-surface-transition-property: translate, box-shadow, outline-color;
+        --interactive-surface-transition-duration: 110ms, 220ms, 330ms;
+        --interactive-surface-transition-easing: linear, ease-in, ease-out;
+        --interactive-surface-transition-delay: 10ms, 20ms, 30ms;
+      }
+
+      #legacy-transition {
+        --motion-default: 90ms;
+        --ease-standard: linear;
       }
 
       /* The persistent fixture must prove reduced motion neutralizes a real active lift. */
@@ -120,6 +145,9 @@ function stateFixtureHtml() {
     <div id="reference" class="consumer-transform">Reference</div>
     <button id="composed" class="interactive-surface consumer-transform">Composed</button>
     <button id="neutral" class="interactive-surface">Neutral core motion</button>
+    <button id="precedence" class="interactive-surface">Precedence</button>
+    <button id="custom-transition" class="interactive-surface">Custom transition</button>
+    <button id="legacy-transition" class="interactive-surface">Legacy transition</button>
   </body>
 </html>`;
 }
@@ -170,6 +198,48 @@ async function composedSnapshot(page: Page, selector: string) {
       scale: styles.getPropertyValue("scale"),
       transform: styles.transform,
       translate: styles.getPropertyValue("translate"),
+    };
+  });
+}
+
+async function interactionSnapshot(page: Page, selector: string) {
+  return page.locator(selector).evaluate((element) => {
+    const host = window.getComputedStyle(element);
+    const layer = window.getComputedStyle(element, "::before");
+    const translate = host.getPropertyValue("translate");
+    const coordinates = translate.trim().split(/\s+/);
+
+    return {
+      boxShadow: host.boxShadow,
+      layerOpacity: Number.parseFloat(layer.opacity),
+      translateY:
+        translate === "none" ? 0 : Number.parseFloat(coordinates[1] ?? "0"),
+    };
+  });
+}
+
+async function transitionSnapshot(page: Page, selector: string) {
+  return page.locator(selector).evaluate((element) => {
+    const styles = window.getComputedStyle(element);
+
+    return {
+      delay: styles.transitionDelay,
+      duration: styles.transitionDuration,
+      easing: styles.transitionTimingFunction,
+      property: styles.transitionProperty,
+    };
+  });
+}
+
+async function stateLayerTransitionSnapshot(page: Page, selector: string) {
+  return page.locator(selector).evaluate((element) => {
+    const styles = window.getComputedStyle(element, "::before");
+
+    return {
+      delay: styles.transitionDelay,
+      duration: styles.transitionDuration,
+      easing: styles.transitionTimingFunction,
+      property: styles.transitionProperty,
     };
   });
 }
@@ -278,6 +348,107 @@ test.describe("state core semantics and precedence", () => {
       expect(await stateLayerOpacity(page, "#current-step")).toBe(0);
     } finally {
       await page.mouse.up();
+    }
+  });
+
+  test("state precedence is disabled, busy, transient active, persistent, hover, then base", async ({
+    page,
+  }) => {
+    const target = page.locator("#precedence");
+    const base = await interactionSnapshot(page, "#precedence");
+
+    expect(base).toEqual({
+      boxShadow: "rgb(10, 20, 30) 0px 1px 0px 0px",
+      layerOpacity: 0,
+      translateY: 0,
+    });
+
+    await target.hover();
+    expect(await interactionSnapshot(page, "#precedence")).toEqual({
+      boxShadow: "rgb(40, 50, 60) 0px 2px 0px 0px",
+      layerOpacity: 0.18,
+      translateY: -8,
+    });
+
+    await target.evaluate((element) =>
+      element.setAttribute("aria-pressed", "true"),
+    );
+    expect(await interactionSnapshot(page, "#precedence")).toEqual({
+      boxShadow: "rgb(70, 80, 90) 0px 3px 0px 0px",
+      layerOpacity: 0.32,
+      translateY: -3,
+    });
+
+    await page.mouse.down();
+    try {
+      expect(await interactionSnapshot(page, "#precedence")).toEqual(base);
+
+      await target.evaluate((element) =>
+        element.setAttribute("aria-busy", "true"),
+      );
+      expect(await interactionSnapshot(page, "#precedence")).toEqual({
+        boxShadow: "rgb(70, 80, 90) 0px 3px 0px 0px",
+        layerOpacity: 0.32,
+        translateY: -3,
+      });
+
+      await target.evaluate((element) =>
+        element.setAttribute("aria-disabled", "true"),
+      );
+      expect(await interactionSnapshot(page, "#precedence")).toEqual({
+        boxShadow: "none",
+        layerOpacity: 0,
+        translateY: 0,
+      });
+    } finally {
+      await page.mouse.up();
+    }
+  });
+
+  test("busy and class loading retain precedence during a transient press", async ({
+    page,
+  }) => {
+    for (const selector of ["#busy", "#loading"]) {
+      const target = page.locator(selector);
+      await target.hover();
+      await page.mouse.down();
+
+      try {
+        expect(await stateLayerOpacity(page, selector), selector).toBe(0.32);
+      } finally {
+        await page.mouse.up();
+      }
+    }
+  });
+
+  test("focus-visible remains orthogonal to base, persistent, busy, and loading feedback", async ({
+    page,
+  }) => {
+    const cases = [
+      { selector: "#focus-target", expectedOpacity: 0 },
+      { selector: "#pressed-true", expectedOpacity: 0.32 },
+      { selector: "#busy", expectedOpacity: 0.32 },
+      { selector: "#loading", expectedOpacity: 0.32 },
+    ];
+
+    for (const stateCase of cases) {
+      const target = page.locator(stateCase.selector);
+      const beforeFocus = await interactionSnapshot(page, stateCase.selector);
+      await target.focus();
+      await expect(target).toBeFocused();
+      const afterFocus = await interactionSnapshot(page, stateCase.selector);
+      const outline = await target.evaluate((element) => {
+        const styles = window.getComputedStyle(element);
+        return {
+          style: styles.outlineStyle,
+          width: Number.parseFloat(styles.outlineWidth),
+        };
+      });
+
+      expect(afterFocus).toEqual(beforeFocus);
+      expect(afterFocus.layerOpacity).toBe(stateCase.expectedOpacity);
+      expect(outline.style).toBe("solid");
+      expect(outline.width).toBeGreaterThanOrEqual(2);
     }
   });
 });
@@ -450,7 +621,7 @@ test.describe("state core motion composition", () => {
       },
       {
         name: "focus",
-        expectedTranslateY: -7,
+        expectedTranslateY: 0,
         activate: async () => page.locator("#composed").focus(),
       },
       {
@@ -511,7 +682,7 @@ test.describe("state core motion composition", () => {
     }
   });
 
-  test("core defaults to neutral lift and transitions only the package-owned translate longhand", async ({
+  test("core exposes exact default, public, and legacy transition tuples", async ({
     page,
   }) => {
     await page.setContent(stateFixtureHtml());
@@ -519,16 +690,46 @@ test.describe("state core motion composition", () => {
 
     expect(await translateY(page, "#neutral")).toBe(0);
 
-    const transitionProperties = await page
-      .locator("#neutral")
-      .evaluate((element) =>
-        window
-          .getComputedStyle(element)
-          .transitionProperty.split(",")
-          .map((property) => property.trim()),
-      );
+    expect(await transitionSnapshot(page, "#neutral")).toEqual({
+      delay: "0s",
+      duration: "0.14s",
+      easing: "cubic-bezier(0.2, 0, 0.2, 1)",
+      property: "translate, box-shadow, outline-color",
+    });
+    expect(await transitionSnapshot(page, "#custom-transition")).toEqual({
+      delay: "0.01s, 0.02s, 0.03s",
+      duration: "0.11s, 0.22s, 0.33s",
+      easing: "linear, ease-in, ease-out",
+      property: "translate, box-shadow, outline-color",
+    });
+    expect(
+      await stateLayerTransitionSnapshot(page, "#custom-transition"),
+    ).toEqual({
+      delay: "0.01s, 0.02s, 0.03s",
+      duration: "0.11s, 0.22s, 0.33s",
+      easing: "linear, ease-in, ease-out",
+      property: "opacity",
+    });
 
-    expect(transitionProperties).toContain("translate");
-    expect(transitionProperties).not.toContain("transform");
+    const customTransition = page.locator("#custom-transition");
+    await customTransition.hover();
+    await page.mouse.down();
+    try {
+      expect(await transitionSnapshot(page, "#custom-transition")).toEqual({
+        delay: "0.01s, 0.02s, 0.03s",
+        duration: "0.11s, 0.22s, 0.33s",
+        easing: "linear, ease-in, ease-out",
+        property: "translate, box-shadow, outline-color",
+      });
+    } finally {
+      await page.mouse.up();
+    }
+
+    expect(await transitionSnapshot(page, "#legacy-transition")).toEqual({
+      delay: "0s",
+      duration: "0.09s",
+      easing: "linear",
+      property: "translate, box-shadow, outline-color",
+    });
   });
 });

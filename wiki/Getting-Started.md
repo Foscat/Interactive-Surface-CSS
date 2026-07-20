@@ -1,6 +1,6 @@
 # Getting Started
 
-This is the shortest reliable path to the Interactive Surface CSS 1.4.0 release candidate.
+This is the shortest reliable path to the Interactive Surface CSS 1.5.0 release candidate.
 
 ## Install
 
@@ -61,11 +61,11 @@ Pin the release candidate version:
 ```html
 <link
   rel="stylesheet"
-  href="https://cdn.jsdelivr.net/npm/interactive-surface-css@1.4.0/standalone-preset.css"
+  href="https://cdn.jsdelivr.net/npm/interactive-surface-css@1.5.0/standalone-preset.css"
 />
 ```
 
-The unpkg equivalent is `https://unpkg.com/interactive-surface-css@1.4.0/standalone-preset.css`. Use `https://cdn.jsdelivr.net/npm/interactive-surface-css@latest/standalone-preset.css` — unpinned opt-in — only when automatically following future releases is intentional.
+The unpkg equivalent is `https://unpkg.com/interactive-surface-css@1.5.0/standalone-preset.css`. Use `https://cdn.jsdelivr.net/npm/interactive-surface-css@latest/standalone-preset.css` — unpinned opt-in — only when automatically following future releases is intentional.
 
 ## Already have a design system?
 

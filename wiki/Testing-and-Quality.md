@@ -1,6 +1,6 @@
 # Testing and Quality
 
-The 1.4.0 release candidate uses layered gates so contributors can choose fast deterministic checks or the complete cross-browser suite without confusing the two.
+The 1.5.0 release candidate uses layered gates so contributors can choose fast deterministic checks or the complete cross-browser suite without confusing the two.
 
 ## Validation tiers
 
@@ -20,6 +20,8 @@ This runs the deterministic validation tier plus browser installation and the Ch
 
 This runs the deterministic validation tier plus the complete Playwright matrix in Chromium, Firefox, and WebKit. It is the final local release gate when all supported browser binaries are available.
 
+The Playwright configuration uses a stable two-worker limit. Focused release proofs may reduce that to one worker for deterministic state sequencing.
+
 ## Focused commands
 
 | Command                       | Purpose                                                                    |
@@ -34,13 +36,15 @@ This runs the deterministic validation tier plus the complete Playwright matrix 
 | `npm run pack:dry`            | Inspect the npm tarball allowlist without publishing                       |
 | `npm audit`                   | Check the dependency tree against the npm advisory database                |
 
-The exact script graph is finalized as part of the 1.4.0 release candidate before publication. Browser downloads intentionally remain outside `prepublishOnly`.
+The exact script graph is finalized as part of the 1.5.0 release candidate before publication. Browser downloads intentionally remain outside `prepublishOnly`.
 
 ## Contract coverage
 
 Deterministic tests verify:
 
 - preserved 1.x selectors, JavaScript entries, stylesheet paths, data hooks, ARIA hooks, and token families
+- public transition property, duration, easing, and delay tokens
+- absence of implicit UI-host lift compensation and cross-package importance
 - resolvable `state-core.css`, `standalone-preset.css`, and compatibility bundles
 - generated-root and distribution parity
 - state-core ownership boundaries
@@ -53,7 +57,9 @@ Deterministic tests verify:
 Playwright verifies:
 
 - fine-pointer hover and transient press
+- exact default, public, active, legacy-fallback, and file-selector transition tuples
 - keyboard focus visibility
+- disabled > busy/loading > transient active > persistent > hover > base precedence
 - pressed true and mixed, non-false current, selected, busy, loading, and established active states
 - native, ARIA, and class-disabled precedence
 - static state meaning under reduced motion

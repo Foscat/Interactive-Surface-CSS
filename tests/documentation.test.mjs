@@ -79,9 +79,11 @@ function readPackageResolutionRows(source) {
     "API reference must contain the package resolution contract table",
   );
 
-  return [...match[1].matchAll(/^\| `([^`]+)` \| `([^`]+)` \|$/gm)].map(
-    ([, key, value]) => [key, value],
-  );
+  return [
+    ...match[1].matchAll(
+      /^\|[ \t]*`([^`]+)`[ \t]*\|[ \t]*`([^`]+)`[ \t]*\|[ \t]*$/gm,
+    ),
+  ].map(([, key, value]) => [key, value]);
 }
 
 test("README is an npm-first guide with durable project links", () => {
@@ -188,6 +190,10 @@ test("README teaches the complete semantic and ecosystem contract", () => {
     "data-surface-level",
     "icon-only",
     "data-icon-role",
+    "--interactive-surface-transition-property",
+    "--interactive-surface-transition-duration",
+    "--interactive-surface-transition-easing",
+    "--interactive-surface-transition-delay",
   ].forEach((value) =>
     assert.ok(
       readme.includes(value),
@@ -201,6 +207,13 @@ test("README teaches the complete semantic and ecosystem contract", () => {
     /suppress activation[^\n]*`aria-disabled="true"`[^\n]*`.is-disabled`/i,
   );
   assert.match(readme, /use one[^\n]*use two[^\n]*use all three/i);
+  assert.ok(
+    readme.includes(
+      "Disabled > busy/loading > transient `:active` > pressed/selected/current > `:hover` > base",
+    ),
+    "README must state the exact interaction precedence",
+  );
+  assert.match(readme, /`:focus-visible`[^\n]*orthogonal/i);
 
   const allThreeOrder = [
     'import "ui-style-kit-css/with-bridge.css";',
@@ -214,7 +227,7 @@ test("README teaches the complete semantic and ecosystem contract", () => {
   );
 });
 
-test("wiki API, token, and accessibility references cover the 1.4.0 contract", () => {
+test("wiki API, token, and accessibility references cover the 1.5.0 contract", () => {
   assert.ok(
     wiki.api.includes(
       "`.size-sm`: default lift with a compact shadow profile.",
@@ -271,6 +284,29 @@ test("wiki API, token, and accessibility references cover the 1.4.0 contract", (
   }
 
   [
+    "--interactive-surface-transition-property",
+    "--interactive-surface-transition-duration",
+    "--interactive-surface-transition-easing",
+    "--interactive-surface-transition-delay",
+    "translate, box-shadow, outline-color",
+  ].forEach((value) =>
+    assert.ok(
+      wiki.tokens.includes(value),
+      `Token reference is missing transition contract: ${value}`,
+    ),
+  );
+
+  for (const document of [wiki.api, wiki.accessibility]) {
+    assert.ok(
+      document.includes(
+        "Disabled > busy/loading > transient `:active` > pressed/selected/current > `:hover` > base",
+      ),
+      "Public state guidance must state the exact interaction precedence",
+    );
+    assert.match(document, /`:focus-visible`[^\n]*orthogonal/i);
+  }
+
+  [
     'aria-pressed="mixed"',
     "aria-current",
     "aria-selected",
@@ -298,8 +334,8 @@ test("wiki installation and quality guidance matches the release-candidate packa
     wiki.roadmap,
   ].forEach((document) => {
     assert.ok(
-      document.includes("1.4.0"),
-      "Release-facing wiki page must identify 1.4.0",
+      document.includes(manifest.version),
+      `Release-facing wiki page must identify ${manifest.version}`,
     );
     assert.match(document, /release candidate/i);
   });
@@ -313,7 +349,9 @@ test("wiki installation and quality guidance matches the release-candidate packa
   };
 
   const expectedLabUrl = normalizeUrlForComparison(labUrl);
-  const installationUrls = [...wiki.installation.matchAll(/https?:\/\/[^\s)>"'`]+/gi)]
+  const installationUrls = [
+    ...wiki.installation.matchAll(/https?:\/\/[^\s)>"'`]+/gi),
+  ]
     .map((match) => match[0])
     .map((candidate) => {
       try {

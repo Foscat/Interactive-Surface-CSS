@@ -1,6 +1,6 @@
 # Installation and Usage
 
-These instructions target the Interactive Surface CSS 1.4.0 release candidate. Existing 1.x imports remain supported.
+These instructions target the Interactive Surface CSS 1.5.0 release candidate. Existing 1.x imports remain supported.
 
 The npm package targets Node.js 20+ for installation and local validation. CI also proves the preferred Node.js 22 release lane.
 
@@ -51,11 +51,11 @@ Pin the release in reproducible pages:
 ```html
 <link
   rel="stylesheet"
-  href="https://cdn.jsdelivr.net/npm/interactive-surface-css@1.4.0/standalone-preset.css"
+  href="https://cdn.jsdelivr.net/npm/interactive-surface-css@1.5.0/standalone-preset.css"
 />
 <link
   rel="stylesheet"
-  href="https://unpkg.com/interactive-surface-css@1.4.0/standalone-preset.css"
+  href="https://unpkg.com/interactive-surface-css@1.5.0/standalone-preset.css"
 />
 ```
 
