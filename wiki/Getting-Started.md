@@ -1,6 +1,6 @@
 # Getting Started
 
-This is the shortest reliable path to the Interactive Surface CSS 1.5.0 release candidate.
+This is the shortest reliable path to the published Interactive Surface CSS 1.5.0 release.
 
 ## Install
 
@@ -56,7 +56,7 @@ Native `disabled` is preferred. If a custom widget must remain focusable and use
 
 ## No-build setup
 
-Pin the release candidate version:
+Pin the release version:
 
 ```html
 <link

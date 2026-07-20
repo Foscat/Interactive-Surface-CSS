@@ -325,8 +325,9 @@ test("wiki API, token, and accessibility references cover the 1.5.0 contract", (
   );
 });
 
-test("wiki installation and quality guidance matches the release-candidate package", () => {
+test("wiki installation and quality guidance matches the released package", () => {
   [
+    readme,
     wiki.home,
     wiki.gettingStarted,
     wiki.installation,
@@ -337,8 +338,16 @@ test("wiki installation and quality guidance matches the release-candidate packa
       document.includes(manifest.version),
       `Release-facing wiki page must identify ${manifest.version}`,
     );
-    assert.match(document, /release candidate/i);
+    assert.doesNotMatch(document, /release candidate/i);
   });
+
+  assert.match(
+    wiki.faq,
+    new RegExp(
+      `${manifest.name}@${manifest.version}[^\\n]*published on npm`,
+      "i",
+    ),
+  );
 
   const normalizeUrlForComparison = (value) => {
     const parsed = new URL(value);

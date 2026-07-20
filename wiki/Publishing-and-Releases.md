@@ -1,19 +1,19 @@
 # Publishing and Releases
 
-Interactive Surface CSS 1.5.0 is a release candidate until the package is published. Preparing this branch does not authorize an npm publish, Git tag, or GitHub Release.
+Interactive Surface CSS 1.5.0 is published on npm. Future publishing, tagging, or GitHub Release work still requires explicit approval.
 
 ## Release ownership
 
 The repository's intended path is:
 
-1. Merge an approved, fully verified release candidate.
+1. Merge an approved, fully verified release branch.
 2. Create the matching GitHub Release and version tag.
 3. Let the npm publish workflow validate the release identity and publish with provenance.
 4. Verify npm and pinned CDN distribution.
 
 See the [npm publish workflow](https://github.com/Foscat/Interactive-Surface-CSS/blob/main/.github/workflows/npm-publish.yml) for the executable release rules.
 
-## 1.5.0 release-candidate checklist
+## Release verification checklist
 
 1. Confirm `package.json` and `package-lock.json` identify `1.5.0`.
 2. Confirm the 1.5.0 changelog entry describes the transition tuple, state precedence, compatibility, accessibility, documentation, and testing.
@@ -44,7 +44,7 @@ The publish guard avoids downloading browser binaries. Browser verification must
 
 ## Release identity
 
-The tag, GitHub Release, package version, lockfile version, and changelog heading must agree. For this candidate, the expected tag is `v1.5.0`.
+The tag, GitHub Release, package version, lockfile version, and changelog heading must agree. For version 1.5.0, the expected tag is `v1.5.0`.
 
 ## Distribution verification
 

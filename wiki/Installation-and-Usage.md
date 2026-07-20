@@ -1,6 +1,6 @@
 # Installation and Usage
 
-These instructions target the Interactive Surface CSS 1.5.0 release candidate. Existing 1.x imports remain supported.
+These instructions target the published Interactive Surface CSS 1.5.0 release. Existing 1.x imports remain supported.
 
 The npm package targets Node.js 20+ for installation and local validation. CI also proves the preferred Node.js 22 release lane.
 
