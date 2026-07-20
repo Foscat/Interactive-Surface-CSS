@@ -5,7 +5,7 @@
 
 Framework-agnostic CSS for reliable hover, focus, press, selected, current, loading, disabled, and motion affordances on interactive controls. Use it alone or as the interaction layer beside your existing layout and theme system.
 
-Version 1.5.0 is a release candidate in this repository until its npm release is published. Existing 1.x imports, selectors, data hooks, ARIA hooks, and tokens remain supported.
+Version 1.5.0 is published on npm. Existing 1.x imports, selectors, data hooks, ARIA hooks, and tokens remain supported.
 
 The package targets Node.js 20+ for npm installs and local validation. CI proves the minimum Node 20 lane and the preferred Node 22 lane before release.
 

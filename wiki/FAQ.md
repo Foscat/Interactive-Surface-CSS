@@ -44,7 +44,7 @@ In the standalone preset and compatibility bundle it supplies centered icon pres
 
 ## Is 1.5.0 published?
 
-The repository describes 1.5.0 as a release candidate until npm publication is explicitly approved and completed. Pinned CDN URLs are distribution checks, not proof of publication.
+Yes. `interactive-surface-css@1.5.0` is published on npm. Pinned CDN URLs remain distribution checks, not the authority for package publication.
 
 ## What browsers are tested?
 

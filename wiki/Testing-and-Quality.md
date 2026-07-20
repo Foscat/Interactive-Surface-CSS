@@ -1,6 +1,6 @@
 # Testing and Quality
 
-The 1.5.0 release candidate uses layered gates so contributors can choose fast deterministic checks or the complete cross-browser suite without confusing the two.
+The 1.5.0 release uses layered gates so contributors can choose fast deterministic checks or the complete cross-browser suite without confusing the two.
 
 ## Validation tiers
 
@@ -36,7 +36,7 @@ The Playwright configuration uses a stable two-worker limit. Focused release pro
 | `npm run pack:dry`            | Inspect the npm tarball allowlist without publishing                       |
 | `npm audit`                   | Check the dependency tree against the npm advisory database                |
 
-The exact script graph is finalized as part of the 1.5.0 release candidate before publication. Browser downloads intentionally remain outside `prepublishOnly`.
+The exact script graph is finalized for the 1.5.0 release. Browser downloads intentionally remain outside `prepublishOnly`.
 
 ## Contract coverage
 
