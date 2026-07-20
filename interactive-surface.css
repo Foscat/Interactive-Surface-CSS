@@ -54,23 +54,6 @@
   background-clip: padding-box;
 }
 
-/*
- * UI Style Kit 2.0.1 contributes one pixel of transform-based hover lift and owns paint
- * transitions. The preset offsets the resolved lift and protects the complete transition tuple.
- */
-:where([data-ui][data-theme][data-mode]) .interactive-surface {
-  --_is-preset-hover-lift-offset: 1px;
-
-  /* stylelint-disable declaration-block-no-redundant-longhand-properties -- Each longhand must survive companion shorthands in either import order. */
-  transition-property:
-    background-color, border-color, box-shadow, color, transform, translate,
-    outline-color !important;
-  transition-duration: var(--_is-transition-duration) !important;
-  transition-timing-function: var(--_is-transition-timing-function) !important;
-  transition-delay: var(--_is-transition-delay) !important;
-  /* stylelint-enable declaration-block-no-redundant-longhand-properties */
-}
-
 /* Surface levels consume bridge tokens while preserving standalone fallbacks. */
 .interactive-surface[data-surface-level] {
   --_is-bg: var(--interactive-surface-level-bg, var(--_is-base-bg));
@@ -514,9 +497,6 @@
     --interactive-surface-lift-hover,
     var(--_is-preset-lift-hover, 0px)
   );
-  --_is-hover-lift: calc(
-    var(--_is-lift-hover) + var(--_is-preset-hover-lift-offset, 0px)
-  );
   --_is-lift-active: var(
     --interactive-surface-lift-active,
     var(--_is-preset-lift-active, 0px)
@@ -588,10 +568,24 @@
     var(--ease-press, cubic-bezier(0.4, 0, 0.6, 1))
   );
 
-  /* A private tuple lets complete presets preserve timing across competing shorthands. */
-  --_is-transition-duration: var(--_is-motion-default);
-  --_is-transition-timing-function: var(--_is-ease-standard);
-  --_is-transition-delay: 0s;
+  --_is-transition-property: var(
+    --interactive-surface-transition-property,
+    translate,
+    box-shadow,
+    outline-color
+  );
+  --_is-transition-duration: var(
+    --interactive-surface-transition-duration,
+    var(--interactive-surface-motion-default, var(--motion-default, 140ms))
+  );
+  --_is-transition-easing: var(
+    --interactive-surface-transition-easing,
+    var(
+      --interactive-surface-ease-standard,
+      var(--ease-standard, cubic-bezier(0.2, 0, 0.2, 1))
+    )
+  );
+  --_is-transition-delay: var(--interactive-surface-transition-delay, 0s);
   --_is-focus-ring-color: var(
     --interactive-surface-focus-ring-color,
     var(--focus-ring, rgb(11 99 246))
@@ -611,13 +605,12 @@
   -webkit-tap-highlight-color: var(--_is-tap-highlight);
   translate: 0 var(--_is-lift-base);
   box-shadow: var(--_is-shadow-base);
-  transition:
-    translate var(--_is-transition-duration)
-      var(--_is-transition-timing-function) var(--_is-transition-delay),
-    box-shadow var(--_is-transition-duration)
-      var(--_is-transition-timing-function) var(--_is-transition-delay),
-    outline-color var(--_is-transition-duration) linear
-      var(--_is-transition-delay);
+  /* stylelint-disable declaration-block-no-redundant-longhand-properties -- Public tuple tokens must remain independently replaceable lists. */
+  transition-property: var(--_is-transition-property);
+  transition-duration: var(--_is-transition-duration);
+  transition-timing-function: var(--_is-transition-easing);
+  transition-delay: var(--_is-transition-delay);
+  /* stylelint-enable declaration-block-no-redundant-longhand-properties */
   will-change: auto;
 }
 
@@ -631,7 +624,12 @@
   opacity: var(--_is-state-layer-base-opacity);
   pointer-events: none;
   z-index: -1;
-  transition: opacity var(--_is-motion-default) var(--_is-ease-standard);
+  /* stylelint-disable declaration-block-no-redundant-longhand-properties -- Public timing tokens may contain independently replaceable lists. */
+  transition-property: opacity;
+  transition-duration: var(--_is-transition-duration);
+  transition-timing-function: var(--_is-transition-easing);
+  transition-delay: var(--_is-transition-delay);
+  /* stylelint-enable declaration-block-no-redundant-longhand-properties */
 }
 
 .interactive-surface:focus {
@@ -648,63 +646,29 @@
 .interactive-surface:not(
     :is(.is-disabled, :disabled, [aria-disabled="true"])
   ):focus-visible {
-  translate: 0 var(--_is-lift-hover);
-  box-shadow: var(--_is-shadow-hover);
   outline: var(--_is-focus-ring-width) solid var(--_is-focus-ring-color);
   outline-offset: var(--_is-focus-ring-offset);
-}
-
-.interactive-surface:not(
-    :is(.is-disabled, :disabled, [aria-disabled="true"])
-  ):focus-visible::before {
-  opacity: var(--_is-state-layer-focus-opacity);
 }
 
 /* Native file inputs expose an inner button that needs the same interaction feedback as the host. */
 :where(input[type="file"].interactive-surface)::file-selector-button {
   cursor: pointer;
-  transition:
-    background-color var(--_is-transition-duration)
-      var(--_is-transition-timing-function) var(--_is-transition-delay),
-    border-color var(--_is-transition-duration)
-      var(--_is-transition-timing-function) var(--_is-transition-delay),
-    box-shadow var(--_is-transition-duration)
-      var(--_is-transition-timing-function) var(--_is-transition-delay),
-    color var(--_is-transition-duration) var(--_is-transition-timing-function)
-      var(--_is-transition-delay);
+  /* stylelint-disable declaration-block-no-redundant-longhand-properties -- Public timing tokens may contain independently replaceable lists. */
+  transition-property: background-color, border-color, box-shadow, color;
+  transition-duration: var(--_is-transition-duration);
+  transition-timing-function: var(--_is-transition-easing);
+  transition-delay: var(--_is-transition-delay);
+  /* stylelint-enable declaration-block-no-redundant-longhand-properties */
 }
 
-:where(input[type="file"].interactive-surface):not(
-    :is(.is-disabled, :disabled, [aria-disabled="true"])
-  ):focus-visible::file-selector-button {
+/* Matching specificity lets source order apply the public precedence to the native subcontrol. */
+input[type="file"].interactive-surface.interactive-surface:where(
+    :focus-visible
+  ):where(
+    :not(:is(.is-disabled, :disabled, [aria-disabled="true"]))
+  )::file-selector-button {
   box-shadow: inset 0 0 0 999px
     rgb(0 0 0 / var(--_is-state-layer-focus-opacity));
-}
-
-/* Zero-specificity state branches let later transient and focus selectors retain precedence. */
-.interactive-surface:where(
-    .is-active,
-    [aria-pressed="true"],
-    [aria-pressed="mixed"],
-    [aria-current]:not([aria-current="false"]),
-    [aria-selected="true"],
-    [aria-busy="true"],
-    .is-loading
-  ):not(:is(.is-disabled, :disabled, [aria-disabled="true"])) {
-  translate: 0 var(--_is-lift-active);
-  box-shadow: var(--_is-shadow-active);
-}
-
-.interactive-surface:where(
-    .is-active,
-    [aria-pressed="true"],
-    [aria-pressed="mixed"],
-    [aria-current]:not([aria-current="false"]),
-    [aria-selected="true"],
-    [aria-busy="true"],
-    .is-loading
-  ):not(:is(.is-disabled, :disabled, [aria-disabled="true"]))::before {
-  opacity: var(--_is-state-layer-active-opacity);
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -715,7 +679,7 @@
   .interactive-surface:not(
       :is(.is-disabled, :disabled, [aria-disabled="true"])
     ):hover {
-    translate: 0 var(--_is-hover-lift);
+    translate: 0 var(--_is-lift-hover);
     box-shadow: var(--_is-shadow-hover);
   }
 
@@ -725,19 +689,62 @@
     opacity: var(--_is-state-layer-hover-opacity);
   }
 
-  :where(input[type="file"].interactive-surface):not(
-      :is(.is-disabled, :disabled, [aria-disabled="true"])
-    ):hover::file-selector-button {
+  input[type="file"].interactive-surface.interactive-surface:where(
+      :hover
+    ):where(
+      :not(:is(.is-disabled, :disabled, [aria-disabled="true"]))
+    )::file-selector-button {
     box-shadow: inset 0 0 0 999px
       rgb(0 0 0 / var(--_is-state-layer-hover-opacity));
   }
 }
 
+/* Repeating the public class normalizes specificity so source order can encode state precedence. */
+.interactive-surface.interactive-surface:where(
+    .is-active,
+    [aria-pressed="true"],
+    [aria-pressed="mixed"],
+    [aria-current]:not([aria-current="false"]),
+    [aria-selected="true"]
+  ):not(:is(.is-disabled, :disabled, [aria-disabled="true"])) {
+  translate: 0 var(--_is-lift-active);
+  box-shadow: var(--_is-shadow-active);
+}
+
+.interactive-surface.interactive-surface:where(
+    .is-active,
+    [aria-pressed="true"],
+    [aria-pressed="mixed"],
+    [aria-current]:not([aria-current="false"]),
+    [aria-selected="true"]
+  ):not(:is(.is-disabled, :disabled, [aria-disabled="true"]))::before {
+  opacity: var(--_is-state-layer-active-opacity);
+}
+
+input[type="file"].interactive-surface.interactive-surface:where(
+    .is-active,
+    [aria-pressed="true"],
+    [aria-pressed="mixed"],
+    [aria-current]:not([aria-current="false"]),
+    [aria-selected="true"]
+  ):where(
+    :not(:is(.is-disabled, :disabled, [aria-disabled="true"]))
+  )::file-selector-button {
+  box-shadow: inset 0 0 0 999px
+    rgb(0 0 0 / var(--_is-state-layer-active-opacity));
+}
+
 .interactive-surface:not(
     :is(.is-disabled, :disabled, [aria-disabled="true"])
   ):active {
-  --_is-transition-duration: var(--_is-motion-press);
-  --_is-transition-timing-function: var(--_is-ease-press);
+  --_is-transition-duration: var(
+    --interactive-surface-transition-duration,
+    var(--_is-motion-press)
+  );
+  --_is-transition-easing: var(
+    --interactive-surface-transition-easing,
+    var(--_is-ease-press)
+  );
 
   translate: 0 var(--_is-lift-base);
   box-shadow: var(--_is-shadow-base);
@@ -747,17 +754,51 @@
     :is(.is-disabled, :disabled, [aria-disabled="true"])
   ):active::before {
   opacity: 0;
-  transition-duration: var(--_is-motion-press);
-  transition-timing-function: var(--_is-ease-press);
+  transition-duration: var(--_is-transition-duration);
+  transition-timing-function: var(--_is-transition-easing);
 }
 
-:where(input[type="file"].interactive-surface):not(
-    :is(.is-disabled, :disabled, [aria-disabled="true"])
-  ):active::file-selector-button {
+input[type="file"].interactive-surface.interactive-surface:where(:active):where(
+    :not(:is(.is-disabled, :disabled, [aria-disabled="true"]))
+  )::file-selector-button {
   box-shadow: inset 0 0 0 999px
     rgb(0 0 0 / var(--_is-state-layer-active-opacity));
-  transition-duration: var(--_is-motion-press);
-  transition-timing-function: var(--_is-ease-press);
+  transition-duration: var(--_is-transition-duration);
+  transition-timing-function: var(--_is-transition-easing);
+}
+
+.interactive-surface.interactive-surface:where(
+    [aria-busy="true"],
+    .is-loading
+  ):not(:is(.is-disabled, :disabled, [aria-disabled="true"])) {
+  --_is-transition-duration: var(
+    --interactive-surface-transition-duration,
+    var(--_is-motion-default)
+  );
+  --_is-transition-easing: var(
+    --interactive-surface-transition-easing,
+    var(--_is-ease-standard)
+  );
+
+  translate: 0 var(--_is-lift-active);
+  box-shadow: var(--_is-shadow-active);
+}
+
+.interactive-surface.interactive-surface:where(
+    [aria-busy="true"],
+    .is-loading
+  ):not(:is(.is-disabled, :disabled, [aria-disabled="true"]))::before {
+  opacity: var(--_is-state-layer-active-opacity);
+}
+
+input[type="file"].interactive-surface.interactive-surface:where(
+    [aria-busy="true"],
+    .is-loading
+  ):where(
+    :not(:is(.is-disabled, :disabled, [aria-disabled="true"]))
+  )::file-selector-button {
+  box-shadow: inset 0 0 0 999px
+    rgb(0 0 0 / var(--_is-state-layer-active-opacity));
 }
 
 /*
@@ -786,10 +827,8 @@
   transition: none;
 }
 
-:where(input[type="file"].interactive-surface):is(
-    .is-disabled,
-    :disabled,
-    [aria-disabled="true"]
+input[type="file"].interactive-surface.interactive-surface:where(
+    :is(.is-disabled, :disabled, [aria-disabled="true"])
   )::file-selector-button {
   cursor: not-allowed;
   box-shadow: none;
@@ -813,7 +852,7 @@
   .interactive-surface:not(
       :is(.is-disabled, :disabled, [aria-disabled="true"])
     ):active,
-  .interactive-surface:where(
+  .interactive-surface.interactive-surface:where(
       .is-active,
       [aria-pressed="true"],
       [aria-pressed="mixed"],
@@ -867,8 +906,6 @@
     --_is-lift-base: 0px;
     --_is-lift-hover: 0px;
 
-    /* Integration offsets must not bypass the forced-colors motion reset. */
-    --_is-hover-lift: 0px;
     --_is-lift-active: 0px;
     --_is-shadow-base: none;
     --_is-shadow-hover: none;

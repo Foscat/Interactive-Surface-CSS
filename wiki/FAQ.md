@@ -42,9 +42,9 @@ Yes. Interactive Surface uses the individual `translate` longhand for lift and p
 
 In the standalone preset and compatibility bundle it supplies centered icon presentation and a 44 × 44px minimum target. A core-only consumer owns that geometry. Every icon-only control still needs an accessible name.
 
-## Is 1.4.0 published?
+## Is 1.5.0 published?
 
-The repository describes 1.4.0 as a release candidate until npm publication is explicitly approved and completed. Pinned CDN URLs are distribution checks, not proof of publication.
+The repository describes 1.5.0 as a release candidate until npm publication is explicitly approved and completed. Pinned CDN URLs are distribution checks, not proof of publication.
 
 ## What browsers are tested?
 

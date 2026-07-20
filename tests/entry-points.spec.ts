@@ -44,7 +44,18 @@ function entryPointHtml(css: string) {
     <button id="variant" class="interactive-surface variant-primary">Variant</button>
     <button id="level" class="interactive-surface" data-surface-level="2">Level</button>
     <button id="icon" class="interactive-surface icon-only" aria-label="Icon">I</button>
-    <input id="file" class="interactive-surface variant-subtle" type="file" />
+    <input
+      id="file"
+      class="interactive-surface variant-subtle"
+      type="file"
+      style="--interactive-surface-transition-duration: 75ms, 125ms, 175ms; --interactive-surface-transition-easing: linear, ease-in, ease-out; --interactive-surface-transition-delay: 20ms, 30ms, 40ms"
+    />
+    <input
+      id="file-state"
+      class="interactive-surface variant-subtle"
+      type="file"
+      style="--interactive-surface-transition-duration: 0ms; --interactive-surface-state-layer-hover-opacity: 0.18; --interactive-surface-state-layer-focus-opacity: 0.24; --interactive-surface-state-layer-active-opacity: 0.32"
+    />
     <button id="hover-motion" class="interactive-surface">Hover motion</button>
     <button id="persistent-motion" class="interactive-surface" aria-selected="true">Selected</button>
   </body>
@@ -112,6 +123,9 @@ async function fileSelectorButtonSnapshot(page: Page, selector: string) {
       buttonBoxShadow: selectorButton.boxShadow,
       buttonColor: selectorButton.color,
       buttonCursor: selectorButton.cursor,
+      buttonTransitionDelay: selectorButton.transitionDelay,
+      buttonTransitionDuration: selectorButton.transitionDuration,
+      buttonTransitionEasing: selectorButton.transitionTimingFunction,
       buttonTransitionProperty: selectorButton.transitionProperty,
       hostBackgroundColor: host.backgroundColor,
       hostColor: host.color,
@@ -193,12 +207,68 @@ test.describe("public stylesheet entry points", () => {
       expect(rest.buttonBackgroundColor).toBe(rest.hostBackgroundColor);
       expect(rest.buttonColor).toBe(rest.hostColor);
       expect(rest.buttonCursor).toBe("pointer");
-      expect(rest.buttonTransitionProperty).toContain("box-shadow");
+      expect(rest.buttonTransitionProperty).toBe(
+        "background-color, border-color, box-shadow, color",
+      );
+      expect(rest.buttonTransitionDuration).toBe("0.075s, 0.125s, 0.175s");
+      expect(rest.buttonTransitionEasing).toBe("linear, ease-in, ease-out");
+      expect(rest.buttonTransitionDelay).toBe("0.02s, 0.03s, 0.04s");
 
       await page.locator("#file").hover({ position: { x: 8, y: 8 } });
       const hover = await fileSelectorButtonSnapshot(page, "#file");
 
       expect(hover.buttonBoxShadow).not.toBe(rest.buttonBoxShadow);
+
+      await page.mouse.down();
+      try {
+        const active = await fileSelectorButtonSnapshot(page, "#file");
+        expect(active.buttonBoxShadow).not.toBe(rest.buttonBoxShadow);
+        expect(active.buttonTransitionDuration).toBe("0.075s, 0.125s, 0.175s");
+      } finally {
+        await page.mouse.up();
+      }
+
+      await page.locator("#file-state").hover({ position: { x: 8, y: 8 } });
+      expect(
+        (await fileSelectorButtonSnapshot(page, "#file-state")).buttonBoxShadow,
+      ).toContain("0.18");
+
+      await page.locator("#file-state").evaluate((element) => {
+        element.setAttribute("aria-selected", "true");
+      });
+      const persistent = await fileSelectorButtonSnapshot(page, "#file-state");
+      expect(persistent.buttonBoxShadow).toContain("0.32");
+
+      await page.locator("#file-state").evaluate((element) => {
+        element.removeAttribute("aria-selected");
+      });
+      await page.mouse.move(0, 0);
+      await page.locator("#file").focus();
+      await page.keyboard.press("Tab");
+      expect(
+        (await fileSelectorButtonSnapshot(page, "#file-state")).buttonBoxShadow,
+      ).toContain("0.24");
+
+      await page.locator("#file-state").evaluate((element) => {
+        element.setAttribute("aria-busy", "true");
+      });
+      const busy = await fileSelectorButtonSnapshot(page, "#file-state");
+      expect(busy.buttonBoxShadow).toContain("0.32");
+
+      await page.locator("#file-state").evaluate((element) => {
+        element.removeAttribute("aria-busy");
+        element.classList.add("is-loading");
+      });
+      const loading = await fileSelectorButtonSnapshot(page, "#file-state");
+      expect(loading.buttonBoxShadow).toContain("0.32");
+
+      await page.locator("#file-state").evaluate((element) => {
+        (element as HTMLInputElement).disabled = true;
+      });
+      const disabled = await fileSelectorButtonSnapshot(page, "#file-state");
+      expect(disabled.buttonBoxShadow).toBe("none");
+      expect(disabled.buttonCursor).toBe("not-allowed");
+      expect(disabled.buttonTransitionDuration).toBe("0s");
     });
   }
 });

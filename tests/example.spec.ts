@@ -56,6 +56,23 @@ async function expectActionableError(
   await expectFocused(status);
 }
 
+function expectElementWithAttributes(
+  source: string,
+  tagName: string,
+  attributes: Record<string, string>,
+): void {
+  const attributeLookaheads = Object.entries(attributes)
+    .map(([name, value]) => {
+      const escapedValue = value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      return `(?=[^>]*\\b${name}="${escapedValue}")`;
+    })
+    .join("");
+
+  expect(source).toMatch(
+    new RegExp(`<${tagName}\\b${attributeLookaheads}[^>]*>`, "i"),
+  );
+}
+
 test.describe("state-first example page", () => {
   test.describe.configure({ mode: "parallel" });
 
@@ -79,15 +96,44 @@ test.describe("state-first example page", () => {
     );
     expect(sourceHtml).not.toMatch(/<link[^>]+href="data:image\/svg\+xml/i);
     [
-      '<link rel="icon" href="./assets/favicon.ico" sizes="any" />',
-      '<link rel="icon" type="image/png" sizes="16x16" href="./assets/favicon-16x16.png" />',
-      '<link rel="icon" type="image/png" sizes="32x32" href="./assets/favicon-32x32.png" />',
-      '<link rel="icon" type="image/png" sizes="48x48" href="./assets/favicon-48x48.png" />',
-      '<link rel="icon" type="image/png" sizes="64x64" href="./assets/favicon-64x64.png" />',
-      '<link rel="apple-touch-icon" sizes="180x180" href="./assets/apple-touch-icon.png" />',
-      '<link rel="manifest" href="./assets/site.webmanifest" />',
-      '<meta name="msapplication-config" content="./assets/browserconfig.xml" />',
-    ].forEach((assetReference) => expect(sourceHtml).toContain(assetReference));
+      { rel: "icon", href: "./assets/favicon.ico", sizes: "any" },
+      {
+        rel: "icon",
+        type: "image/png",
+        sizes: "16x16",
+        href: "./assets/favicon-16x16.png",
+      },
+      {
+        rel: "icon",
+        type: "image/png",
+        sizes: "32x32",
+        href: "./assets/favicon-32x32.png",
+      },
+      {
+        rel: "icon",
+        type: "image/png",
+        sizes: "48x48",
+        href: "./assets/favicon-48x48.png",
+      },
+      {
+        rel: "icon",
+        type: "image/png",
+        sizes: "64x64",
+        href: "./assets/favicon-64x64.png",
+      },
+      {
+        rel: "apple-touch-icon",
+        sizes: "180x180",
+        href: "./assets/apple-touch-icon.png",
+      },
+      { rel: "manifest", href: "./assets/site.webmanifest" },
+    ].forEach((attributes) =>
+      expectElementWithAttributes(sourceHtml, "link", attributes),
+    );
+    expectElementWithAttributes(sourceHtml, "meta", {
+      name: "msapplication-config",
+      content: "./assets/browserconfig.xml",
+    });
     expect(sourceHtml).toContain('<script type="application/ld+json">');
     expect(sourceHtml).toContain(
       '<script id="embeddedReadme" type="text/markdown">',

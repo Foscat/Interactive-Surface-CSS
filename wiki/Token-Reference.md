@@ -43,6 +43,17 @@ The UI Style Kit bridge aliases remain recognized:
 
 The core's lift fallbacks are neutral. The standalone preset opts into the established lift and shadow values.
 
+### Interaction transition tuple
+
+| Token                                       | Default or fallback chain                                                                                                       |
+| ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| `--interactive-surface-transition-property` | `translate, box-shadow, outline-color`                                                                                          |
+| `--interactive-surface-transition-duration` | Default motion; transient `:active` uses press motion. Both retain `--interactive-surface-motion-*` and `--motion-*` fallbacks. |
+| `--interactive-surface-transition-easing`   | Standard easing; transient `:active` uses press easing. Both retain `--interactive-surface-ease-*` and `--ease-*` fallbacks.    |
+| `--interactive-surface-transition-delay`    | `0s`                                                                                                                            |
+
+Supplying a public duration or easing value overrides both the default and transient-press fallback. The core owns this mechanics tuple; companion theme packages do not need a transition override.
+
 ### Persistent-state emphasis
 
 - `--interactive-surface-darken-hover`
@@ -149,7 +160,11 @@ These non-namespaced families are compatibility-only. Prefer the namespaced prop
   --interactive-surface-focus-ring-color: rgb(0 95 115);
   --interactive-surface-state-layer-color: rgb(0 45 55);
   --interactive-surface-state-layer-hover-opacity: 0.1;
-  --interactive-surface-motion-default: 120ms;
+  --interactive-surface-transition-property:
+    translate, box-shadow, outline-color;
+  --interactive-surface-transition-duration: 120ms;
+  --interactive-surface-transition-easing: cubic-bezier(0.2, 0, 0.2, 1);
+  --interactive-surface-transition-delay: 0ms;
 }
 ```
 

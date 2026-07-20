@@ -22,11 +22,35 @@
     />
     <meta name="color-scheme" content="light dark" />
     <link rel="icon" href="./assets/favicon.ico" sizes="any" />
-    <link rel="icon" type="image/png" sizes="16x16" href="./assets/favicon-16x16.png" />
-    <link rel="icon" type="image/png" sizes="32x32" href="./assets/favicon-32x32.png" />
-    <link rel="icon" type="image/png" sizes="48x48" href="./assets/favicon-48x48.png" />
-    <link rel="icon" type="image/png" sizes="64x64" href="./assets/favicon-64x64.png" />
-    <link rel="apple-touch-icon" sizes="180x180" href="./assets/apple-touch-icon.png" />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="./assets/favicon-16x16.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="./assets/favicon-32x32.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="48x48"
+      href="./assets/favicon-48x48.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="64x64"
+      href="./assets/favicon-64x64.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="./assets/apple-touch-icon.png"
+    />
     <link rel="manifest" href="./assets/site.webmanifest" />
     <meta name="msapplication-TileColor" content="#09131c" />
     <meta name="msapplication-config" content="./assets/browserconfig.xml" />
@@ -538,6 +562,7 @@
       </form>
     </dialog>
 
+    <!-- prettier-ignore -->
     <script id="embeddedReadme" type="text/markdown">
 # Interactive Surface CSS
 
@@ -546,7 +571,7 @@
 
 Framework-agnostic CSS for reliable hover, focus, press, selected, current, loading, disabled, and motion affordances on interactive controls. Use it alone or as the interaction layer beside your existing layout and theme system.
 
-Version 1.4.0 is a release candidate in this repository until its npm release is published. Existing 1.x imports, selectors, data hooks, ARIA hooks, and tokens remain supported.
+Version 1.5.0 is a release candidate in this repository until its npm release is published. Existing 1.x imports, selectors, data hooks, ARIA hooks, and tokens remain supported.
 
 The package targets Node.js 20+ for npm installs and local validation. CI proves the minimum Node 20 lane and the preferred Node 22 lane before release.
 
@@ -597,11 +622,11 @@ For a no-build page, pin the release:
 ```html
 <link
   rel="stylesheet"
-  href="https://cdn.jsdelivr.net/npm/interactive-surface-css@1.4.0/standalone-preset.css"
+  href="https://cdn.jsdelivr.net/npm/interactive-surface-css@1.5.0/standalone-preset.css"
 />
 ```
 
-The equivalent unpkg URL is `https://unpkg.com/interactive-surface-css@1.4.0/standalone-preset.css`. To follow future releases deliberately, use `https://cdn.jsdelivr.net/npm/interactive-surface-css@latest/standalone-preset.css` — unpinned opt-in.
+The equivalent unpkg URL is `https://unpkg.com/interactive-surface-css@1.5.0/standalone-preset.css`. To follow future releases deliberately, use `https://cdn.jsdelivr.net/npm/interactive-surface-css@latest/standalone-preset.css` — unpinned opt-in.
 
 ## Semantic recipes
 
@@ -668,7 +693,7 @@ Native `disabled` is preferred because the browser suppresses focus and activati
 | `import "interactive-surface-css/interactive-surface.css";` | Complete standalone compatibility bundle                                                | Existing direct-CSS 1.x consumers                           |
 | `import "interactive-surface-css";`                         | JavaScript entry that imports the complete compatibility bundle                         | Existing bundlers configured for CSS imports                |
 
-`standalone-preset.css` and `interactive-surface.css` are generated from the same authored modules and are behaviorally equivalent in 1.4.0. The compatibility paths remain stable; no 1.x migration is required.
+`standalone-preset.css` and `interactive-surface.css` are generated from the same authored modules and are behaviorally equivalent in 1.5.0. The compatibility paths remain stable; no 1.x migration is required.
 
 The package `main` and `module` fields preserve the CommonJS and ESM entries; both load `interactive-surface.css`. The `style`, `unpkg`, and `jsdelivr` fields also resolve to that complete compatibility bundle.
 
@@ -683,11 +708,11 @@ The package `main` and `module` fields preserve the CommonJS and ESM entries; bo
 | Loading           | `aria-busy="true"`, `.is-loading`                                                                                                                                |
 | Disabled          | native `:disabled`, `aria-disabled="true"`, `.is-disabled`                                                                                                       |
 | Variant           | `.variant-primary`, `.variant-secondary`, `.variant-accent`, `.variant-subtle`, `.variant-warning`, `.variant-danger`, or matching `data-surface-variant` values |
-| Level             | `data-surface-level="1"`, `"2"`, or `"3"`                                                                                                                   |
-| Icon              | `.icon-only`; child `data-icon-role="light"`, `"dark"`, `"accessibility"`, or the legacy role classes                                                      |
+| Level             | `data-surface-level="1"`, `"2"`, or `"3"`                                                                                                                        |
+| Icon              | `.icon-only`; child `data-icon-role="light"`, `"dark"`, `"accessibility"`, or the legacy role classes                                                            |
 | Native subcontrol | `input[type="file"].interactive-surface::file-selector-button` inherits surface paint and hover/active feedback                                                  |
 
-Disabled state has highest visual precedence. The state layer preserves static meaning under reduced motion and uses system-color affordances in forced-colors mode. Interaction lift uses the individual `translate` property, so consumer-owned `transform`, `scale`, and `rotate` declarations can coexist.
+Disabled > busy/loading > transient `:active` > pressed/selected/current > `:hover` > base. The `:focus-visible` ring is orthogonal to that precedence, so keyboard focus remains visible without replacing the active interaction state. The state layer preserves static meaning under reduced motion and uses system-color affordances in forced-colors mode. Interaction lift uses the individual `translate` property, so consumer-owned `transform`, `scale`, and `rotate` declarations can coexist.
 
 For selector details and responsibilities, see the [complete API reference](https://github.com/Foscat/Interactive-Surface-CSS/wiki/API-Reference).
 
@@ -700,15 +725,19 @@ For selector details and responsibilities, see the [complete API reference](http
   --interactive-surface-focus-ring-color: rgb(0 95 115);
   --interactive-surface-state-layer-color: rgb(0 45 55);
   --interactive-surface-state-layer-hover-opacity: 0.1;
-  --interactive-surface-motion-default: 120ms;
+  --interactive-surface-transition-property:
+    translate, box-shadow, outline-color;
+  --interactive-surface-transition-duration: 120ms;
+  --interactive-surface-transition-easing: cubic-bezier(0.2, 0, 0.2, 1);
+  --interactive-surface-transition-delay: 0ms;
 }
 ```
 
-All public custom properties use the `--interactive-surface-*` namespace. Established legacy and semantic fallback tokens remain supported. See the [token ownership tables and full reference](https://github.com/Foscat/Interactive-Surface-CSS/wiki/Token-Reference).
+The transition defaults are `translate, box-shadow, outline-color`, the established default motion duration, the standard easing curve, and zero delay. Existing `--interactive-surface-motion-*`, `--interactive-surface-ease-*`, `--motion-*`, and `--ease-*` fallbacks remain supported. All public custom properties use the `--interactive-surface-*` namespace. See the [token ownership tables and full reference](https://github.com/Foscat/Interactive-Surface-CSS/wiki/Token-Reference).
 
 ## Accessibility responsibilities
 
-The CSS package provides visible keyboard focus, persistent-state treatment, disabled precedence, reduced-motion behavior, higher-contrast behavior, forced-colors affordances, hover gating for capable pointers, and standalone icon target sizing.
+The CSS package provides visible keyboard focus, persistent-state treatment, disabled precedence, reduced-motion behavior, higher-contrast behavior, forced-colors affordances, hover gating for capable pointers, and standalone icon target sizing. The `:focus-visible` ring remains orthogonal across every focusable non-disabled interaction state.
 
 Applications still own semantics and behavior:
 
@@ -729,7 +758,7 @@ import "ui-style-kit-css/with-bridge.css";
 import "interactive-surface-css/state-core.css";
 ```
 
-The bridge maps active UI Style Kit theme and mode values into the `--interactive-surface-*` contract. Interactive Surface keeps ownership of focus, hover, pressed, selected, current, loading, disabled, and motion behavior.
+The bridge maps active UI Style Kit theme and mode values into the `--interactive-surface-*` contract. Interactive Surface keeps ownership of focus, hover, pressed, selected, current, loading, disabled, and motion behavior. UI Style Kit remains optional: this package declares no runtime or peer dependency on it, and the documented import order keeps its paint layer before `state-core.css`.
 
 ## Use all three libraries
 
@@ -753,7 +782,7 @@ The [Interface Systems Lab](https://foscat.github.io/interface-systems-lab/) is 
 - [Code of Conduct](https://github.com/Foscat/Interactive-Surface-CSS/blob/main/CODE_OF_CONDUCT.md)
 - [Security policy](https://github.com/Foscat/Interactive-Surface-CSS/blob/main/SECURITY.md)
 - [MIT License](https://github.com/Foscat/Interactive-Surface-CSS/blob/main/LICENSE)
-</script>
+    </script>
     <script src="./demo/demo.js" defer></script>
   </body>
 </html>
