@@ -110,10 +110,10 @@
   "devDependencies": {
     "@playwright/test": "^1.57.0",
     "clean-css": "~5.3.3",
+    "prettier": "3.9.5",
     "stylelint": "^17.14.0",
     "stylelint-config-standard": "^40.0.0",
-    "prettier": "3.9.5",
-    "ui-style-kit-css": "2.0.1"
+    "ui-style-kit-css": "2.1.0"
   },
   "publishConfig": {
     "access": "public"

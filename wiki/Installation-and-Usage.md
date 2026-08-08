@@ -118,7 +118,8 @@ import "interactive-surface-css/standalone-preset.css";
 ### With UI Style Kit CSS
 
 ```js
-import "ui-style-kit-css/with-bridge.css";
+import "ui-style-kit-css/visual.css";
+import "ui-style-kit-css/interactive-surface-theme.css";
 import "interactive-surface-css/state-core.css";
 ```
 
@@ -127,9 +128,9 @@ UI Style Kit owns paint and theme modes; Interactive Surface owns interaction st
 ### With all three libraries
 
 ```js
-import "ui-style-kit-css/with-bridge.css";
+import "ui-style-kit-css/visual.css";
+import "ui-style-kit-css/interactive-surface-theme.css";
 import "interactive-surface-css/state-core.css";
-import "layout-style-css/bridge.css";
 import "layout-style-css";
 ```
 

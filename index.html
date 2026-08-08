@@ -751,23 +751,24 @@ Read the [accessibility guide](https://github.com/Foscat/Interactive-Surface-CSS
 
 ## Pair with UI Style Kit CSS
 
-When UI Style Kit owns visual paint, import its opt-in bridge and the state-only core:
+When UI Style Kit owns visual paint, import its visual layer, token-and-paint bridge, and the state-only core:
 
 ```js
-import "ui-style-kit-css/with-bridge.css";
+import "ui-style-kit-css/visual.css";
+import "ui-style-kit-css/interactive-surface-theme.css";
 import "interactive-surface-css/state-core.css";
 ```
 
-The bridge maps active UI Style Kit theme and mode values into the `--interactive-surface-*` contract. Interactive Surface keeps ownership of focus, hover, pressed, selected, current, loading, disabled, and motion behavior. UI Style Kit remains optional: this package declares no runtime or peer dependency on it, and the documented import order keeps its paint layer before `state-core.css`.
+The token-and-paint bridge maps active UI Style Kit theme and mode values into the `--interactive-surface-*` contract. Interactive Surface keeps ownership of focus, hover, pressed, selected, current, loading, disabled, and motion behavior. UI Style Kit remains optional: this package declares no runtime or peer dependency on it, and the documented import order keeps its paint layer before `state-core.css`.
 
 ## Use all three libraries
 
 Use the established order so paint, interaction, and structure retain clear ownership:
 
 ```js
-import "ui-style-kit-css/with-bridge.css";
+import "ui-style-kit-css/visual.css";
+import "ui-style-kit-css/interactive-surface-theme.css";
 import "interactive-surface-css/state-core.css";
-import "layout-style-css/bridge.css";
 import "layout-style-css";
 ```
 

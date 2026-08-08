@@ -222,7 +222,7 @@ async function expectStateLayerOpacity(
     .toBe(expectedOpacity);
 }
 
-test.describe("ui-style-kit-css 2.0.1 compatibility", () => {
+test.describe("ui-style-kit-css 2.1.0 legacy bridge compatibility", () => {
   for (const order of importOrders) {
     for (const system of systems) {
       for (const mode of modes) {

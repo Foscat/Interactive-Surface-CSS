@@ -170,13 +170,14 @@ These non-namespaced families are compatibility-only. Prefer the namespaced prop
 
 Use functional color notation such as `rgb(0 95 115)` or `hsl(190deg 100% 23%)`. Avoid reducing focus-ring visibility or disabled distinction below practical usability.
 
-## UI Style Kit bridge
+## UI Style Kit theme bridge
 
-`ui-style-kit-css/with-bridge.css` maps its active theme and mode values into this public contract. Pair it with the state-only entry:
+`ui-style-kit-css/interactive-surface-theme.css` maps active theme and mode values into this public contract. Pair UI paint, the token-and-paint bridge, and the state-only entry:
 
 ```js
-import "ui-style-kit-css/with-bridge.css";
+import "ui-style-kit-css/visual.css";
+import "ui-style-kit-css/interactive-surface-theme.css";
 import "interactive-surface-css/state-core.css";
 ```
 
-UI Style Kit owns the mapped paint values. Interactive Surface owns state behavior and remains usable without the bridge.
+UI Style Kit owns the mapped paint values. Interactive Surface owns state behavior and remains usable without the bridge. The stateful `ui-style-kit-css/with-bridge.css` path remains a deprecated migration-only compatibility export; new integrations should use the token-and-paint bridge above.
