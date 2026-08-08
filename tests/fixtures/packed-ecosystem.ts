@@ -33,6 +33,7 @@ const uiStyleKitRoot =
 
 function runNpm(args: string[], cwd: string, label: string) {
   const executableDirectory = path.dirname(process.execPath);
+  // Use Node's npm CLI directly so fixture paths with spaces work on Windows and Unix.
   const npmCliCandidates = [
     process.env.npm_execpath,
     path.join(executableDirectory, "node_modules", "npm", "bin", "npm-cli.js"),
@@ -100,6 +101,7 @@ function packPackage(
 
   const tarballPath = path.resolve(packDirectory, packedPackage.filename);
 
+  // Keep consumer installation confined to this fixture even if npm returns a malformed filename.
   if (!tarballPath.startsWith(`${path.resolve(packDirectory)}${path.sep}`)) {
     throw new Error(
       `npm pack ${packageRoot} wrote outside its fixture directory.`,
@@ -111,6 +113,19 @@ function packPackage(
     tarballPath,
     version: packedPackage.version,
   } satisfies PackageArtifact;
+}
+
+function removeFixtureDirectory(fixtureDirectory: string) {
+  try {
+    rmSync(fixtureDirectory, {
+      force: true,
+      maxRetries: 3,
+      recursive: true,
+      retryDelay: 100,
+    });
+  } catch (error) {
+    return error;
+  }
 }
 
 export function createPackedEcosystemFixture(
@@ -193,7 +208,9 @@ export function createPackedEcosystemFixture(
     return {
       artifacts,
       cleanup() {
-        rmSync(fixtureDirectory, { force: true, recursive: true });
+        const cleanupError = removeFixtureDirectory(fixtureDirectory);
+
+        if (cleanupError) throw cleanupError;
       },
       readCss(publicSpecifier: string) {
         return readFileSync(this.resolvePublicExport(publicSpecifier), "utf8");
@@ -203,7 +220,15 @@ export function createPackedEcosystemFixture(
       },
     };
   } catch (error) {
-    rmSync(fixtureDirectory, { force: true, recursive: true });
+    const cleanupError = removeFixtureDirectory(fixtureDirectory);
+
+    if (cleanupError) {
+      throw new AggregateError(
+        [error, cleanupError],
+        "Packed ecosystem setup failed and its fixture could not be removed.",
+      );
+    }
+
     throw error;
   }
 }
