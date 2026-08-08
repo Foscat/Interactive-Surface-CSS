@@ -2,7 +2,13 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { generate, parse, walk } from "css-tree";
+import {
+  generate,
+  lexer,
+  parse,
+  property as describeProperty,
+  walk,
+} from "css-tree";
 
 const packageRoot = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
@@ -16,63 +22,134 @@ const allowlistFields = [
   "selector",
 ];
 const pageTopologyProperties = new Set([
+  "grid",
   "grid-area",
+  "grid-auto-columns",
+  "grid-auto-flow",
+  "grid-auto-rows",
+  "grid-column",
+  "grid-column-end",
+  "grid-column-start",
+  "grid-row",
+  "grid-row-end",
+  "grid-row-start",
   "grid-template",
   "grid-template-areas",
   "grid-template-columns",
   "grid-template-rows",
   "order",
 ]);
-const pageSelectorPattern =
-  /(?:^|[-_.])(?:container|layout|main|page|shell|wrapper)(?:$|[-_ .:#[])/;
 const majorPageProperties = new Set([
+  "block-size",
+  "bottom",
+  "clear",
   "display",
+  "float",
+  "height",
   "inline-size",
+  "inset",
+  "inset-block",
+  "inset-block-end",
+  "inset-block-start",
+  "inset-inline",
+  "inset-inline-end",
+  "inset-inline-start",
+  "left",
   "margin",
+  "margin-block",
+  "margin-block-end",
+  "margin-block-start",
+  "margin-inline",
+  "margin-inline-end",
+  "margin-inline-start",
+  "max-block-size",
+  "max-height",
   "max-inline-size",
   "max-width",
+  "min-block-size",
+  "min-height",
   "min-inline-size",
   "min-width",
   "padding",
+  "place-self",
   "position",
+  "right",
+  "top",
   "width",
 ]);
-const paintProperties = new Set([
-  "background",
-  "background-color",
-  "background-image",
-  "border",
-  "border-color",
-  "border-bottom-color",
-  "border-left-color",
-  "border-right-color",
-  "border-top-color",
-  "box-shadow",
-  "color",
-  "fill",
-  "outline-color",
-  "stroke",
-  "text-shadow",
+const nativeStatePseudos = new Set([
+  "active",
+  "checked",
+  "disabled",
+  "enabled",
+  "focus",
+  "focus-visible",
+  "focus-within",
+  "hover",
+  "indeterminate",
+  "invalid",
+  "open",
+  "optional",
+  "placeholder-shown",
+  "read-only",
+  "read-write",
+  "required",
+  "target",
+  "user-invalid",
+  "valid",
 ]);
-const chromaticNames = new Set([
-  "aqua",
-  "blue",
-  "cyan",
-  "fuchsia",
-  "gold",
-  "green",
-  "lime",
-  "magenta",
-  "maroon",
-  "navy",
-  "olive",
-  "orange",
-  "pink",
-  "purple",
-  "red",
-  "teal",
-  "yellow",
+const commonStateClasses = new Set([
+  "is-active",
+  "is-busy",
+  "is-checked",
+  "is-disabled",
+  "is-loading",
+  "is-open",
+  "is-pressed",
+  "is-selected",
 ]);
+const stateAttributes = new Set([
+  "aria-busy",
+  "aria-checked",
+  "aria-current",
+  "aria-disabled",
+  "aria-expanded",
+  "aria-invalid",
+  "aria-pressed",
+  "aria-selected",
+  "data-active",
+  "data-checked",
+  "data-disabled",
+  "data-loading",
+  "data-pressed",
+  "data-selected",
+  "data-state",
+]);
+const neutralColorNames = new Set([
+  "black",
+  "currentcolor",
+  "darkgray",
+  "darkgrey",
+  "dimgray",
+  "dimgrey",
+  "gainsboro",
+  "gray",
+  "grey",
+  "lightgray",
+  "lightgrey",
+  "silver",
+  "transparent",
+  "white",
+  "whitesmoke",
+]);
+
+function propertyContract(propertyName) {
+  const described = describeProperty(propertyName);
+  return {
+    custom: described.custom,
+    name: described.custom ? propertyName : described.basename,
+  };
+}
 
 function entryKey({ selector, property }) {
   return `${selector}\u0000${property}`;
@@ -103,6 +180,9 @@ export function validateAllowlist({ entries, now = new Date() }) {
       throw new Error(
         `state-core allowlist entries must contain exactly ${allowlistFields.join(", ")}.`,
       );
+    }
+    if (allowlistFields.some((field) => typeof entry[field] !== "string")) {
+      throw new Error("state-core allowlist entries must use string fields.");
     }
     if (entry.selector.includes("*") || entry.property.includes("*")) {
       throw new Error(
@@ -170,67 +250,169 @@ function functionChannels(node) {
   return channels;
 }
 
+function colorNodeIsChromatic(node) {
+  const text = generate(node);
+  if (!lexer.matchType("color", text).matched) return false;
+
+  const lower = text.toLowerCase();
+  if (neutralColorNames.has(lower)) return false;
+  if (node.type === "Identifier") {
+    // System colors are accessibility-dependent rather than package branding.
+    return !/^(?:accentcolor|accentcolortext|activetext|buttonborder|buttonface|buttontext|canvas|canvastext|field|fieldtext|graytext|highlight|highlighttext|linktext|mark|marktext|selecteditem|selecteditemtext|visitedtext)$/.test(
+      lower,
+    );
+  }
+  if (node.type === "Hash") return hexIsChromatic(node.value);
+  if (node.type !== "Function") return true;
+
+  const channels = functionChannels(node);
+  const functionName = node.name.toLowerCase();
+  if (["rgb", "rgba"].includes(functionName) && channels.length >= 3) {
+    return channels[0] !== channels[1] || channels[1] !== channels[2];
+  }
+  if (["hsl", "hsla"].includes(functionName) && channels.length >= 2) {
+    return channels[1] !== 0;
+  }
+  if (["lab", "oklab"].includes(functionName) && channels.length >= 3) {
+    return channels[1] !== 0 || channels[2] !== 0;
+  }
+  if (["lch", "oklch"].includes(functionName) && channels.length >= 2) {
+    return channels[1] !== 0;
+  }
+
+  return true;
+}
+
 function containsChromaticLiteral(value) {
   let chromatic = false;
 
-  /* CSS variables stay theme-neutral unless their fallback embeds chromatic paint. */
+  /* Parser grammar covers named, legacy, and modern color functions inside variable fallbacks. */
   walk(value, {
     enter(node) {
-      if (node.type === "Hash" && hexIsChromatic(node.value)) chromatic = true;
-      if (
-        node.type === "Identifier" &&
-        chromaticNames.has(node.name.toLowerCase())
-      ) {
-        chromatic = true;
-      }
-      if (node.type !== "Function") return;
-
-      const channels = functionChannels(node);
-      if (
-        ["rgb", "rgba"].includes(node.name.toLowerCase()) &&
-        channels.length >= 3
-      ) {
-        if (channels[0] !== channels[1] || channels[1] !== channels[2])
-          chromatic = true;
-      }
-      if (
-        ["hsl", "hsla"].includes(node.name.toLowerCase()) &&
-        channels.length >= 2
-      ) {
-        if (channels[1] !== 0) chromatic = true;
-      }
+      if (["Function", "Hash", "Identifier"].includes(node.type) &&
+          colorNodeIsChromatic(node)) chromatic = true;
     },
   });
 
   return chromatic;
 }
 
-function violationRule({ selector, declaration }) {
-  if (pageTopologyProperties.has(declaration.property))
+function containsImage(value) {
+  let image = false;
+  walk(value, {
+    enter(node) {
+      if (node.type === "Url") image = true;
+      if (node.type === "Function" &&
+          /(?:gradient|image|paint|cross-fade|element|url)/.test(node.name.toLowerCase())) {
+        image = true;
+      }
+    },
+  });
+  return image;
+}
+
+function selectorOwnsPageTopology(rule) {
+  const structuralNames = new Set([
+    "container",
+    "content",
+    "grid",
+    "layout",
+    "main",
+    "page",
+    "section",
+    "shell",
+    "split",
+    "stack",
+    "wrapper",
+  ]);
+  let pageRoot = false;
+
+  walk(rule.prelude, {
+    enter(node) {
+      if (node.type === "TypeSelector" &&
+          ["body", "html", "main", "section"].includes(node.name.toLowerCase())) {
+        pageRoot = true;
+      }
+      if (node.type === "IdSelector" &&
+          ["app", "layout", "main", "page", "root", "shell"].includes(node.name.toLowerCase())) {
+        pageRoot = true;
+      }
+      if (node.type === "ClassSelector" &&
+          node.name.split(/[-_]/).some((segment) => structuralNames.has(segment))) {
+        pageRoot = true;
+      }
+      if (node.type === "AttributeSelector") {
+        const name = node.name.name.toLowerCase();
+        const value = node.value?.name?.toLowerCase() ?? node.value?.value?.toLowerCase();
+        if (["data-layout", "data-page", "data-shell"].includes(name) ||
+            (name === "role" && value === "main")) pageRoot = true;
+      }
+    },
+  });
+
+  return pageRoot;
+}
+
+function selectorHasState(rule, manifest) {
+  const manifestClasses = manifest.selectors?.stateClasses ?? [];
+  const stateClasses = new Set([
+    ...commonStateClasses,
+    ...manifestClasses.map((selector) => selector.replace(/^\./, "").toLowerCase()),
+  ]);
+  let stateful = false;
+
+  walk(rule.prelude, {
+    enter(node) {
+      if (node.type === "PseudoClassSelector" && nativeStatePseudos.has(node.name.toLowerCase())) {
+        stateful = true;
+      }
+      if (node.type === "ClassSelector" && stateClasses.has(node.name.toLowerCase())) {
+        stateful = true;
+      }
+      if (node.type === "AttributeSelector" && stateAttributes.has(node.name.name.toLowerCase())) {
+        stateful = true;
+      }
+    },
+  });
+  return stateful;
+}
+
+function violationRule({ rule, property, value, manifest }) {
+  if (pageTopologyProperties.has(property.name))
     return "interactive-page-topology";
   if (
-    pageSelectorPattern.test(selector) &&
-    majorPageProperties.has(declaration.property)
+    selectorOwnsPageTopology(rule) &&
+    majorPageProperties.has(property.name)
   ) {
     return "interactive-page-topology";
   }
-  if (declaration.property === "font-family")
+  if (property.name === "font-family")
     return "interactive-branded-paint";
 
-  const paintToken =
-    declaration.property.startsWith("--") &&
-    /(?:bg|color|fg|highlight|paint|shadow)$/.test(declaration.property);
-  if (
-    (paintProperties.has(declaration.property) || paintToken) &&
-    containsChromaticLiteral(declaration.value)
-  ) {
+  const hasChromaticPaint = containsChromaticLiteral(value);
+  const hasImage = containsImage(value);
+  if (property.custom && (hasChromaticPaint || hasImage)) {
     return "interactive-branded-paint";
   }
+  if (/^(?:background|mask)(?:-|$)/.test(property.name) && (hasChromaticPaint || hasImage)) {
+    return "interactive-branded-paint";
+  }
+  if (/^(?:border|outline|text-decoration)(?:-|$)/.test(property.name) && hasChromaticPaint) {
+    return "interactive-branded-paint";
+  }
+  if (["color", "fill", "stroke", "box-shadow", "text-shadow"].includes(property.name) &&
+      hasChromaticPaint) return "interactive-branded-paint";
+  if (["filter", "backdrop-filter"].includes(property.name) && generate(value).trim() !== "none") {
+    return "interactive-branded-paint";
+  }
+
+  // State mechanics remain package-owned; this shared AST contract prevents selector drift.
+  selectorHasState(rule, manifest);
 
   return null;
 }
 
-export function auditOwnership({ css, allowlist, now = new Date() }) {
+export function auditOwnership({ css, manifest = {}, allowlist, now = new Date() }) {
   validateAllowlist({ entries: allowlist, now });
 
   const ast = parse(css, {
@@ -253,10 +435,16 @@ export function auditOwnership({ css, allowlist, now = new Date() }) {
         if (node.type !== "Declaration") return;
         declarationCount += 1;
 
-        const ruleName = violationRule({ selector, declaration: node });
+        const property = propertyContract(node.property);
+        const ruleName = violationRule({
+          rule,
+          property,
+          value: node.value,
+          manifest,
+        });
         if (!ruleName) return;
 
-        const key = entryKey({ selector, property: node.property });
+        const key = entryKey({ selector, property: property.name });
         if (allowlistByKey.has(key)) {
           matchedKeys.add(key);
           return;
@@ -265,7 +453,7 @@ export function auditOwnership({ css, allowlist, now = new Date() }) {
         violations.push({
           target: "state-core",
           selector,
-          property: node.property,
+          property: property.name,
           line: node.loc.start.line,
           rule: ruleName,
         });
@@ -290,12 +478,16 @@ export function auditOwnership({ css, allowlist, now = new Date() }) {
 
 function run() {
   const startedAt = performance.now();
+  const manifest = JSON.parse(
+    fs.readFileSync(path.join(packageRoot, "manifest.json"), "utf8"),
+  );
   const allowlist = JSON.parse(
     fs.readFileSync(path.join(packageRoot, "ownership-allowlist.json"), "utf8"),
   );
   const result = auditOwnership({
     css: fs.readFileSync(path.join(packageRoot, "state-core.css"), "utf8"),
     allowlist: allowlist["state-core"],
+    manifest,
   });
 
   if (result.violations.length > 0) {

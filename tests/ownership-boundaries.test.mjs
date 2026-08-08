@@ -25,6 +25,12 @@ test("state core rejects branded paint literals outside an exact reviewed fallba
   const css = `
     .interactive-surface { --_is-focus-ring-color: rgb(11 99 246); }
     .interactive-surface { background: #ff00aa; }
+    .interactive-surface { --Arbitrary-Paint: red; }
+    .interactive-surface { --Modern-Paint: oklch(62% .22 24); }
+    .interactive-surface { background-image: url("brand-texture.svg"); }
+    .interactive-surface { border-top: 1px solid red; }
+    .interactive-surface { filter: drop-shadow(0 2px 4px red); }
+    .interactive-surface { --Neutral-State-Layer: rgb(0 0 0 / .12); }
   `;
   const result = auditOwnership({
     css,
@@ -40,6 +46,41 @@ test("state core rejects branded paint literals outside an exact reviewed fallba
       line: 3,
       rule: "interactive-branded-paint",
     },
+    {
+      target: "state-core",
+      selector: ".interactive-surface",
+      property: "--Arbitrary-Paint",
+      line: 4,
+      rule: "interactive-branded-paint",
+    },
+    {
+      target: "state-core",
+      selector: ".interactive-surface",
+      property: "--Modern-Paint",
+      line: 5,
+      rule: "interactive-branded-paint",
+    },
+    {
+      target: "state-core",
+      selector: ".interactive-surface",
+      property: "background-image",
+      line: 6,
+      rule: "interactive-branded-paint",
+    },
+    {
+      target: "state-core",
+      selector: ".interactive-surface",
+      property: "border-top",
+      line: 7,
+      rule: "interactive-branded-paint",
+    },
+    {
+      target: "state-core",
+      selector: ".interactive-surface",
+      property: "filter",
+      line: 8,
+      rule: "interactive-branded-paint",
+    },
   ]);
   assert.equal(result.matchedAllowlistCount, 1);
 });
@@ -47,30 +88,106 @@ test("state core rejects branded paint literals outside an exact reviewed fallba
 test("state core rejects page topology but permits internal state positioning", () => {
   const css = `
     .interactive-surface::before { position: absolute; inset: 0; }
-    .page-shell { grid-template-columns: 1fr 2fr; }
+    .state-grid { grid-column: 1 / 3; }
+    .page-shell { max-width: 72rem; }
+    #app { width: 100%; }
   `;
   const result = auditOwnership({ css, allowlist: [], now: reviewedAt });
 
   assert.deepEqual(result.violations, [
     {
       target: "state-core",
-      selector: ".page-shell",
-      property: "grid-template-columns",
+      selector: ".state-grid",
+      property: "grid-column",
       line: 3,
+      rule: "interactive-page-topology",
+    },
+    {
+      target: "state-core",
+      selector: ".page-shell",
+      property: "max-width",
+      line: 4,
+      rule: "interactive-page-topology",
+    },
+    {
+      target: "state-core",
+      selector: "#app",
+      property: "width",
+      line: 5,
       rule: "interactive-page-topology",
     },
   ]);
 });
 
-test("allowlist rejects invalid metadata and declarations that no longer need exceptions", () => {
-  assert.throws(
-    () =>
-      validateAllowlist({
-        entries: [exception({ owner: "ui-style-kit-css" })],
-        now: reviewedAt,
-      }),
-    /owner must be interactive-surface-css/,
-  );
+test("allowlist rejects every malformed, stale, broad, duplicate, and unmatched mutation", () => {
+  const missingReason = exception();
+  delete missingReason.reason;
+  const cases = [
+    {
+      name: "stale",
+      entries: [exception({ reviewDate: "2025-01-01" })],
+      message: /stale reviewDate/,
+    },
+    {
+      name: "future",
+      entries: [exception({ reviewDate: "2026-08-09" })],
+      message: /stale reviewDate/,
+    },
+    {
+      name: "invalid date",
+      entries: [exception({ reviewDate: "2026-02-30" })],
+      message: /ISO date/,
+    },
+    {
+      name: "duplicate",
+      entries: [exception(), exception()],
+      message: /duplicate selector and property/,
+    },
+    {
+      name: "selector wildcard",
+      entries: [exception({ selector: ".interactive-*" })],
+      message: /must not contain wildcards/,
+    },
+    {
+      name: "property wildcard",
+      entries: [exception({ property: "--_is-*" })],
+      message: /must not contain wildcards/,
+    },
+    {
+      name: "unexplained",
+      entries: [exception({ reason: "Needed." })],
+      message: /professional reason/,
+    },
+    {
+      name: "wrong owner",
+      entries: [exception({ owner: "ui-style-kit-css" })],
+      message: /owner must be interactive-surface-css/,
+    },
+    {
+      name: "missing field",
+      entries: [missingReason],
+      message: /contain exactly/,
+    },
+    {
+      name: "extra field",
+      entries: [exception({ ticket: "IS-42" })],
+      message: /contain exactly/,
+    },
+    {
+      name: "non-string field",
+      entries: [exception({ reason: null })],
+      message: /string fields/,
+    },
+  ];
+
+  for (const fixture of cases) {
+    assert.throws(
+      () => validateAllowlist({ entries: fixture.entries, now: reviewedAt }),
+      fixture.message,
+      fixture.name,
+    );
+  }
+
   assert.throws(
     () =>
       auditOwnership({
