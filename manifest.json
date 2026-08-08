@@ -12,16 +12,49 @@
     "compatibility": "./interactive-surface.css"
   },
   "selectors": {
-    "stable": [".interactive-surface", ".size-sm", ".size-lg", ".icon-only"],
+    "stable": [
+      ".interactive-surface",
+      ".size-sm",
+      ".size-lg",
+      ".icon-only",
+      ".variant-primary",
+      ".variant-secondary",
+      ".variant-accent",
+      ".variant-subtle",
+      ".variant-warning",
+      ".variant-danger",
+      ".light-icon",
+      ".dark-icon",
+      ".accessibility-icon"
+    ],
     "stateClasses": [".is-active", ".is-loading", ".is-disabled"],
     "dataHooks": [
       {
         "name": "data-surface-variant",
-        "selectors": ["[data-surface-variant='primary']", "[data-surface-variant='secondary']", "[data-surface-variant='accent']", "[data-surface-variant='subtle']", "[data-surface-variant='warning']", "[data-surface-variant='danger']"]
+        "selectors": [
+          "[data-surface-variant='primary']",
+          "[data-surface-variant='secondary']",
+          "[data-surface-variant='accent']",
+          "[data-surface-variant='subtle']",
+          "[data-surface-variant='warning']",
+          "[data-surface-variant='danger']"
+        ]
       },
       {
         "name": "data-surface-level",
-        "selectors": ["[data-surface-level='1']", "[data-surface-level='2']", "[data-surface-level='3']"]
+        "selectors": [
+          "[data-surface-level='1']",
+          "[data-surface-level='2']",
+          "[data-surface-level='3']"
+        ]
+      },
+      {
+        "name": "data-icon-role",
+        "selectors": [
+          "[data-icon-role='light']",
+          "[data-icon-role='dark']",
+          "[data-icon-role='accessibility']"
+        ]
       }
     ],
     "deprecated": [],
@@ -29,16 +62,120 @@
   },
   "states": {
     "sizes": ["sm", "md", "lg"],
-    "variants": ["primary", "secondary", "accent", "subtle", "warning", "danger"],
+    "variants": [
+      "primary",
+      "secondary",
+      "accent",
+      "subtle",
+      "warning",
+      "danger"
+    ],
     "levels": ["1", "2", "3"],
-    "precedence": ["disabled", "busy-loading", "active", "persistent", "hover", "base"],
-    "ariaHooks": ["aria-pressed=true", "aria-pressed=mixed", "aria-current!=false", "aria-selected=true", "aria-busy=true", "aria-disabled=true"]
+    "precedence": [
+      "disabled",
+      "busy-loading",
+      "active",
+      "persistent",
+      "hover",
+      "base"
+    ],
+    "ariaHooks": [
+      "aria-pressed=true",
+      "aria-pressed=mixed",
+      "aria-current!=false",
+      "aria-selected=true",
+      "aria-busy=true",
+      "aria-disabled=true"
+    ]
   },
   "tokens": {
     "public": [
-      "--interactive-surface-bg", "--interactive-surface-fg", "--interactive-surface-border-color", "--interactive-surface-border-width", "--interactive-surface-radius", "--interactive-surface-focus-ring-color", "--interactive-surface-focus-ring-width", "--interactive-surface-focus-ring-offset", "--interactive-surface-state-layer-color", "--interactive-surface-state-layer-hover-opacity", "--interactive-surface-state-layer-focus-opacity", "--interactive-surface-state-layer-active-opacity", "--interactive-surface-transition-property", "--interactive-surface-transition-duration", "--interactive-surface-transition-easing", "--interactive-surface-transition-delay", "--interactive-surface-motion-default", "--interactive-surface-motion-press", "--interactive-surface-ease-standard", "--interactive-surface-ease-press", "--interactive-surface-lift-base", "--interactive-surface-lift-hover", "--interactive-surface-lift-active", "--interactive-surface-shadow-base", "--interactive-surface-shadow-hover", "--interactive-surface-shadow-active", "--interactive-surface-disabled-opacity", "--interactive-surface-tap-highlight-color", "--interactive-surface-light-icon-color", "--interactive-surface-dark-icon-color", "--interactive-surface-accessibility-icon-color"
+      "--interactive-surface-accessibility-icon-color",
+      "--interactive-surface-accessibility-icon-color-dark",
+      "--interactive-surface-bg",
+      "--interactive-surface-border-color",
+      "--interactive-surface-border-width",
+      "--interactive-surface-darken-active",
+      "--interactive-surface-darken-hover",
+      "--interactive-surface-dark-icon-color",
+      "--interactive-surface-dark-icon-color-dark",
+      "--interactive-surface-disabled-opacity",
+      "--interactive-surface-ease-press",
+      "--interactive-surface-ease-standard",
+      "--interactive-surface-fg",
+      "--interactive-surface-focus-ring-color",
+      "--interactive-surface-focus-ring-offset",
+      "--interactive-surface-focus-ring-width",
+      "--interactive-surface-level-1-active-opacity",
+      "--interactive-surface-level-1-bg",
+      "--interactive-surface-level-1-border-color",
+      "--interactive-surface-level-1-focus-opacity",
+      "--interactive-surface-level-1-hover-opacity",
+      "--interactive-surface-level-1-shadow",
+      "--interactive-surface-level-2-active-opacity",
+      "--interactive-surface-level-2-bg",
+      "--interactive-surface-level-2-border-color",
+      "--interactive-surface-level-2-focus-opacity",
+      "--interactive-surface-level-2-hover-opacity",
+      "--interactive-surface-level-2-shadow",
+      "--interactive-surface-level-3-active-opacity",
+      "--interactive-surface-level-3-bg",
+      "--interactive-surface-level-3-border-color",
+      "--interactive-surface-level-3-focus-opacity",
+      "--interactive-surface-level-3-hover-opacity",
+      "--interactive-surface-level-3-shadow",
+      "--interactive-surface-level-bg",
+      "--interactive-surface-level-border-color",
+      "--interactive-surface-level-shadow",
+      "--interactive-surface-lift-active",
+      "--interactive-surface-lift-base",
+      "--interactive-surface-lift-hover",
+      "--interactive-surface-light-icon-color",
+      "--interactive-surface-light-icon-color-dark",
+      "--interactive-surface-motion-default",
+      "--interactive-surface-motion-press",
+      "--interactive-surface-radius",
+      "--interactive-surface-shadow-active",
+      "--interactive-surface-shadow-base",
+      "--interactive-surface-shadow-hover",
+      "--interactive-surface-state-layer-active-opacity",
+      "--interactive-surface-state-layer-color",
+      "--interactive-surface-state-layer-focus-opacity",
+      "--interactive-surface-state-layer-hover-opacity",
+      "--interactive-surface-state-layer-opacity",
+      "--interactive-surface-state-layer-opacity-active",
+      "--interactive-surface-state-layer-opacity-focus",
+      "--interactive-surface-state-layer-opacity-hover",
+      "--interactive-surface-tap-highlight-color",
+      "--interactive-surface-transition-property",
+      "--interactive-surface-transition-duration",
+      "--interactive-surface-transition-easing",
+      "--interactive-surface-transition-delay",
+      "--interactive-surface-variant-accent-bg",
+      "--interactive-surface-variant-accent-border-color",
+      "--interactive-surface-variant-accent-fg",
+      "--interactive-surface-variant-danger-bg",
+      "--interactive-surface-variant-danger-border-color",
+      "--interactive-surface-variant-danger-fg",
+      "--interactive-surface-variant-primary-bg",
+      "--interactive-surface-variant-primary-border-color",
+      "--interactive-surface-variant-primary-fg",
+      "--interactive-surface-variant-secondary-bg",
+      "--interactive-surface-variant-secondary-border-color",
+      "--interactive-surface-variant-secondary-fg",
+      "--interactive-surface-variant-subtle-bg",
+      "--interactive-surface-variant-subtle-border-color",
+      "--interactive-surface-variant-subtle-fg",
+      "--interactive-surface-variant-warning-bg",
+      "--interactive-surface-variant-warning-border-color",
+      "--interactive-surface-variant-warning-fg"
     ],
-    "fallbacks": ["--interactive-surface-motion-*", "--interactive-surface-ease-*", "--motion-*", "--ease-*"]
+    "fallbacks": [
+      "--interactive-surface-motion-*",
+      "--interactive-surface-ease-*",
+      "--motion-*",
+      "--ease-*"
+    ]
   },
   "companions": {
     "ui-style-kit-css": ">=2.1.0 <3.0.0",
