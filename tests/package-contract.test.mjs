@@ -78,6 +78,7 @@ const expectedScripts = {
     "npm run check:public",
     "npm run build",
     "npm run check:generated",
+    "npm run check:ownership",
     "npm run test:contracts",
     "npm run test:package",
     "npm run pack:dry",
