@@ -32,6 +32,7 @@ The following table is contract-tested against `package.json`; it includes every
 | `exports["./interactive-surface.css"]` | `./interactive-surface.css`                                                                                  |
 | `exports["./state-core.css"]`          | `./state-core.css`                                                                                           |
 | `exports["./standalone-preset.css"]`   | `./standalone-preset.css`                                                                                    |
+| `exports["./manifest.json"]`           | `./manifest.json`                                                                                            |
 | `exports["./index.html"]`              | `./index.html`                                                                                               |
 | `exports["./index.cjs"]`               | `./index.cjs`                                                                                                |
 | `exports["./package.json"]`            | `./package.json`                                                                                             |
@@ -175,6 +176,7 @@ An icon-only control still needs an accessible name:
 - `interactive-surface-css/interactive-surface.css`
 - `interactive-surface-css/state-core.css`
 - `interactive-surface-css/standalone-preset.css`
+- `interactive-surface-css/manifest.json`
 - `interactive-surface-css/index.html`
 - `interactive-surface-css/index.cjs`
 - `interactive-surface-css/package.json`

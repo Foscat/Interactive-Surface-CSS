@@ -42,6 +42,7 @@
     "./interactive-surface.css": "./interactive-surface.css",
     "./state-core.css": "./state-core.css",
     "./standalone-preset.css": "./standalone-preset.css",
+    "./manifest.json": "./manifest.json",
     "./index.html": "./index.html",
     "./index.cjs": "./index.cjs",
     "./package.json": "./package.json"
@@ -55,6 +56,7 @@
   "files": [
     "index.js",
     "index.cjs",
+    "manifest.json",
     "interactive-surface.css",
     "state-core.css",
     "standalone-preset.css",
@@ -91,7 +93,7 @@
     "minify": "node ./scripts/build.mjs minify",
     "build": "node ./scripts/build.mjs",
     "test": "playwright test --config=./playwright.config.mjs",
-    "test:contracts": "node --test tests/public-contract.test.mjs tests/build.test.mjs tests/documentation.test.mjs tests/fixture-cleanup.test.mjs",
+    "test:contracts": "node --test tests/manifest-contract.test.mjs tests/public-contract.test.mjs tests/build.test.mjs tests/documentation.test.mjs tests/fixture-cleanup.test.mjs",
     "test:package": "node --test tests/package-contract.test.mjs",
     "test:chromium": "playwright test --config=./playwright.config.mjs --project=chromium",
     "test:install": "playwright install --with-deps chromium firefox webkit",

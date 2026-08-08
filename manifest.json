@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "schemaPolicy": {
+    "compatibility": "additive-within-major",
+    "breakingChange": "increment-schemaVersion-before-removing-or-renaming-fields"
+  },
+  "name": "interactive-surface-css",
+  "version": "1.5.0",
+  "entrypoints": {
+    "stateCore": "./state-core.css",
+    "standalonePreset": "./standalone-preset.css",
+    "compatibility": "./interactive-surface.css"
+  },
+  "selectors": {
+    "stable": [".interactive-surface", ".size-sm", ".size-lg", ".icon-only"],
+    "deprecated": [],
+    "plannedRemoval": []
+  },
+  "states": {
+    "sizes": ["sm", "md", "lg"],
+    "variants": ["primary", "secondary", "accent", "subtle", "warning", "danger"],
+    "levels": ["1", "2", "3"],
+    "precedence": ["disabled", "busy-loading", "active", "persistent", "hover", "base"],
+    "ariaHooks": ["aria-pressed=true", "aria-pressed=mixed", "aria-current!=false", "aria-selected=true", "aria-busy=true", "aria-disabled=true"]
+  },
+  "tokens": {
+    "public": [
+      "--interactive-surface-bg", "--interactive-surface-fg", "--interactive-surface-border-color", "--interactive-surface-border-width", "--interactive-surface-radius", "--interactive-surface-focus-ring-color", "--interactive-surface-focus-ring-width", "--interactive-surface-focus-ring-offset", "--interactive-surface-state-layer-color", "--interactive-surface-state-layer-hover-opacity", "--interactive-surface-state-layer-focus-opacity", "--interactive-surface-state-layer-active-opacity", "--interactive-surface-transition-property", "--interactive-surface-transition-duration", "--interactive-surface-transition-easing", "--interactive-surface-transition-delay", "--interactive-surface-motion-default", "--interactive-surface-motion-press", "--interactive-surface-ease-standard", "--interactive-surface-ease-press", "--interactive-surface-lift-base", "--interactive-surface-lift-hover", "--interactive-surface-lift-active", "--interactive-surface-shadow-base", "--interactive-surface-shadow-hover", "--interactive-surface-shadow-active", "--interactive-surface-disabled-opacity", "--interactive-surface-tap-highlight-color", "--interactive-surface-light-icon-color", "--interactive-surface-dark-icon-color", "--interactive-surface-accessibility-icon-color"
+    ],
+    "fallbacks": ["--interactive-surface-motion-*", "--interactive-surface-ease-*", "--motion-*", "--ease-*"]
+  },
+  "companions": {
+    "ui-style-kit-css": ">=2.1.0 <3.0.0",
+    "layout-style-css": ">=3.0.0 <4.0.0"
+  }
+}
