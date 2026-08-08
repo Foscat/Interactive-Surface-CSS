@@ -13,6 +13,17 @@
   },
   "selectors": {
     "stable": [".interactive-surface", ".size-sm", ".size-lg", ".icon-only"],
+    "stateClasses": [".is-active", ".is-loading", ".is-disabled"],
+    "dataHooks": [
+      {
+        "name": "data-surface-variant",
+        "selectors": ["[data-surface-variant='primary']", "[data-surface-variant='secondary']", "[data-surface-variant='accent']", "[data-surface-variant='subtle']", "[data-surface-variant='warning']", "[data-surface-variant='danger']"]
+      },
+      {
+        "name": "data-surface-level",
+        "selectors": ["[data-surface-level='1']", "[data-surface-level='2']", "[data-surface-level='3']"]
+      }
+    ],
     "deprecated": [],
     "plannedRemoval": []
   },

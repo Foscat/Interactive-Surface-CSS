@@ -14,6 +14,8 @@ const entrypoints = {
   compatibility: "./interactive-surface.css"
 };
 const variants = ["primary", "secondary", "accent", "subtle", "warning", "danger"];
+const attributeSelector = (name, value) =>
+  `[${name}='${value}']`;
 const publicTokens = [
   "--interactive-surface-bg",
   "--interactive-surface-fg",
@@ -52,6 +54,25 @@ test("ecosystem manifest describes real interactive state and token contracts", 
     ".size-sm",
     ".size-lg",
     ".icon-only"
+  ]);
+  assert.deepEqual(manifest.selectors.stateClasses, [
+    ".is-active",
+    ".is-loading",
+    ".is-disabled"
+  ]);
+  assert.deepEqual(manifest.selectors.dataHooks, [
+    {
+      name: "data-surface-variant",
+      selectors: variants.map((variant) => attributeSelector("data-surface-variant", variant))
+    },
+    {
+      name: "data-surface-level",
+      selectors: [
+        attributeSelector("data-surface-level", "1"),
+        attributeSelector("data-surface-level", "2"),
+        attributeSelector("data-surface-level", "3")
+      ]
+    }
   ]);
   assert.deepEqual(manifest.selectors.deprecated, []);
   assert.deepEqual(manifest.selectors.plannedRemoval, []);
@@ -94,6 +115,15 @@ test("ecosystem manifest describes real interactive state and token contracts", 
     .join("\n");
   for (const selector of manifest.selectors.stable) {
     assert(css.includes(selector), `${selector} must remain in public CSS`);
+  }
+  for (const selector of manifest.selectors.stateClasses) {
+    assert(css.includes(selector), `${selector} must remain in public CSS`);
+  }
+  for (const hook of manifest.selectors.dataHooks) {
+    for (const selector of hook.selectors) {
+      const sourceSelector = selector.replaceAll("'", String.fromCharCode(34));
+      assert(css.includes(sourceSelector), `${selector} must remain a public ${hook.name} hook`);
+    }
   }
   for (const variant of manifest.states.variants) {
     assert(css.includes(`variant-${variant}`), `${variant} must remain in public CSS`);
