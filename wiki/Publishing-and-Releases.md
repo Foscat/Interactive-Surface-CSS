@@ -54,7 +54,7 @@ The deterministic publish guard avoids downloading browser binaries. The separat
 
 The immutable cross-repository pins require this exact remote sequence:
 
-1. Push a stable UI bootstrap ref containing `72286fc27e4c3664ab05598a34c4dcf7e8267821`.
+1. Push a stable UI bootstrap ref containing `0080528295e485a340959c602f35b47ff5b8fea3`.
 2. Push and merge Interactive Surface CSS and Layout Style CSS with merge commits so their reviewed commit SHAs remain reachable.
 3. Update and verify the final UI companion pins against those merged companion commits.
 4. Push the final UI branch, rerun its ecosystem preflight, and merge UI with a merge commit.

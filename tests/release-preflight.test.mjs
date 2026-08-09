@@ -97,9 +97,17 @@ test("publishing guide records the immutable bootstrap and merge sequence", () =
     path.join(rootDir, "wiki", "Publishing-and-Releases.md"),
     "utf8",
   );
+  const uiFixture = JSON.parse(
+    fs.readFileSync(
+      path.join(rootDir, "ecosystem-release-fixture.json"),
+      "utf8",
+    ),
+  );
+
+  // The operator guide must follow the same immutable revision used by release automation.
+  assert.match(guide, new RegExp(uiFixture.revision, "i"));
 
   for (const phrase of [
-    "72286fc27e4c3664ab05598a34c4dcf7e8267821",
     "Push a stable UI bootstrap ref",
     "merge commits",
     "Update and verify the final UI companion pins",
