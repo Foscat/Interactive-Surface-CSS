@@ -18,6 +18,17 @@ const repositoryRoot = path.resolve(
 );
 const manifestPath = path.join(repositoryRoot, "package.json");
 const manifest = JSON.parse(await readFile(manifestPath, "utf8"));
+const packageLock = JSON.parse(
+  await readFile(path.join(repositoryRoot, "package-lock.json"), "utf8"),
+);
+
+// Exact overrides keep the release audit deterministic without promoting transitive tooling to direct dependencies.
+const expectedSecurityOverrides = {
+  "fast-uri": "3.1.5",
+  "js-yaml": "4.3.1",
+  nanoid: "3.3.17",
+  postcss: "8.5.23",
+};
 
 const expectedPackedFiles = [
   "CHANGELOG.md",
@@ -275,6 +286,22 @@ test("the release manifest and validation graph are pinned to 1.5.0", () => {
       manifest.scripts[scriptName],
       command,
       `Unexpected ${scriptName} script`,
+    );
+  }
+});
+
+test("release security overrides resolve audited transitive tooling", () => {
+  assert.deepEqual(manifest.overrides, expectedSecurityOverrides);
+  assert.deepEqual(manifest.dependencies ?? {}, {});
+  assert.deepEqual(packageLock.packages[""].dependencies ?? {}, {});
+
+  for (const [packageName, expectedVersion] of Object.entries(
+    expectedSecurityOverrides,
+  )) {
+    assert.equal(
+      packageLock.packages[`node_modules/${packageName}`]?.version,
+      expectedVersion,
+      `Expected ${packageName}@${expectedVersion} in the release lockfile`,
     );
   }
 });

@@ -121,6 +121,12 @@
     "stylelint-config-standard": "^40.0.0",
     "ui-style-kit-css": "2.1.0"
   },
+  "overrides": {
+    "fast-uri": "3.1.5",
+    "js-yaml": "4.3.1",
+    "nanoid": "3.3.17",
+    "postcss": "8.5.23"
+  },
   "publishConfig": {
     "access": "public"
   },
