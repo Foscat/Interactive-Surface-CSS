@@ -125,6 +125,7 @@ const stateAttributes = new Set([
   "aria-current",
   "aria-disabled",
   "aria-expanded",
+  "aria-hidden",
   "aria-invalid",
   "aria-pressed",
   "aria-selected",
@@ -438,6 +439,20 @@ function selectorHasState(rule, manifest) {
       if (node.type === "AttributeSelector" && stateAttributes.has(node.name.name.toLowerCase())) {
         stateful = true;
       }
+    },
+  });
+  return stateful;
+}
+
+export function matchesStateSelector(selector, manifest = {}) {
+  const ast = parse(`${selector} {}`, { filename: "state-selector" });
+  let stateful = false;
+
+  // The exported probe keeps the shared selector vocabulary directly testable in state-owning builds.
+  walk(ast, {
+    visit: "Rule",
+    enter(rule) {
+      if (selectorHasState(rule, manifest)) stateful = true;
     },
   });
   return stateful;

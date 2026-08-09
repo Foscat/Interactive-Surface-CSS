@@ -4,6 +4,7 @@ import test from "node:test";
 
 import {
   auditOwnership,
+  matchesStateSelector,
   validateAllowlist,
 } from "../scripts/check-css-ownership.mjs";
 
@@ -32,7 +33,7 @@ test("state core rejects branded paint literals outside an exact reviewed fallba
     .interactive-surface { filter: drop-shadow(0 2px 4px red); }
     .interactive-surface { --Neutral-State-Layer: rgb(0 0 0 / .12); }
     .interactive-surface { --Neutral-Fallback: var(--neutral-layer, #fff); }
-    :is(a:any-link, details[open], input[checked], input[required], option[selected], textarea[readonly], [hidden]) {
+    :is(a:any-link, details[open], input[checked], input[required], option[selected], textarea[readonly], [hidden], [aria-hidden="true"]) {
       background: var(--interactive-surface-bg);
       box-shadow: var(--interactive-surface-shadow-hover);
       transform: translateY(var(--interactive-surface-lift-hover));
@@ -158,6 +159,31 @@ test("state core rejects branded paint literals outside an exact reviewed fallba
     },
   ]);
   assert.equal(result.matchedAllowlistCount, 1);
+});
+
+test("state core permits token value supply across shared reflected ARIA states", () => {
+  const ariaStates = [
+    "busy",
+    "checked",
+    "current",
+    "disabled",
+    "expanded",
+    "hidden",
+    "invalid",
+    "pressed",
+    "selected",
+  ];
+
+  for (const state of ariaStates) {
+    const selector = `:is(.interactive-surface,[aria-${state}="true"])`;
+    assert.equal(matchesStateSelector(selector), true, selector);
+    const result = auditOwnership({
+      css: `${selector} { --State-Opacity: .8; background: var(--surface-bg); transform: scale(.98); }`,
+      allowlist: [],
+      now: reviewedAt,
+    });
+    assert.deepEqual(result.violations, [], selector);
+  }
 });
 
 test("state core rejects page topology but permits internal state positioning", () => {
