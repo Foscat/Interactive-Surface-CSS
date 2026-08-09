@@ -1,6 +1,6 @@
 {
   "name": "interactive-surface-css",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "description": "A framework-agnostic, accessible CSS interaction primitive for buttons, cards, and icon controls with token-driven theming.",
   "keywords": [
     "css",
@@ -42,6 +42,7 @@
     "./interactive-surface.css": "./interactive-surface.css",
     "./state-core.css": "./state-core.css",
     "./standalone-preset.css": "./standalone-preset.css",
+    "./manifest.json": "./manifest.json",
     "./index.html": "./index.html",
     "./index.cjs": "./index.cjs",
     "./package.json": "./package.json"
@@ -55,6 +56,7 @@
   "files": [
     "index.js",
     "index.cjs",
+    "manifest.json",
     "interactive-surface.css",
     "state-core.css",
     "standalone-preset.css",
@@ -83,6 +85,7 @@
   },
   "scripts": {
     "check:no-hex-colors": "node ./scripts/check-no-hex-colors.mjs",
+    "check:ownership": "node ./scripts/check-css-ownership.mjs",
     "check:generated": "node ./scripts/build.mjs check",
     "check:public": "node ./scripts/build.mjs check-public",
     "lint:css": "stylelint \"styles/**/*.css\" \"*.css\" \"demo/**/*.css\"",
@@ -91,7 +94,7 @@
     "minify": "node ./scripts/build.mjs minify",
     "build": "node ./scripts/build.mjs",
     "test": "playwright test --config=./playwright.config.mjs",
-    "test:contracts": "node --test tests/public-contract.test.mjs tests/build.test.mjs tests/documentation.test.mjs",
+    "test:contracts": "node --test tests/manifest-contract.test.mjs tests/public-contract.test.mjs tests/build.test.mjs tests/documentation.test.mjs tests/fixture-cleanup.test.mjs tests/ownership-boundaries.test.mjs tests/release-preflight.test.mjs tests/semantic-fallbacks.test.mjs",
     "test:package": "node --test tests/package-contract.test.mjs",
     "test:chromium": "playwright test --config=./playwright.config.mjs --project=chromium",
     "test:install": "playwright install --with-deps chromium firefox webkit",
@@ -100,20 +103,29 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "validate:node20": "npm run validate:ci",
-    "validate:publish": "npm run check:no-hex-colors && npm run lint:css && npm run check:public && npm run build && npm run check:generated && npm run test:contracts && npm run test:package && npm run pack:dry",
+    "validate:publish": "npm run check:no-hex-colors && npm run lint:css && npm run check:public && npm run build && npm run check:generated && npm run check:ownership && npm run test:contracts && npm run test:package && npm run pack:dry",
     "validate:ci": "npm run validate:publish && npm run audit",
     "validate:browsers": "npm run validate:ci && npm run test:install:chromium && npm run test:chromium",
     "validate:full": "npm run validate:ci && npm run test:install && npm test",
     "validate": "npm run validate:ci",
-    "prepublishOnly": "npm run validate:publish"
+    "release:preflight": "npm run build && node ./scripts/release-fixture-contract.mjs",
+    "release:verify": "npm run validate:publish && npm run release:preflight",
+    "prepublishOnly": "npm run release:verify"
   },
   "devDependencies": {
     "@playwright/test": "^1.57.0",
     "clean-css": "~5.3.3",
+    "css-tree": "3.2.1",
+    "prettier": "3.9.5",
     "stylelint": "^17.14.0",
     "stylelint-config-standard": "^40.0.0",
-    "prettier": "3.9.5",
-    "ui-style-kit-css": "2.0.1"
+    "ui-style-kit-css": "2.1.0"
+  },
+  "overrides": {
+    "fast-uri": "3.1.5",
+    "js-yaml": "4.3.1",
+    "nanoid": "3.3.17",
+    "postcss": "8.5.23"
   },
   "publishConfig": {
     "access": "public"

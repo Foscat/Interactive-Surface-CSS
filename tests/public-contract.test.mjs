@@ -144,4 +144,5 @@ test("UI Style Kit remains an optional development-only compatibility fixture", 
   assert.equal(manifest.dependencies?.["ui-style-kit-css"], undefined);
   assert.equal(manifest.optionalDependencies?.["ui-style-kit-css"], undefined);
   assert.equal(manifest.peerDependencies?.["ui-style-kit-css"], undefined);
+  assert.equal(manifest.devDependencies?.["ui-style-kit-css"], "2.1.0");
 });

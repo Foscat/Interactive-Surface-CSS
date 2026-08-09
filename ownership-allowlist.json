@@ -1,0 +1,18 @@
+{
+  "state-core": [
+    {
+      "selector": ".interactive-surface",
+      "property": "--_is-focus-ring-color",
+      "reason": "Preserves a visible WCAG-oriented focus fallback when no companion theme supplies the public focus token.",
+      "owner": "interactive-surface-css",
+      "reviewDate": "2026-08-08"
+    },
+    {
+      "selector": ".interactive-surface",
+      "property": "--_is-tap-highlight",
+      "reason": "Preserves visible touch feedback as an accessibility fallback when no companion theme supplies a tap color.",
+      "owner": "interactive-surface-css",
+      "reviewDate": "2026-08-08"
+    }
+  ]
+}

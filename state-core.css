@@ -75,7 +75,7 @@
   );
   --_is-motion-default: var(
     --interactive-surface-motion-default,
-    var(--motion-default, 140ms)
+    var(--ui-motion-duration, var(--motion-default, 140ms))
   );
   --_is-motion-press: var(
     --interactive-surface-motion-press,
@@ -83,7 +83,7 @@
   );
   --_is-ease-standard: var(
     --interactive-surface-ease-standard,
-    var(--ease-standard, cubic-bezier(0.2, 0, 0.2, 1))
+    var(--ui-motion-easing, var(--ease-standard, cubic-bezier(0.2, 0, 0.2, 1)))
   );
   --_is-ease-press: var(
     --interactive-surface-ease-press,
@@ -98,19 +98,25 @@
   );
   --_is-transition-duration: var(
     --interactive-surface-transition-duration,
-    var(--interactive-surface-motion-default, var(--motion-default, 140ms))
+    var(
+      --interactive-surface-motion-default,
+      var(--ui-motion-duration, var(--motion-default, 140ms))
+    )
   );
   --_is-transition-easing: var(
     --interactive-surface-transition-easing,
     var(
       --interactive-surface-ease-standard,
-      var(--ease-standard, cubic-bezier(0.2, 0, 0.2, 1))
+      var(
+        --ui-motion-easing,
+        var(--ease-standard, cubic-bezier(0.2, 0, 0.2, 1))
+      )
     )
   );
   --_is-transition-delay: var(--interactive-surface-transition-delay, 0s);
   --_is-focus-ring-color: var(
     --interactive-surface-focus-ring-color,
-    var(--focus-ring, rgb(11 99 246))
+    var(--ui-focus-color, var(--focus-ring, rgb(11 99 246)))
   );
   --_is-focus-ring-width: var(--interactive-surface-focus-ring-width, 2px);
   --_is-focus-ring-offset: var(--interactive-surface-focus-ring-offset, 2px);

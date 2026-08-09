@@ -6,6 +6,32 @@ All notable changes to this package are documented in this file.
 
 ## Unreleased
 
+## 1.6.0 - 2026-08-09
+
+### Added
+
+- Added optional shared semantic fallbacks for standalone paint, control geometry, focus, and default motion while retaining package-specific precedence and all legacy behavior when shared tokens are absent.
+
+### Changed
+
+- Documented the third-party theme integration path, fallback order, and canonical UI Style Kit bridge boundary across the README and wiki without changing ownership or compatibility ranges.
+
+### Fixed
+
+- Preserved legacy standalone behavior when shared semantic tokens are unavailable by retaining the existing fallback chains.
+
+### Accessibility
+
+- Kept the established focus and motion semantics while allowing optional shared focus-color and default-motion values.
+
+### Documentation
+
+- Updated release-facing package, CDN, README, and wiki guidance for the unpublished `1.6.0` candidate.
+
+### Testing
+
+- Added focused contracts for shared semantic fallback precedence and manifest inventory while retaining generated, package, and public-export coverage.
+
 ## 1.5.0 - 2026-07-20
 
 ### Added

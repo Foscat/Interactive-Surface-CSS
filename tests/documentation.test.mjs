@@ -216,9 +216,9 @@ test("README teaches the complete semantic and ecosystem contract", () => {
   assert.match(readme, /`:focus-visible`[^\n]*orthogonal/i);
 
   const allThreeOrder = [
-    'import "ui-style-kit-css/with-bridge.css";',
+    'import "ui-style-kit-css/visual.css";',
+    'import "ui-style-kit-css/interactive-surface-theme.css";',
     'import "interactive-surface-css/state-core.css";',
-    'import "layout-style-css/bridge.css";',
     'import "layout-style-css";',
   ];
   assertAppearsInOrder(
@@ -368,9 +368,9 @@ test("wiki installation and quality guidance matches the release-candidate packa
   );
   assert.match(wiki.installation, /use one[^\n]*use two[^\n]*use all three/i);
   assertAppearsInOrder(wiki.installation, [
-    'import "ui-style-kit-css/with-bridge.css";',
+    'import "ui-style-kit-css/visual.css";',
+    'import "ui-style-kit-css/interactive-surface-theme.css";',
     'import "interactive-surface-css/state-core.css";',
-    'import "layout-style-css/bridge.css";',
     'import "layout-style-css";',
   ]);
 

@@ -8,7 +8,7 @@ import { spawnSync } from "node:child_process";
 import test from "node:test";
 
 const EXPECTED_NAME = "interactive-surface-css";
-const EXPECTED_VERSION = "1.5.0";
+const EXPECTED_VERSION = "1.6.0";
 const CHECKOUT_V4_SHA = "34e114876b0b11c390a56381ad16ebd13914f8d5";
 const CHECKOUT_V5_SHA = "93cb6efe18208431cddfb8368fd83d5badbf9bfd";
 const SETUP_NODE_V5_SHA = "a0853c24544627f65ddf259abe73b1d18a591444";
@@ -18,6 +18,17 @@ const repositoryRoot = path.resolve(
 );
 const manifestPath = path.join(repositoryRoot, "package.json");
 const manifest = JSON.parse(await readFile(manifestPath, "utf8"));
+const packageLock = JSON.parse(
+  await readFile(path.join(repositoryRoot, "package-lock.json"), "utf8"),
+);
+
+// Exact overrides keep the release audit deterministic without promoting transitive tooling to direct dependencies.
+const expectedSecurityOverrides = {
+  "fast-uri": "3.1.5",
+  "js-yaml": "4.3.1",
+  nanoid: "3.3.17",
+  postcss: "8.5.23",
+};
 
 const expectedPackedFiles = [
   "CHANGELOG.md",
@@ -42,6 +53,7 @@ const expectedPackedFiles = [
   "index.html",
   "index.js",
   "interactive-surface.css",
+  "manifest.json",
   "package.json",
   "standalone-preset.css",
   "state-core.css",
@@ -60,6 +72,7 @@ const expectedExports = {
   "./interactive-surface.css": "./interactive-surface.css",
   "./state-core.css": "./state-core.css",
   "./standalone-preset.css": "./standalone-preset.css",
+  "./manifest.json": "./manifest.json",
   "./index.html": "./index.html",
   "./index.cjs": "./index.cjs",
   "./package.json": "./package.json",
@@ -76,6 +89,7 @@ const expectedScripts = {
     "npm run check:public",
     "npm run build",
     "npm run check:generated",
+    "npm run check:ownership",
     "npm run test:contracts",
     "npm run test:package",
     "npm run pack:dry",
@@ -85,7 +99,10 @@ const expectedScripts = {
   "validate:browsers":
     "npm run validate:ci && npm run test:install:chromium && npm run test:chromium",
   "validate:full": "npm run validate:ci && npm run test:install && npm test",
-  prepublishOnly: "npm run validate:publish",
+  "release:preflight":
+    "npm run build && node ./scripts/release-fixture-contract.mjs",
+  "release:verify": "npm run validate:publish && npm run release:preflight",
+  prepublishOnly: "npm run release:verify",
 };
 
 function locateNpmCli() {
@@ -242,9 +259,14 @@ function collectReferencedAssetPaths(assetFile, assetSource) {
     .sort();
 }
 
-test("the release manifest and validation graph are pinned to 1.5.0", () => {
+test("the release manifest and validation graph are pinned to 1.6.0", () => {
   assert.equal(manifest.name, EXPECTED_NAME);
   assert.equal(manifest.version, EXPECTED_VERSION);
+  assert.equal(
+    manifest.homepage,
+    "https://foscat.github.io/Interactive-Surface-CSS/",
+    "The npm homepage must open the live GitHub Pages demo",
+  );
   assert.deepEqual(
     [...manifest.files].sort(),
     [...expectedManifestFiles].sort(),
@@ -268,23 +290,48 @@ test("the release manifest and validation graph are pinned to 1.5.0", () => {
   }
 });
 
-test("the changelog records the complete 1.5.0 release immediately after Unreleased", async () => {
+test("release security overrides resolve audited transitive tooling", () => {
+  assert.deepEqual(manifest.overrides, expectedSecurityOverrides);
+  assert.deepEqual(manifest.dependencies ?? {}, {});
+  assert.deepEqual(packageLock.packages[""].dependencies ?? {}, {});
+
+  for (const [packageName, expectedVersion] of Object.entries(
+    expectedSecurityOverrides,
+  )) {
+    assert.equal(
+      packageLock.packages[`node_modules/${packageName}`]?.version,
+      expectedVersion,
+      `Expected ${packageName}@${expectedVersion} in the release lockfile`,
+    );
+  }
+});
+
+test("the changelog keeps the complete 1.6.0 release after the Unreleased section", async () => {
   const changelog = await readFile(
     path.join(repositoryRoot, "CHANGELOG.md"),
     "utf8",
   );
-  const releaseHeading = `## ${EXPECTED_VERSION} - 2026-07-20`;
+  const releaseHeading = `## ${EXPECTED_VERSION} - 2026-08-09`;
   const releaseMatches =
     changelog.match(
       new RegExp(`^${releaseHeading.replaceAll(".", "\\.")}$`, "gm"),
     ) ?? [];
 
-  assert.match(
-    changelog,
-    new RegExp(
-      `^## Unreleased\\s+${releaseHeading.replaceAll(".", "\\.")}$`,
-      "m",
-    ),
+  const unreleasedStart = changelog.indexOf("## Unreleased");
+  const releaseStart = changelog.indexOf(releaseHeading);
+
+  assert.ok(
+    unreleasedStart !== -1,
+    "Changelog is missing its Unreleased section",
+  );
+  assert.ok(
+    releaseStart > unreleasedStart,
+    `${releaseHeading} must follow the Unreleased section`,
+  );
+  assert.doesNotMatch(
+    changelog.slice(unreleasedStart + "## Unreleased".length, releaseStart),
+    /\n## /,
+    "No released version may appear between Unreleased and the current release",
   );
   assert.equal(
     releaseMatches.length,
@@ -292,7 +339,6 @@ test("the changelog records the complete 1.5.0 release immediately after Unrelea
     `Expected exactly one ${releaseHeading} heading`,
   );
 
-  const releaseStart = changelog.indexOf(releaseHeading);
   const nextRelease = changelog.indexOf(
     "\n## ",
     releaseStart + releaseHeading.length,

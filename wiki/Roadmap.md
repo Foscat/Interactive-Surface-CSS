@@ -1,8 +1,8 @@
 # Roadmap
 
-Interactive Surface CSS 1.5.0 is a release candidate. The work in this branch focuses the package on a durable interaction-state contract without expanding into layout or theme ownership.
+Interactive Surface CSS 1.6.0 is a release candidate. The work in this branch adds optional shared semantic fallbacks without expanding into layout or theme ownership.
 
-## 1.5.0 release candidate
+## 1.6.0 release candidate
 
 - Preserve every existing 1.x import, selector, hook, token fallback, and complete or companion stylesheet entry point.
 - Expose public transition property, duration, easing, and delay tokens from `state-core.css`.
@@ -16,7 +16,7 @@ Interactive Surface CSS 1.5.0 is a release candidate. The work in this branch fo
 
 Publication, tagging, and a GitHub Release remain separate approval-gated steps.
 
-## After 1.5.0
+## After 1.6.0
 
 Potential follow-up work must be driven by demonstrated consumer need:
 

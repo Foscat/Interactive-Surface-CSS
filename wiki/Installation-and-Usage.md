@@ -1,6 +1,6 @@
 # Installation and Usage
 
-These instructions target the Interactive Surface CSS 1.5.0 release candidate. Existing 1.x imports remain supported.
+These instructions target the Interactive Surface CSS 1.6.0 release candidate. Existing 1.x imports remain supported.
 
 The npm package targets Node.js 20+ for installation and local validation. CI also proves the preferred Node.js 22 release lane.
 
@@ -51,11 +51,11 @@ Pin the release in reproducible pages:
 ```html
 <link
   rel="stylesheet"
-  href="https://cdn.jsdelivr.net/npm/interactive-surface-css@1.5.0/standalone-preset.css"
+  href="https://cdn.jsdelivr.net/npm/interactive-surface-css@1.6.0/standalone-preset.css"
 />
 <link
   rel="stylesheet"
-  href="https://unpkg.com/interactive-surface-css@1.5.0/standalone-preset.css"
+  href="https://unpkg.com/interactive-surface-css@1.6.0/standalone-preset.css"
 />
 ```
 
@@ -118,18 +118,28 @@ import "interactive-surface-css/standalone-preset.css";
 ### With UI Style Kit CSS
 
 ```js
-import "ui-style-kit-css/with-bridge.css";
+import "ui-style-kit-css/visual.css";
+import "ui-style-kit-css/interactive-surface-theme.css";
 import "interactive-surface-css/state-core.css";
 ```
 
 UI Style Kit owns paint and theme modes; Interactive Surface owns interaction states.
 
+### With a third-party semantic theme
+
+```js
+import "third-party-theme/tokens.css";
+import "interactive-surface-css/standalone-preset.css";
+```
+
+The third-party design system may provide the optional `--ui-*` semantic control tokens documented in the token reference. Resolution remains package-specific first, shared semantic second, and legacy fallback or literal last. Use `state-core.css` instead when that theme already paints and sizes the component itself.
+
 ### With all three libraries
 
 ```js
-import "ui-style-kit-css/with-bridge.css";
+import "ui-style-kit-css/visual.css";
+import "ui-style-kit-css/interactive-surface-theme.css";
 import "interactive-surface-css/state-core.css";
-import "layout-style-css/bridge.css";
 import "layout-style-css";
 ```
 
