@@ -79,6 +79,7 @@ const majorPageProperties = new Set([
 ]);
 const nativeStatePseudos = new Set([
   "active",
+  "any-link",
   "checked",
   "disabled",
   "enabled",
@@ -110,8 +111,15 @@ const commonStateClasses = new Set([
   "is-pressed",
   "is-selected",
 ]);
+// Reflected native attributes are state selectors even when no pseudo-class is used.
 const stateAttributes = new Set([
+  "checked",
   "disabled",
+  "hidden",
+  "open",
+  "readonly",
+  "required",
+  "selected",
   "aria-busy",
   "aria-checked",
   "aria-current",
@@ -317,15 +325,9 @@ function colorNodeIsDirectLiteral(node) {
 function containsDirectLiteralPaint(value) {
   let literal = false;
 
-  // Token-driven declarations remain neutral; literal fallbacks belong in reviewed custom properties.
+  // A token reference is neutral, but a literal fallback still paints when the token is absent.
   walk(value, {
     enter(node) {
-      if (
-        node.type === "Function" &&
-        ["env", "var"].includes(node.name.toLowerCase())
-      ) {
-        return walk.skip;
-      }
       if (
         ["Function", "Hash", "Identifier"].includes(node.type) &&
         colorNodeIsDirectLiteral(node)

@@ -23,7 +23,7 @@ function exception(overrides = {}) {
 
 test("state core rejects branded paint literals outside an exact reviewed fallback", () => {
   const css = `
-    .interactive-surface { --_is-focus-ring-color: rgb(11 99 246); }
+    .interactive-surface { --_is-focus-ring-color: var(--focus-ring, rgb(11 99 246)); }
     .interactive-surface { background: #ff00aa; }
     .interactive-surface { --Arbitrary-Paint: red; }
     .interactive-surface { --Modern-Paint: oklch(62% .22 24); }
@@ -31,11 +31,22 @@ test("state core rejects branded paint literals outside an exact reviewed fallba
     .interactive-surface { border-top: 1px solid red; }
     .interactive-surface { filter: drop-shadow(0 2px 4px red); }
     .interactive-surface { --Neutral-State-Layer: rgb(0 0 0 / .12); }
-    :is(a:visited, button:popover-open, button[disabled], .saas-disabled) {
+    .interactive-surface { --Neutral-Fallback: var(--neutral-layer, #fff); }
+    :is(a:any-link, details[open], input[checked], input[required], option[selected], textarea[readonly], [hidden]) {
       background: var(--interactive-surface-bg);
       box-shadow: var(--interactive-surface-shadow-hover);
       transform: translateY(var(--interactive-surface-lift-hover));
     }
+    .token-only {
+      background: var(--surface-bg);
+      box-shadow: var(--surface-shadow);
+      border: var(--surface-border);
+      color: env(surface-color);
+    }
+    .fallback-paint { background: var(--bg, #fff); }
+    .fallback-paint { box-shadow: var(--shadow, 0 2px 4px #0008); }
+    .fallback-paint { border: var(--border-color, red); }
+    .fallback-paint { color: env(surface-color, red); }
     .x { border: 1px solid #777; }
     .x { background: #fff; }
     .x { box-shadow: 0 2px 4px #0008; }
@@ -98,23 +109,51 @@ test("state core rejects branded paint literals outside an exact reviewed fallba
     },
     {
       target: "state-core",
+      selector: ".fallback-paint",
+      property: "background",
+      line: 22,
+      rule: "interactive-branded-paint",
+    },
+    {
+      target: "state-core",
+      selector: ".fallback-paint",
+      property: "box-shadow",
+      line: 23,
+      rule: "interactive-branded-paint",
+    },
+    {
+      target: "state-core",
+      selector: ".fallback-paint",
+      property: "border",
+      line: 24,
+      rule: "interactive-branded-paint",
+    },
+    {
+      target: "state-core",
+      selector: ".fallback-paint",
+      property: "color",
+      line: 25,
+      rule: "interactive-branded-paint",
+    },
+    {
+      target: "state-core",
       selector: ".x",
       property: "border",
-      line: 15,
+      line: 26,
       rule: "interactive-branded-paint",
     },
     {
       target: "state-core",
       selector: ".x",
       property: "background",
-      line: 16,
+      line: 27,
       rule: "interactive-branded-paint",
     },
     {
       target: "state-core",
       selector: ".x",
       property: "box-shadow",
-      line: 17,
+      line: 28,
       rule: "interactive-branded-paint",
     },
   ]);
