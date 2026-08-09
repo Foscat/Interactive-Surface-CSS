@@ -16,7 +16,7 @@ try {
   // RED remains an assertion failure until the companion fixture contract exists.
 }
 
-test("pins an immutable reviewed UI release fixture and writes exact checkout outputs", () => {
+test("pins the immutable U-I bootstrap fixture and writes exact checkout outputs", () => {
   assert.ok(
     releaseContract,
     "scripts/release-fixture-contract.mjs must implement the fixture contract",
@@ -25,7 +25,7 @@ test("pins an immutable reviewed UI release fixture and writes exact checkout ou
   const descriptor = releaseContract.readFixtureDescriptor(rootDir);
   assert.deepEqual(descriptor, {
     repository: "Foscat/ui-style-kit-css",
-    revision: "0080528295e485a340959c602f35b47ff5b8fea3",
+    revision: "3869ca49c11d8cc085affa25115e8e80546f7a3c",
   });
 
   const tempRoot = fs.mkdtempSync(
@@ -36,7 +36,7 @@ test("pins an immutable reviewed UI release fixture and writes exact checkout ou
     releaseContract.writeGithubOutputs(descriptor, outputPath);
     assert.equal(
       fs.readFileSync(outputPath, "utf8"),
-      "ui_repository=Foscat/ui-style-kit-css\nui_revision=0080528295e485a340959c602f35b47ff5b8fea3\n",
+      "ui_repository=Foscat/ui-style-kit-css\nui_revision=3869ca49c11d8cc085affa25115e8e80546f7a3c\n",
     );
   } finally {
     fs.rmSync(tempRoot, { recursive: true, force: true });
@@ -108,6 +108,8 @@ test("publishing guide records the immutable bootstrap and merge sequence", () =
   assert.match(guide, new RegExp(uiFixture.revision, "i"));
 
   for (const phrase of [
+    "U-I bootstrap",
+    "Interactive Surface CSS 1.6.0 candidate",
     "Push a stable UI bootstrap ref",
     "merge commits",
     "Update and verify the final UI companion pins",

@@ -50,17 +50,17 @@ See the [npm publish workflow](https://github.com/Foscat/Interactive-Surface-CSS
 
 The deterministic publish guard avoids downloading browser binaries. The separate ecosystem release preflight installs Chromium in CI and must pass before the irreversible release step.
 
-## Coordinated bootstrap sequence
+## Coordinated U-I bootstrap sequence
 
-The immutable cross-repository pins require this exact remote sequence:
+The U-I bootstrap gives the Interactive Surface CSS 1.6.0 candidate an immutable UI compatibility fixture after Layout Style CSS 3.0.1 has been published. The cross-repository pins require this exact remote sequence:
 
-1. Push a stable UI bootstrap ref containing `0080528295e485a340959c602f35b47ff5b8fea3`.
-2. Push and merge Interactive Surface CSS and Layout Style CSS with merge commits so their reviewed commit SHAs remain reachable.
-3. Update and verify the final UI companion pins against those merged companion commits.
+1. Push a stable UI bootstrap ref containing `3869ca49c11d8cc085affa25115e8e80546f7a3c`.
+2. Use merge commits: push and merge Interactive Surface CSS so its reviewed candidate commit SHA remains reachable.
+3. Update and verify the final UI companion pins against the merged Interactive Surface commit and the published Layout Style commit.
 4. Push the final UI branch, rerun its ecosystem preflight, and merge UI with a merge commit.
 5. Do not squash, rebase, or delete the only remote refs until every pinned commit is reachable through merged ancestry.
 
-The bootstrap SHA is deliberately stable: companion workflows use it to load the reviewed preflight implementation before the final UI commit can reference the companion heads.
+The U-I bootstrap SHA is deliberately stable: the Interactive Surface candidate workflow uses it to load the reviewed preflight implementation before the final UI commit can reference the merged Interactive Surface head.
 
 ## Release identity
 
