@@ -88,7 +88,10 @@ const expectedScripts = {
   "validate:browsers":
     "npm run validate:ci && npm run test:install:chromium && npm run test:chromium",
   "validate:full": "npm run validate:ci && npm run test:install && npm test",
-  prepublishOnly: "npm run validate:publish",
+  "release:preflight":
+    "npm run build && node ./scripts/release-fixture-contract.mjs",
+  "release:verify": "npm run validate:publish && npm run release:preflight",
+  prepublishOnly: "npm run release:verify",
 };
 
 function locateNpmCli() {

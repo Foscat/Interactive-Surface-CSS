@@ -94,7 +94,7 @@
     "minify": "node ./scripts/build.mjs minify",
     "build": "node ./scripts/build.mjs",
     "test": "playwright test --config=./playwright.config.mjs",
-    "test:contracts": "node --test tests/manifest-contract.test.mjs tests/public-contract.test.mjs tests/build.test.mjs tests/documentation.test.mjs tests/fixture-cleanup.test.mjs tests/ownership-boundaries.test.mjs",
+    "test:contracts": "node --test tests/manifest-contract.test.mjs tests/public-contract.test.mjs tests/build.test.mjs tests/documentation.test.mjs tests/fixture-cleanup.test.mjs tests/ownership-boundaries.test.mjs tests/release-preflight.test.mjs",
     "test:package": "node --test tests/package-contract.test.mjs",
     "test:chromium": "playwright test --config=./playwright.config.mjs --project=chromium",
     "test:install": "playwright install --with-deps chromium firefox webkit",
@@ -108,7 +108,9 @@
     "validate:browsers": "npm run validate:ci && npm run test:install:chromium && npm run test:chromium",
     "validate:full": "npm run validate:ci && npm run test:install && npm test",
     "validate": "npm run validate:ci",
-    "prepublishOnly": "npm run validate:publish"
+    "release:preflight": "npm run build && node ./scripts/release-fixture-contract.mjs",
+    "release:verify": "npm run validate:publish && npm run release:preflight",
+    "prepublishOnly": "npm run release:verify"
   },
   "devDependencies": {
     "@playwright/test": "^1.57.0",

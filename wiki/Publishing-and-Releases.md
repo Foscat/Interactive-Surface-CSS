@@ -24,6 +24,14 @@ See the [npm publish workflow](https://github.com/Foscat/Interactive-Surface-CSS
    npm run validate
    ```
 
+   Then run the read-only ecosystem release preflight:
+
+   ```bash
+   npm run release:preflight
+   ```
+
+   The preflight uses the immutable UI fixture in `ecosystem-release-fixture.json`, overrides Interactive Surface with the candidate tarball, queries npm for every exact documented minimum/current version, resolves all packed exports, validates current documentation, and runs the reviewed clean-install matrices. Pull requests execute this same gate without enabling publish, tag, release, or deployment mutations.
+
 5. Run the supported browser matrix:
 
    ```bash
@@ -40,7 +48,7 @@ See the [npm publish workflow](https://github.com/Foscat/Interactive-Surface-CSS
 - `validate:browsers`: deterministic checks plus Chromium.
 - `validate:full`: deterministic checks plus Chromium, Firefox, and WebKit.
 
-The publish guard avoids downloading browser binaries. Browser verification must already be complete before the irreversible release step.
+The deterministic publish guard avoids downloading browser binaries. The separate ecosystem release preflight installs Chromium in CI and must pass before the irreversible release step.
 
 ## Release identity
 
