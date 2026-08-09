@@ -6,6 +6,11 @@ All notable changes to this package are documented in this file.
 
 ## Unreleased
 
+### Changed
+
+- Added optional shared semantic fallbacks for standalone paint, control geometry, focus, and default motion while preserving package-specific precedence and all legacy behavior when the shared tokens are absent.
+- Documented the third-party theme integration path, fallback order, and canonical UI Style Kit bridge boundary across the README and wiki.
+
 ## 1.5.0 - 2026-07-20
 
 ### Added

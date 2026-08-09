@@ -4,11 +4,14 @@
  */
 
 :is(.interactive-surface) {
-  /* Complete bundles retain the established lift and shadow fallbacks without imposing them on the core. */
+  /* Shared semantic values remain optional and sit below package-specific overrides. */
   --_is-preset-lift-base: var(--lift-base, 0px);
   --_is-preset-lift-hover: var(--lift-hover, -4px);
   --_is-preset-lift-active: var(--lift-active, -2px);
-  --_is-preset-shadow-base: var(--shadow-base, 0 0 0 rgb(0 0 0 / 0));
+  --_is-preset-shadow-base: var(
+    --ui-shadow-control,
+    var(--shadow-base, 0 0 0 rgb(0 0 0 / 0))
+  );
   --_is-preset-shadow-hover: var(
     --shadow-hover,
     0 10px 28px rgb(0 0 0 / 0.35),
@@ -21,20 +24,29 @@
   );
   --_is-base-bg: var(
     --interactive-surface-bg,
-    var(--surface-bg, var(--bg-surface, rgb(248 250 252)))
+    var(
+      --ui-color-surface,
+      var(--surface-bg, var(--bg-surface, rgb(248 250 252)))
+    )
   );
   --_is-bg: var(--_is-base-bg);
   --_is-fg: var(
     --interactive-surface-fg,
-    var(--surface-fg, var(--text-primary, rgb(17 24 39)))
+    var(--ui-color-text, var(--surface-fg, var(--text-primary, rgb(17 24 39))))
   );
   --_is-base-border-color: var(
     --interactive-surface-border-color,
-    var(--surface-border, var(--border-color, rgba(15, 23, 42, 0.2)))
+    var(
+      --ui-color-border,
+      var(--surface-border, var(--border-color, rgba(15, 23, 42, 0.2)))
+    )
   );
   --_is-border-color: var(--_is-base-border-color);
   --_is-border-width: var(--interactive-surface-border-width, 1px);
-  --_is-radius: var(--interactive-surface-radius, 0.75rem);
+  --_is-radius: var(
+    --interactive-surface-radius,
+    var(--ui-radius-control, 0.75rem)
+  );
 
   box-sizing: border-box;
   border: var(--_is-border-width) solid var(--_is-border-color);
@@ -341,15 +353,18 @@
 .interactive-surface[data-surface-variant="primary"] {
   --interactive-surface-bg: var(
     --interactive-surface-variant-primary-bg,
-    var(--variant-primary-bg, rgb(15 79 127))
+    var(--ui-color-primary, var(--variant-primary-bg, rgb(15 79 127)))
   );
   --interactive-surface-fg: var(
     --interactive-surface-variant-primary-fg,
-    var(--variant-primary-fg, rgb(244 251 255))
+    var(--ui-color-on-primary, var(--variant-primary-fg, rgb(244 251 255)))
   );
   --interactive-surface-border-color: var(
     --interactive-surface-variant-primary-border-color,
-    var(--variant-primary-border, var(--interactive-surface-bg))
+    var(
+      --ui-color-primary,
+      var(--variant-primary-border, var(--interactive-surface-bg))
+    )
   );
   --interactive-surface-darken-hover: 0.95;
   --interactive-surface-darken-active: 0.97;
@@ -399,7 +414,7 @@
   );
   --interactive-surface-fg: var(
     --interactive-surface-variant-subtle-fg,
-    var(--variant-subtle-fg, rgb(26 52 75))
+    var(--ui-color-muted, var(--variant-subtle-fg, rgb(26 52 75)))
   );
   --interactive-surface-border-color: var(
     --interactive-surface-variant-subtle-border-color,

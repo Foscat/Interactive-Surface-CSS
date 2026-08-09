@@ -735,6 +735,15 @@ For selector details and responsibilities, see the [complete API reference](http
 
 The transition defaults are `translate, box-shadow, outline-color`, the established default motion duration, the standard easing curve, and zero delay. Existing `--interactive-surface-motion-*`, `--interactive-surface-ease-*`, `--motion-*`, and `--ease-*` fallbacks remain supported. All public custom properties use the `--interactive-surface-*` namespace. See the [token ownership tables and full reference](https://github.com/Foscat/Interactive-Surface-CSS/wiki/Token-Reference).
 
+A third-party design system can theme the standalone entry point with the optional shared semantic tokens `--ui-color-surface`, `--ui-color-text`, `--ui-color-muted`, `--ui-color-primary`, `--ui-color-on-primary`, `--ui-color-border`, `--ui-radius-control`, `--ui-shadow-control`, `--ui-focus-color`, `--ui-motion-duration`, and `--ui-motion-easing`. The fallback order is package-specific `--interactive-surface-*` values, then shared semantic values, then existing legacy values and literals. When the shared tokens are absent, standalone output is unchanged.
+
+```js
+import "third-party-theme/tokens.css";
+import "interactive-surface-css/standalone-preset.css";
+```
+
+Use `state-core.css` instead when the third-party theme already paints and sizes the component directly. The full token-to-property mapping is in the [token reference](https://github.com/Foscat/Interactive-Surface-CSS/wiki/Token-Reference).
+
 ## Accessibility responsibilities
 
 The CSS package provides visible keyboard focus, persistent-state treatment, disabled precedence, reduced-motion behavior, higher-contrast behavior, forced-colors affordances, hover gating for capable pointers, and standalone icon target sizing. The `:focus-visible` ring remains orthogonal across every focusable non-disabled interaction state.
@@ -760,6 +769,8 @@ import "interactive-surface-css/state-core.css";
 ```
 
 The token-and-paint bridge maps active UI Style Kit theme and mode values into the `--interactive-surface-*` contract. Interactive Surface keeps ownership of focus, hover, pressed, selected, current, loading, disabled, and motion behavior. UI Style Kit remains optional: this package declares no runtime or peer dependency on it, and the documented import order keeps its paint layer before `state-core.css`.
+
+For a generic semantic integration without specialized UI Style Kit variant and level mappings, `ui-style-kit-css/visual.css` may instead precede `interactive-surface-css/standalone-preset.css`. The shared tokens cover the portable control baseline; the canonical token-and-paint bridge above remains the preferred UI Style Kit composition.
 
 ## Use all three libraries
 

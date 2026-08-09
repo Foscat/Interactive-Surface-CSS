@@ -175,6 +175,74 @@
       "--interactive-surface-ease-*",
       "--motion-*",
       "--ease-*"
+    ],
+    "sharedSemanticFallbacks": [
+      {
+        "name": "--ui-color-surface",
+        "type": "<color>",
+        "precedence": "after-package-specific-before-legacy",
+        "standaloneExpectation": "optional-with-existing-fallbacks"
+      },
+      {
+        "name": "--ui-color-text",
+        "type": "<color>",
+        "precedence": "after-package-specific-before-legacy",
+        "standaloneExpectation": "optional-with-existing-fallbacks"
+      },
+      {
+        "name": "--ui-color-muted",
+        "type": "<color>",
+        "precedence": "after-package-specific-before-legacy",
+        "standaloneExpectation": "optional-with-existing-fallbacks"
+      },
+      {
+        "name": "--ui-color-primary",
+        "type": "<color>",
+        "precedence": "after-package-specific-before-legacy",
+        "standaloneExpectation": "optional-with-existing-fallbacks"
+      },
+      {
+        "name": "--ui-color-on-primary",
+        "type": "<color>",
+        "precedence": "after-package-specific-before-legacy",
+        "standaloneExpectation": "optional-with-existing-fallbacks"
+      },
+      {
+        "name": "--ui-color-border",
+        "type": "<color>",
+        "precedence": "after-package-specific-before-legacy",
+        "standaloneExpectation": "optional-with-existing-fallbacks"
+      },
+      {
+        "name": "--ui-radius-control",
+        "type": "<length>",
+        "precedence": "after-package-specific-before-legacy",
+        "standaloneExpectation": "optional-with-existing-fallbacks"
+      },
+      {
+        "name": "--ui-shadow-control",
+        "type": "<shadow-list>",
+        "precedence": "after-package-specific-before-legacy",
+        "standaloneExpectation": "optional-with-existing-fallbacks"
+      },
+      {
+        "name": "--ui-focus-color",
+        "type": "<color>",
+        "precedence": "after-package-specific-before-legacy",
+        "standaloneExpectation": "optional-with-existing-fallbacks"
+      },
+      {
+        "name": "--ui-motion-duration",
+        "type": "<time>",
+        "precedence": "after-package-specific-before-legacy",
+        "standaloneExpectation": "optional-with-existing-fallbacks"
+      },
+      {
+        "name": "--ui-motion-easing",
+        "type": "<easing-function>",
+        "precedence": "after-package-specific-before-legacy",
+        "standaloneExpectation": "optional-with-existing-fallbacks"
+      }
     ]
   },
   "companions": {

@@ -125,6 +125,15 @@ import "interactive-surface-css/state-core.css";
 
 UI Style Kit owns paint and theme modes; Interactive Surface owns interaction states.
 
+### With a third-party semantic theme
+
+```js
+import "third-party-theme/tokens.css";
+import "interactive-surface-css/standalone-preset.css";
+```
+
+The third-party design system may provide the optional `--ui-*` semantic control tokens documented in the token reference. Resolution remains package-specific first, shared semantic second, and legacy fallback or literal last. Use `state-core.css` instead when that theme already paints and sizes the component itself.
+
 ### With all three libraries
 
 ```js

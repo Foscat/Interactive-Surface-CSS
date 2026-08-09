@@ -274,7 +274,7 @@ test("the release manifest and validation graph are pinned to 1.5.0", () => {
   }
 });
 
-test("the changelog records the complete 1.5.0 release immediately after Unreleased", async () => {
+test("the changelog keeps the complete 1.5.0 release after the Unreleased section", async () => {
   const changelog = await readFile(
     path.join(repositoryRoot, "CHANGELOG.md"),
     "utf8",
@@ -285,12 +285,21 @@ test("the changelog records the complete 1.5.0 release immediately after Unrelea
       new RegExp(`^${releaseHeading.replaceAll(".", "\\.")}$`, "gm"),
     ) ?? [];
 
-  assert.match(
-    changelog,
-    new RegExp(
-      `^## Unreleased\\s+${releaseHeading.replaceAll(".", "\\.")}$`,
-      "m",
-    ),
+  const unreleasedStart = changelog.indexOf("## Unreleased");
+  const releaseStart = changelog.indexOf(releaseHeading);
+
+  assert.ok(
+    unreleasedStart !== -1,
+    "Changelog is missing its Unreleased section",
+  );
+  assert.ok(
+    releaseStart > unreleasedStart,
+    `${releaseHeading} must follow the Unreleased section`,
+  );
+  assert.doesNotMatch(
+    changelog.slice(unreleasedStart + "## Unreleased".length, releaseStart),
+    /\n## /,
+    "No released version may appear between Unreleased and the current release",
   );
   assert.equal(
     releaseMatches.length,
@@ -298,7 +307,6 @@ test("the changelog records the complete 1.5.0 release immediately after Unrelea
     `Expected exactly one ${releaseHeading} heading`,
   );
 
-  const releaseStart = changelog.indexOf(releaseHeading);
   const nextRelease = changelog.indexOf(
     "\n## ",
     releaseStart + releaseHeading.length,
