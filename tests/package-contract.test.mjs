@@ -251,6 +251,11 @@ function collectReferencedAssetPaths(assetFile, assetSource) {
 test("the release manifest and validation graph are pinned to 1.5.0", () => {
   assert.equal(manifest.name, EXPECTED_NAME);
   assert.equal(manifest.version, EXPECTED_VERSION);
+  assert.equal(
+    manifest.homepage,
+    "https://foscat.github.io/Interactive-Surface-CSS/",
+    "The npm homepage must open the live GitHub Pages demo",
+  );
   assert.deepEqual(
     [...manifest.files].sort(),
     [...expectedManifestFiles].sort(),
