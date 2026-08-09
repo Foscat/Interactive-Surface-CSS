@@ -41,6 +41,34 @@ export function writeGithubOutputs(descriptor, outputPath) {
 }
 
 export function validateWorkflowSources(workflows) {
+  const mutationPatterns = [
+    {
+      label: "npm publish",
+      pattern: /^(?!\s*(?:name:|#)).*\bnpm\s+publish\b/m,
+    },
+    {
+      label: "npm version",
+      pattern: /^(?!\s*(?:name:|#)).*\bnpm\s+version(?:\s|$)/m,
+    },
+    {
+      label: "git tag",
+      pattern: /^(?!\s*(?:name:|#)).*\bgit\s+tag(?:\s|$)/m,
+    },
+    {
+      label: "git push",
+      pattern: /^(?!\s*(?:name:|#)).*\bgit\s+push(?:\s|$)/m,
+    },
+    {
+      label: "GitHub release",
+      pattern:
+        /(?:^\s*(?:-\s*)?uses:\s*(?:softprops\/action-gh-release|ncipollo\/release-action|actions\/create-release)@|^(?!\s*(?:name:|#)).*\bgh\s+release\b)/m,
+    },
+    {
+      label: "deployment",
+      pattern:
+        /(?:^\s*(?:-\s*)?uses:\s*(?:actions\/(?:deploy-pages|upload-pages-artifact)|peaceiris\/actions-gh-pages|cloudflare\/wrangler-action|azure\/webapps-deploy)@|^(?!\s*(?:name:|#)).*\b(?:wrangler\s+(?:deploy|publish)|netlify\s+deploy|firebase\s+deploy|vercel(?:\s+deploy)?)\b)/m,
+    },
+  ];
   const pullRequestWorkflows = workflows.filter(({ source }) =>
     /^\s*pull_request\s*:/m.test(source),
   );
@@ -51,15 +79,12 @@ export function validateWorkflowSources(workflows) {
     "A pull-request workflow must execute npm run release:preflight.",
   );
   for (const workflow of pullRequestWorkflows) {
-    if (/^(?!\s*(?:name:|#)).*\bnpm\s+publish\b/m.test(workflow.source)) {
-      throw new Error(
-        `pull-request workflow ${workflow.name} enables npm publish`,
-      );
-    }
-    if (/^(?!\s*(?:name:|#)).*\bgit\s+(?:push|tag)\b/m.test(workflow.source)) {
-      throw new Error(
-        `pull-request workflow ${workflow.name} enables a git mutation`,
-      );
+    for (const mutation of mutationPatterns) {
+      if (mutation.pattern.test(workflow.source)) {
+        throw new Error(
+          `pull-request workflow ${workflow.name} enables forbidden mutation: ${mutation.label}`,
+        );
+      }
     }
   }
 
@@ -80,6 +105,11 @@ export function validateWorkflowSources(workflows) {
   assert.ok(
     preflightIndex >= 0 && preflightIndex < publishIndex,
     "npm-publish.yml must run preflight before npm publish.",
+  );
+  assert.match(
+    publishWorkflow.source,
+    /^(?!\s*(?:name:|#)).*\bnpm\s+publish\b[^\r\n]*--ignore-scripts(?:\s|$)/m,
+    "npm-publish.yml must suppress lifecycle re-entry after explicit preflight.",
   );
 }
 

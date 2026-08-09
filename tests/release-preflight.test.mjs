@@ -54,26 +54,57 @@ test("pull requests execute read-only preflight and npm publish stays downstream
   );
 });
 
-test("workflow policy rejects a pull-request publish command", () => {
+test("workflow policy rejects every release or deployment mutation from pull requests", () => {
   assert.ok(
     releaseContract,
     "scripts/release-fixture-contract.mjs must implement the fixture contract",
   );
 
-  assert.throws(
-    () =>
-      releaseContract.validateWorkflowSources([
-        {
-          name: "ci.yaml",
-          source:
-            "on:\n  pull_request:\njobs:\n  verify:\n    steps:\n      - run: npm run release:preflight\n      - run: npm publish\n",
-        },
-        {
-          name: "npm-publish.yml",
-          source:
-            "on:\n  release:\njobs:\n  publish:\n    steps:\n      - run: npm run release:preflight\n      - run: npm publish\n",
-        },
-      ]),
-    /pull-request workflow ci\.yaml enables npm publish/,
+  const forbiddenMutations = [
+    ["npm publish", "      - run: npm publish"],
+    ["npm version", "      - run: npm version patch"],
+    ["git tag", "      - run: git tag v1.5.1"],
+    ["git push", "      - run: git push origin HEAD"],
+    ["GitHub release", "      - uses: softprops/action-gh-release@v2"],
+    ["GitHub release", "      - run: gh release create v1.5.1"],
+    ["deployment", "      - uses: actions/deploy-pages@v4"],
+    ["deployment", "      - run: npx wrangler deploy"],
+  ];
+  const safeRelease =
+    "on:\n  release:\njobs:\n  publish:\n    steps:\n      - run: npm run release:preflight\n      - run: npm publish --provenance --access public --ignore-scripts\n";
+
+  for (const [label, mutation] of forbiddenMutations) {
+    assert.throws(
+      () =>
+        releaseContract.validateWorkflowSources([
+          {
+            name: "ci.yaml",
+            source:
+              "on:\n  pull_request:\njobs:\n  verify:\n    steps:\n      - run: npm run release:preflight\n" +
+              `${mutation}\n`,
+          },
+          { name: "npm-publish.yml", source: safeRelease },
+        ]),
+      new RegExp(
+        `pull-request workflow ci\\.yaml enables forbidden mutation: ${label}`,
+      ),
+    );
+  }
+});
+
+test("publishing guide records the immutable bootstrap and merge sequence", () => {
+  const guide = fs.readFileSync(
+    path.join(rootDir, "wiki", "Publishing-and-Releases.md"),
+    "utf8",
   );
+
+  for (const phrase of [
+    "72286fc27e4c3664ab05598a34c4dcf7e8267821",
+    "Push a stable UI bootstrap ref",
+    "merge commits",
+    "Update and verify the final UI companion pins",
+    "Do not squash, rebase, or delete the only remote refs",
+  ]) {
+    assert.match(guide, new RegExp(phrase, "i"));
+  }
 });
