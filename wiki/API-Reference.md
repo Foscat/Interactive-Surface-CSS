@@ -1,6 +1,6 @@
 # API Reference
 
-Interactive Surface CSS 1.5.0 is a CSS state primitive. It exports stylesheets and compatibility JavaScript entries, but it does not ship state-management or component-runtime behavior.
+Interactive Surface CSS 1.6.0 is a CSS state primitive. It exports stylesheets and compatibility JavaScript entries, but it does not ship state-management or component-runtime behavior.
 
 ## Entry points
 
@@ -11,7 +11,7 @@ Interactive Surface CSS 1.5.0 is a CSS state primitive. It exports stylesheets a
 | `interactive-surface-css/interactive-surface.css` | Preserved complete 1.x compatibility bundle                                                                             |
 | `interactive-surface-css`                         | Preserved JavaScript entry that imports the compatibility bundle                                                        |
 
-The preset and compatibility stylesheet are generated from the same authored modules and are behaviorally equivalent in 1.5.0.
+The preset and compatibility stylesheet are generated from the same authored modules and are behaviorally equivalent in 1.6.0.
 
 Package metadata keeps established resolution intact: `main` points to the CommonJS entry, `module` points to the ESM entry, and both load `interactive-surface.css`. The `style`, `unpkg`, and `jsdelivr` fields point directly to that complete compatibility bundle.
 

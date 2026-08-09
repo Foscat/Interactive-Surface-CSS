@@ -8,7 +8,7 @@ import { spawnSync } from "node:child_process";
 import test from "node:test";
 
 const EXPECTED_NAME = "interactive-surface-css";
-const EXPECTED_VERSION = "1.5.0";
+const EXPECTED_VERSION = "1.6.0";
 const CHECKOUT_V4_SHA = "34e114876b0b11c390a56381ad16ebd13914f8d5";
 const CHECKOUT_V5_SHA = "93cb6efe18208431cddfb8368fd83d5badbf9bfd";
 const SETUP_NODE_V5_SHA = "a0853c24544627f65ddf259abe73b1d18a591444";
@@ -259,7 +259,7 @@ function collectReferencedAssetPaths(assetFile, assetSource) {
     .sort();
 }
 
-test("the release manifest and validation graph are pinned to 1.5.0", () => {
+test("the release manifest and validation graph are pinned to 1.6.0", () => {
   assert.equal(manifest.name, EXPECTED_NAME);
   assert.equal(manifest.version, EXPECTED_VERSION);
   assert.equal(
@@ -306,12 +306,12 @@ test("release security overrides resolve audited transitive tooling", () => {
   }
 });
 
-test("the changelog keeps the complete 1.5.0 release after the Unreleased section", async () => {
+test("the changelog keeps the complete 1.6.0 release after the Unreleased section", async () => {
   const changelog = await readFile(
     path.join(repositoryRoot, "CHANGELOG.md"),
     "utf8",
   );
-  const releaseHeading = `## ${EXPECTED_VERSION} - 2026-07-20`;
+  const releaseHeading = `## ${EXPECTED_VERSION} - 2026-08-09`;
   const releaseMatches =
     changelog.match(
       new RegExp(`^${releaseHeading.replaceAll(".", "\\.")}$`, "gm"),
