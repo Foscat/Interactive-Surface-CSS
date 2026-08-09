@@ -91,12 +91,14 @@ const nativeStatePseudos = new Set([
   "open",
   "optional",
   "placeholder-shown",
+  "popover-open",
   "read-only",
   "read-write",
   "required",
   "target",
   "user-invalid",
   "valid",
+  "visited",
 ]);
 const commonStateClasses = new Set([
   "is-active",
@@ -109,6 +111,7 @@ const commonStateClasses = new Set([
   "is-selected",
 ]);
 const stateAttributes = new Set([
+  "disabled",
   "aria-busy",
   "aria-checked",
   "aria-current",
@@ -142,6 +145,8 @@ const neutralColorNames = new Set([
   "white",
   "whitesmoke",
 ]);
+const systemColorPattern =
+  /^(?:accentcolor|accentcolortext|activetext|buttonborder|buttonface|buttontext|canvas|canvastext|field|fieldtext|graytext|highlight|highlighttext|linktext|mark|marktext|selecteditem|selecteditemtext|visitedtext)$/;
 
 function propertyContract(propertyName) {
   const described = describeProperty(propertyName);
@@ -258,9 +263,7 @@ function colorNodeIsChromatic(node) {
   if (neutralColorNames.has(lower)) return false;
   if (node.type === "Identifier") {
     // System colors are accessibility-dependent rather than package branding.
-    return !/^(?:accentcolor|accentcolortext|activetext|buttonborder|buttonface|buttontext|canvas|canvastext|field|fieldtext|graytext|highlight|highlighttext|linktext|mark|marktext|selecteditem|selecteditemtext|visitedtext)$/.test(
-      lower,
-    );
+    return !systemColorPattern.test(lower);
   }
   if (node.type === "Hash") return hexIsChromatic(node.value);
   if (node.type !== "Function") return true;
@@ -295,6 +298,43 @@ function containsChromaticLiteral(value) {
   });
 
   return chromatic;
+}
+
+function colorNodeIsDirectLiteral(node) {
+  if (
+    node.type === "Function" &&
+    ["env", "var"].includes(node.name.toLowerCase())
+  ) {
+    return false;
+  }
+
+  const text = generate(node);
+  if (!lexer.matchType("color", text).matched) return false;
+  const lower = text.toLowerCase();
+  return lower !== "currentcolor" && !systemColorPattern.test(lower);
+}
+
+function containsDirectLiteralPaint(value) {
+  let literal = false;
+
+  // Token-driven declarations remain neutral; literal fallbacks belong in reviewed custom properties.
+  walk(value, {
+    enter(node) {
+      if (
+        node.type === "Function" &&
+        ["env", "var"].includes(node.name.toLowerCase())
+      ) {
+        return walk.skip;
+      }
+      if (
+        ["Function", "Hash", "Identifier"].includes(node.type) &&
+        colorNodeIsDirectLiteral(node)
+      ) {
+        literal = true;
+      }
+    },
+  });
+  return literal;
 }
 
 function containsImage(value) {
@@ -353,11 +393,35 @@ function selectorOwnsPageTopology(rule) {
   return pageRoot;
 }
 
+function manifestStateClasses(manifest) {
+  const stateSuffixes = new Set([...commonStateClasses].map((name) => name.replace(/^is-/, "")));
+  const manifestClasses = new Set([
+    ...(manifest.selectors?.stateClasses ?? []),
+    ...(manifest.classApi?.stateClasses ?? []),
+  ].map((selector) => selector.replace(/^\./, "").toLowerCase()));
+
+  for (const preset of manifest.presets ?? []) {
+    const suffixes = [
+      ...(manifest.classApi?.universalVisualSuffixes ?? []),
+      ...(manifest.classApi?.presetExtras?.[preset.id] ?? []),
+    ];
+    for (const suffix of suffixes) {
+      if (
+        stateSuffixes.has(suffix) ||
+        [...stateSuffixes].some((state) => suffix.endsWith(`-${state}`))
+      ) {
+        manifestClasses.add(`${preset.prefix}-${suffix}`.toLowerCase());
+      }
+    }
+  }
+
+  return manifestClasses;
+}
+
 function selectorHasState(rule, manifest) {
-  const manifestClasses = manifest.selectors?.stateClasses ?? [];
   const stateClasses = new Set([
     ...commonStateClasses,
-    ...manifestClasses.map((selector) => selector.replace(/^\./, "").toLowerCase()),
+    ...manifestStateClasses(manifest),
   ]);
   let stateful = false;
 
@@ -390,18 +454,29 @@ function violationRule({ rule, property, value, manifest }) {
     return "interactive-branded-paint";
 
   const hasChromaticPaint = containsChromaticLiteral(value);
+  const hasDirectLiteralPaint = containsDirectLiteralPaint(value);
   const hasImage = containsImage(value);
   if (property.custom && (hasChromaticPaint || hasImage)) {
     return "interactive-branded-paint";
   }
-  if (/^(?:background|mask)(?:-|$)/.test(property.name) && (hasChromaticPaint || hasImage)) {
+  if (
+    /^(?:background|mask)(?:-|$)/.test(property.name) &&
+    (hasDirectLiteralPaint || hasImage)
+  ) {
     return "interactive-branded-paint";
   }
-  if (/^(?:border|outline|text-decoration)(?:-|$)/.test(property.name) && hasChromaticPaint) {
+  if (
+    /^(?:border|outline|text-decoration)(?:-|$)/.test(property.name) &&
+    (hasDirectLiteralPaint || hasImage)
+  ) {
     return "interactive-branded-paint";
   }
-  if (["color", "fill", "stroke", "box-shadow", "text-shadow"].includes(property.name) &&
-      hasChromaticPaint) return "interactive-branded-paint";
+  if (
+    ["color", "fill", "stroke", "box-shadow", "text-shadow"].includes(property.name) &&
+    hasDirectLiteralPaint
+  ) {
+    return "interactive-branded-paint";
+  }
   if (["filter", "backdrop-filter"].includes(property.name) && generate(value).trim() !== "none") {
     return "interactive-branded-paint";
   }

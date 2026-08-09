@@ -31,9 +31,24 @@ test("state core rejects branded paint literals outside an exact reviewed fallba
     .interactive-surface { border-top: 1px solid red; }
     .interactive-surface { filter: drop-shadow(0 2px 4px red); }
     .interactive-surface { --Neutral-State-Layer: rgb(0 0 0 / .12); }
+    :is(a:visited, button:popover-open, button[disabled], .saas-disabled) {
+      background: var(--interactive-surface-bg);
+      box-shadow: var(--interactive-surface-shadow-hover);
+      transform: translateY(var(--interactive-surface-lift-hover));
+    }
+    .x { border: 1px solid #777; }
+    .x { background: #fff; }
+    .x { box-shadow: 0 2px 4px #0008; }
   `;
   const result = auditOwnership({
     css,
+    manifest: {
+      presets: [{ id: "minimal-saas", prefix: "saas" }],
+      classApi: {
+        universalVisualSuffixes: ["disabled"],
+        presetExtras: { "minimal-saas": [] },
+      },
+    },
     allowlist: [exception()],
     now: reviewedAt,
   });
@@ -79,6 +94,27 @@ test("state core rejects branded paint literals outside an exact reviewed fallba
       selector: ".interactive-surface",
       property: "filter",
       line: 8,
+      rule: "interactive-branded-paint",
+    },
+    {
+      target: "state-core",
+      selector: ".x",
+      property: "border",
+      line: 15,
+      rule: "interactive-branded-paint",
+    },
+    {
+      target: "state-core",
+      selector: ".x",
+      property: "background",
+      line: 16,
+      rule: "interactive-branded-paint",
+    },
+    {
+      target: "state-core",
+      selector: ".x",
+      property: "box-shadow",
+      line: 17,
       rule: "interactive-branded-paint",
     },
   ]);
