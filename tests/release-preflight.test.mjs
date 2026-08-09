@@ -25,7 +25,7 @@ test("pins an immutable reviewed UI release fixture and writes exact checkout ou
   const descriptor = releaseContract.readFixtureDescriptor(rootDir);
   assert.deepEqual(descriptor, {
     repository: "Foscat/ui-style-kit-css",
-    revision: "72286fc27e4c3664ab05598a34c4dcf7e8267821",
+    revision: "0080528295e485a340959c602f35b47ff5b8fea3",
   });
 
   const tempRoot = fs.mkdtempSync(
@@ -36,7 +36,7 @@ test("pins an immutable reviewed UI release fixture and writes exact checkout ou
     releaseContract.writeGithubOutputs(descriptor, outputPath);
     assert.equal(
       fs.readFileSync(outputPath, "utf8"),
-      "ui_repository=Foscat/ui-style-kit-css\nui_revision=72286fc27e4c3664ab05598a34c4dcf7e8267821\n",
+      "ui_repository=Foscat/ui-style-kit-css\nui_revision=0080528295e485a340959c602f35b47ff5b8fea3\n",
     );
   } finally {
     fs.rmSync(tempRoot, { recursive: true, force: true });

@@ -39,6 +39,15 @@ const pageTopologyProperties = new Set([
   "grid-template-rows",
   "order",
 ]);
+const flexTopologyProperties = new Set([
+  "column-gap",
+  "flex",
+  "flex-direction",
+  "flex-flow",
+  "flex-wrap",
+  "gap",
+  "row-gap",
+]);
 const majorPageProperties = new Set([
   "block-size",
   "bottom",
@@ -335,8 +344,11 @@ function containsChromaticLiteral(value) {
   /* Parser grammar covers named, legacy, and modern color functions inside variable fallbacks. */
   walk(value, {
     enter(node) {
-      if (["Function", "Hash", "Identifier"].includes(node.type) &&
-          colorNodeIsChromatic(node)) chromatic = true;
+      if (
+        ["Function", "Hash", "Identifier"].includes(node.type) &&
+        colorNodeIsChromatic(node)
+      )
+        chromatic = true;
     },
   });
 
@@ -374,13 +386,31 @@ function containsDirectLiteralPaint(value) {
   return literal;
 }
 
+function isColorPaintProperty(property) {
+  return (
+    property === "color" ||
+    property === "color-scheme" ||
+    property.endsWith("-color") ||
+    ["fill", "stroke"].includes(property)
+  );
+}
+
+function colorSchemeHasLiteral(value) {
+  // A bare token reference remains theme-owned; literals and token fallbacks still choose paint.
+  return !/^(?:env|var)\([^,()]+\)$/.test(generate(value).trim());
+}
+
 function containsImage(value) {
   let image = false;
   walk(value, {
     enter(node) {
       if (node.type === "Url") image = true;
-      if (node.type === "Function" &&
-          /(?:gradient|image|paint|cross-fade|element|url)/.test(node.name.toLowerCase())) {
+      if (
+        node.type === "Function" &&
+        /(?:gradient|image|paint|cross-fade|element|url)/.test(
+          node.name.toLowerCase(),
+        )
+      ) {
         image = true;
       }
     },
@@ -388,7 +418,89 @@ function containsImage(value) {
   return image;
 }
 
-function selectorOwnsPageTopology(rule) {
+function manifestComponentClasses(manifest) {
+  const componentClasses = new Set(
+    (manifest.selectors?.stable ?? [])
+      .filter((selector) => /^\.[a-zA-Z0-9_-]+$/.test(selector))
+      .map((selector) => selector.slice(1)),
+  );
+  const universalSuffixes = manifest.classApi?.universalVisualSuffixes ?? [];
+
+  for (const preset of manifest.presets ?? []) {
+    for (const suffix of universalSuffixes) {
+      componentClasses.add(`${preset.prefix}-${suffix}`);
+    }
+    for (const suffix of manifest.classApi?.presetExtras?.[preset.id] ?? []) {
+      componentClasses.add(`${preset.prefix}-${suffix}`);
+    }
+  }
+  return componentClasses;
+}
+
+function rightmostCompound(selector) {
+  const nodes = [...selector.children];
+  let subjectStart = 0;
+  nodes.forEach((node, index) => {
+    if (node.type === "Combinator") subjectStart = index + 1;
+  });
+  return nodes.slice(subjectStart);
+}
+
+function selectorListHasPageSubject(selectorList, context) {
+  for (const selector of selectorList.children) {
+    if (
+      rightmostCompound(selector).some((node) =>
+        subjectNodeOwnsPageTopology(node, context),
+      )
+    ) {
+      return true;
+    }
+  }
+  return false;
+}
+
+function subjectNodeOwnsPageTopology(node, context) {
+  if (node.type === "TypeSelector") {
+    return ["body", "html", "main", "section"].includes(
+      node.name.toLowerCase(),
+    );
+  }
+  if (node.type === "IdSelector") {
+    return ["app", "layout", "main", "page", "root", "shell"].includes(
+      node.name.toLowerCase(),
+    );
+  }
+  if (node.type === "ClassSelector") {
+    if (context.componentClasses.has(node.name)) return false;
+    return node.name
+      .split(/[-_]/)
+      .some((segment) => context.structuralNames.has(segment));
+  }
+  if (node.type === "AttributeSelector") {
+    const name = node.name.name.toLowerCase();
+    const value =
+      node.value?.name?.toLowerCase() ?? node.value?.value?.toLowerCase();
+    return (
+      ["data-layout", "data-page", "data-shell"].includes(name) ||
+      (name === "role" && value === "main")
+    );
+  }
+  if (
+    node.type === "PseudoClassSelector" &&
+    ["is", "where"].includes(node.name.toLowerCase())
+  ) {
+    for (const child of node.children ?? []) {
+      if (
+        child.type === "SelectorList" &&
+        selectorListHasPageSubject(child, context)
+      )
+        return true;
+    }
+  }
+  return false;
+}
+
+function selectorOwnsPageTopology(rule, manifest) {
   const structuralNames = new Set([
     "container",
     "content",
@@ -402,40 +514,22 @@ function selectorOwnsPageTopology(rule) {
     "stack",
     "wrapper",
   ]);
-  let pageRoot = false;
-
-  walk(rule.prelude, {
-    enter(node) {
-      if (node.type === "TypeSelector" &&
-          ["body", "html", "main", "section"].includes(node.name.toLowerCase())) {
-        pageRoot = true;
-      }
-      if (node.type === "IdSelector" &&
-          ["app", "layout", "main", "page", "root", "shell"].includes(node.name.toLowerCase())) {
-        pageRoot = true;
-      }
-      if (node.type === "ClassSelector" &&
-          node.name.split(/[-_]/).some((segment) => structuralNames.has(segment))) {
-        pageRoot = true;
-      }
-      if (node.type === "AttributeSelector") {
-        const name = node.name.name.toLowerCase();
-        const value = node.value?.name?.toLowerCase() ?? node.value?.value?.toLowerCase();
-        if (["data-layout", "data-page", "data-shell"].includes(name) ||
-            (name === "role" && value === "main")) pageRoot = true;
-      }
-    },
+  return selectorListHasPageSubject(rule.prelude, {
+    componentClasses: manifestComponentClasses(manifest),
+    structuralNames,
   });
-
-  return pageRoot;
 }
 
 function manifestStateClasses(manifest) {
-  const stateSuffixes = new Set([...commonStateClasses].map((name) => name.replace(/^is-/, "")));
-  const manifestClasses = new Set([
-    ...(manifest.selectors?.stateClasses ?? []),
-    ...(manifest.classApi?.stateClasses ?? []),
-  ].map((selector) => selector.replace(/^\./, "").toLowerCase()));
+  const stateSuffixes = new Set(
+    [...commonStateClasses].map((name) => name.replace(/^is-/, "")),
+  );
+  const manifestClasses = new Set(
+    [
+      ...(manifest.selectors?.stateClasses ?? []),
+      ...(manifest.classApi?.stateClasses ?? []),
+    ].map((selector) => selector.replace(/^\./, "").toLowerCase()),
+  );
 
   for (const preset of manifest.presets ?? []) {
     const suffixes = [
@@ -470,7 +564,10 @@ function selectorHasState(rule, manifest) {
 
   walk(rule.prelude, {
     enter(node) {
-      if (node.type === "PseudoClassSelector" && nativeStatePseudos.has(node.name.toLowerCase())) {
+      if (
+        node.type === "PseudoClassSelector" &&
+        nativeStatePseudos.has(node.name.toLowerCase())
+      ) {
         stateful = true;
       }
       if (node.type === "ClassSelector") {
@@ -479,9 +576,13 @@ function selectorHasState(rule, manifest) {
           (state) =>
             className.endsWith(`-${state}`) || className.endsWith(`_${state}`),
         );
-        if (exactStateClasses.has(className) || hasBoundarySuffix) stateful = true;
+        if (exactStateClasses.has(className) || hasBoundarySuffix)
+          stateful = true;
       }
-      if (node.type === "AttributeSelector" && stateAttributes.has(node.name.name.toLowerCase())) {
+      if (
+        node.type === "AttributeSelector" &&
+        stateAttributes.has(node.name.name.toLowerCase())
+      ) {
         stateful = true;
       }
     },
@@ -503,17 +604,23 @@ export function matchesStateSelector(selector, manifest = {}) {
   return stateful;
 }
 
+function isFlexTopologyProperty(property) {
+  return (
+    flexTopologyProperties.has(property) || /^(?:align|justify)-/.test(property)
+  );
+}
+
 function violationRule({ rule, property, value, manifest }) {
   if (pageTopologyProperties.has(property.name))
     return "interactive-page-topology";
   if (
-    selectorOwnsPageTopology(rule) &&
-    majorPageProperties.has(property.name)
+    selectorOwnsPageTopology(rule, manifest) &&
+    (majorPageProperties.has(property.name) ||
+      isFlexTopologyProperty(property.name))
   ) {
     return "interactive-page-topology";
   }
-  if (property.name === "font-family")
-    return "interactive-branded-paint";
+  if (property.name === "font-family") return "interactive-branded-paint";
 
   const hasChromaticPaint = containsChromaticLiteral(value);
   const hasDirectLiteralPaint = containsDirectLiteralPaint(value);
@@ -534,12 +641,24 @@ function violationRule({ rule, property, value, manifest }) {
     return "interactive-branded-paint";
   }
   if (
-    ["color", "fill", "stroke", "box-shadow", "text-shadow"].includes(property.name) &&
+    !property.custom &&
+    isColorPaintProperty(property.name) &&
+    (property.name === "color-scheme"
+      ? colorSchemeHasLiteral(value)
+      : hasDirectLiteralPaint)
+  ) {
+    return "interactive-branded-paint";
+  }
+  if (
+    ["box-shadow", "text-shadow"].includes(property.name) &&
     hasDirectLiteralPaint
   ) {
     return "interactive-branded-paint";
   }
-  if (["filter", "backdrop-filter"].includes(property.name) && generate(value).trim() !== "none") {
+  if (
+    ["filter", "backdrop-filter"].includes(property.name) &&
+    generate(value).trim() !== "none"
+  ) {
     return "interactive-branded-paint";
   }
 
@@ -549,7 +668,12 @@ function violationRule({ rule, property, value, manifest }) {
   return null;
 }
 
-export function auditOwnership({ css, manifest = {}, allowlist, now = new Date() }) {
+export function auditOwnership({
+  css,
+  manifest = {},
+  allowlist,
+  now = new Date(),
+}) {
   validateAllowlist({ entries: allowlist, now });
 
   const ast = parse(css, {

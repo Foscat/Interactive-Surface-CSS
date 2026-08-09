@@ -161,6 +161,43 @@ test("state core rejects branded paint literals outside an exact reviewed fallba
   assert.equal(result.matchedAllowlistCount, 1);
 });
 
+test("state core rejects literal paint across every color property family", () => {
+  const literals = [
+    ["accent-color", "#ff0066"],
+    ["caret-color", "red"],
+    ["column-rule-color", "blue"],
+    ["color", "red"],
+    ["color-scheme", "dark"],
+    ["fill", "red"],
+    ["stroke", "blue"],
+    ["flood-color", "red"],
+    ["lighting-color", "blue"],
+    ["stop-color", "red"],
+    ["scrollbar-color", "red blue"],
+  ];
+
+  for (const [property, value] of literals) {
+    const result = auditOwnership({
+      css: `.literal-paint { ${property}: ${value}; }`,
+      allowlist: [],
+      now: reviewedAt,
+    });
+    assert.equal(result.violations.length, 1, property);
+    assert.equal(
+      result.violations[0].rule,
+      "interactive-branded-paint",
+      property,
+    );
+  }
+
+  const tokenResult = auditOwnership({
+    css: ".token-paint { accent-color: var(--accent); color-scheme: var(--scheme); fill: var(--fill); scrollbar-color: var(--thumb) var(--track); }",
+    allowlist: [],
+    now: reviewedAt,
+  });
+  assert.deepEqual(tokenResult.violations, []);
+});
+
 test("state core permits token value supply across shared reflected ARIA states", () => {
   const ariaStates = [
     "busy",
@@ -242,7 +279,10 @@ test("shared state probe recognizes manifest classes at exact and boundary-delim
   ];
 
   assert.deepEqual(
-    selectors.map((selector) => [selector, matchesStateSelector(selector, manifest)]),
+    selectors.map((selector) => [
+      selector,
+      matchesStateSelector(selector, manifest),
+    ]),
     selectors.map((selector) => [selector, true]),
   );
 });
@@ -298,6 +338,44 @@ test("state core rejects page topology but permits internal state positioning", 
       rule: "interactive-page-topology",
     },
   ]);
+});
+
+test("state core rejects structural flex topology while preserving component subjects", () => {
+  const cases = [
+    ["html", "flex", "1"],
+    ["body", "flex-flow", "row wrap"],
+    ["#app", "flex-direction", "column"],
+    ["#root", "flex-wrap", "wrap"],
+    [".page-shell", "gap", "2rem"],
+    [".page", "row-gap", "1rem"],
+    ["main", "column-gap", "3rem"],
+    ["[data-layout]", "align-content", "start"],
+    ["[data-page]", "align-items", "center"],
+    ["[data-shell]", "align-self", "stretch"],
+    ["[role=main]", "justify-content", "space-between"],
+    [".main", "justify-items", "center"],
+    ["section", "justify-self", "stretch"],
+  ];
+
+  for (const [selector, property, value] of cases) {
+    const result = auditOwnership({
+      css: `${selector} { ${property}: ${value}; }`,
+      allowlist: [],
+      now: reviewedAt,
+    });
+    assert.equal(result.violations.length, 1, `${selector} ${property}`);
+    assert.equal(result.violations[0].rule, "interactive-page-topology");
+  }
+
+  const componentResult = auditOwnership({
+    css: ".page .interactive-surface { flex-flow: column wrap; gap: 1rem; } .page-shell-component { flex-direction: column; align-items: center; }",
+    manifest: {
+      selectors: { stable: [".interactive-surface", ".page-shell-component"] },
+    },
+    allowlist: [],
+    now: reviewedAt,
+  });
+  assert.deepEqual(componentResult.violations, []);
 });
 
 test("allowlist rejects every malformed, stale, broad, duplicate, and unmatched mutation", () => {
