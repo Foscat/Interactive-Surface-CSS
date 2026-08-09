@@ -186,6 +186,86 @@ test("state core permits token value supply across shared reflected ARIA states"
   }
 });
 
+test("shared state probe recognizes exact and boundary-delimited common class vocabulary", () => {
+  const stateVocabulary = [
+    "active",
+    "any-link",
+    "busy",
+    "busy-loading",
+    "checked",
+    "current",
+    "disabled",
+    "enabled",
+    "expanded",
+    "focus",
+    "focus-visible",
+    "focus-within",
+    "hidden",
+    "hover",
+    "indeterminate",
+    "invalid",
+    "loading",
+    "open",
+    "optional",
+    "persistent",
+    "placeholder-shown",
+    "popover-open",
+    "pressed",
+    "read-only",
+    "read-write",
+    "readonly",
+    "required",
+    "selected",
+    "target",
+    "user-invalid",
+    "valid",
+    "visited",
+  ];
+  const selectors = stateVocabulary.flatMap((state) => [
+    `.${state}`,
+    `.navigation-${state}`,
+    `.navigation_${state}`,
+  ]);
+
+  assert.deepEqual(
+    selectors.map((selector) => [selector, matchesStateSelector(selector)]),
+    selectors.map((selector) => [selector, true]),
+  );
+});
+
+test("shared state probe recognizes manifest classes at exact and boundary-delimited forms", () => {
+  const manifest = { selectors: { stateClasses: [".custom-state"] } };
+  const selectors = [
+    ".custom-state",
+    ".navigation-custom-state",
+    ".navigation_custom-state",
+  ];
+
+  assert.deepEqual(
+    selectors.map((selector) => [selector, matchesStateSelector(selector, manifest)]),
+    selectors.map((selector) => [selector, true]),
+  );
+});
+
+test("shared state probe preserves boundary controls and state-core mechanics ownership", () => {
+  for (const selector of [
+    ".card-static",
+    ".proactive",
+    ".undisabled",
+    ".selectedness",
+  ]) {
+    assert.equal(matchesStateSelector(selector), false, selector);
+  }
+
+  const result = auditOwnership({
+    css: ".active { transform: scale(.98); } .navigation_active { animation: pulse 1s; } .custom-state { transition: opacity 100ms; }",
+    manifest: { selectors: { stateClasses: [".custom-state"] } },
+    allowlist: [],
+    now: reviewedAt,
+  });
+  assert.deepEqual(result.violations, []);
+});
+
 test("state core rejects page topology but permits internal state positioning", () => {
   const css = `
     .interactive-surface::before { position: absolute; inset: 0; }

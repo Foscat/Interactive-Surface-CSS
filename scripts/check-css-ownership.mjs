@@ -137,6 +137,40 @@ const stateAttributes = new Set([
   "data-selected",
   "data-state",
 ]);
+const sharedStateClassVocabulary = new Set([
+  "active",
+  "any-link",
+  "busy",
+  "busy-loading",
+  "checked",
+  "current",
+  "disabled",
+  "enabled",
+  "expanded",
+  "focus",
+  "focus-visible",
+  "focus-within",
+  "hidden",
+  "hover",
+  "indeterminate",
+  "invalid",
+  "loading",
+  "open",
+  "optional",
+  "persistent",
+  "placeholder-shown",
+  "popover-open",
+  "pressed",
+  "read-only",
+  "read-write",
+  "readonly",
+  "required",
+  "selected",
+  "target",
+  "user-invalid",
+  "valid",
+  "visited",
+]);
 const neutralColorNames = new Set([
   "black",
   "currentcolor",
@@ -422,9 +456,15 @@ function manifestStateClasses(manifest) {
 }
 
 function selectorHasState(rule, manifest) {
-  const stateClasses = new Set([
+  const manifestClasses = manifestStateClasses(manifest);
+  const exactStateClasses = new Set([
     ...commonStateClasses,
-    ...manifestStateClasses(manifest),
+    ...sharedStateClassVocabulary,
+    ...manifestClasses,
+  ]);
+  const stateVocabulary = new Set([
+    ...sharedStateClassVocabulary,
+    ...manifestClasses,
   ]);
   let stateful = false;
 
@@ -433,8 +473,13 @@ function selectorHasState(rule, manifest) {
       if (node.type === "PseudoClassSelector" && nativeStatePseudos.has(node.name.toLowerCase())) {
         stateful = true;
       }
-      if (node.type === "ClassSelector" && stateClasses.has(node.name.toLowerCase())) {
-        stateful = true;
+      if (node.type === "ClassSelector") {
+        const className = node.name.toLowerCase();
+        const hasBoundarySuffix = [...stateVocabulary].some(
+          (state) =>
+            className.endsWith(`-${state}`) || className.endsWith(`_${state}`),
+        );
+        if (exactStateClasses.has(className) || hasBoundarySuffix) stateful = true;
       }
       if (node.type === "AttributeSelector" && stateAttributes.has(node.name.name.toLowerCase())) {
         stateful = true;
