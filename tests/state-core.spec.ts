@@ -55,9 +55,13 @@ function stateFixtureHtml() {
       #pressed-true,
       #current-step,
       #busy,
-      #loading {
+      #loading,
+      #feedback-focus,
+      #feedback-busy,
+      #feedback-loading {
         --interactive-surface-motion-default: 0ms;
         --interactive-surface-motion-press: 0ms;
+        --interactive-surface-feedback-duration: 0ms;
       }
 
       .consumer-transform {
@@ -70,6 +74,7 @@ function stateFixtureHtml() {
         --interactive-surface-lift-base: 0px;
         --interactive-surface-lift-hover: -7px;
         --interactive-surface-lift-active: -3px;
+        --interactive-surface-feedback-duration: 0ms;
       }
 
       #precedence {
@@ -79,6 +84,7 @@ function stateFixtureHtml() {
         --interactive-surface-shadow-base: 0 1px 0 rgb(10 20 30);
         --interactive-surface-shadow-hover: 0 2px 0 rgb(40 50 60);
         --interactive-surface-shadow-active: 0 3px 0 rgb(70 80 90);
+        --interactive-surface-feedback-duration: 0ms;
         --interactive-surface-motion-default: 0ms;
         --interactive-surface-motion-press: 0ms;
       }
@@ -114,11 +120,15 @@ function stateFixtureHtml() {
     <button id="active" class="interactive-surface is-active">Active</button>
     <button id="busy" class="interactive-surface" aria-busy="true">Busy</button>
     <button id="loading" class="interactive-surface is-loading">Loading</button>
+    <button id="feedback-focus" class="interactive-surface" data-surface-feedback="success">Feedback focus</button>
+    <button id="feedback-busy" class="interactive-surface" data-surface-feedback="error" aria-busy="true">Feedback busy</button>
+    <button id="feedback-loading" class="interactive-surface is-loading" data-surface-feedback="attention">Feedback loading</button>
 
     <button
       id="native-disabled"
       class="interactive-surface is-active is-loading"
       aria-selected="true"
+      data-surface-feedback="error"
       disabled
     >Native disabled</button>
     <button
@@ -127,11 +137,13 @@ function stateFixtureHtml() {
       aria-busy="true"
       aria-disabled="true"
       aria-pressed="mixed"
+      data-surface-feedback="success"
     >ARIA disabled</button>
     <button
       id="class-disabled"
       class="interactive-surface is-disabled is-active is-loading"
       aria-current="step"
+      data-surface-feedback="attention"
     >Class disabled</button>
     <div
       id="custom-disabled"
@@ -351,7 +363,7 @@ test.describe("state core semantics and precedence", () => {
     }
   });
 
-  test("state precedence is disabled, busy, transient active, persistent, hover, then base", async ({
+  test("state precedence is disabled, busy, feedback, transient active, persistent, hover, then base", async ({
     page,
   }) => {
     const target = page.locator("#precedence");
@@ -379,9 +391,26 @@ test.describe("state core semantics and precedence", () => {
       translateY: -3,
     });
 
+    await target.evaluate((element) =>
+      element.setAttribute("data-surface-feedback", "error"),
+    );
+    expect(await interactionSnapshot(page, "#precedence")).toEqual({
+      boxShadow: "rgb(10, 20, 30) 0px 1px 0px 0px",
+      layerOpacity: 0.18,
+      translateY: 0,
+    });
+    await expect(target).toHaveCSS(
+      "animation-name",
+      "interactive-surface-feedback-error",
+    );
+
     await page.mouse.down();
     try {
-      expect(await interactionSnapshot(page, "#precedence")).toEqual(base);
+      expect(await interactionSnapshot(page, "#precedence")).toEqual({
+        boxShadow: "rgb(10, 20, 30) 0px 1px 0px 0px",
+        layerOpacity: 0.18,
+        translateY: 0,
+      });
 
       await target.evaluate((element) =>
         element.setAttribute("aria-busy", "true"),
@@ -402,6 +431,32 @@ test.describe("state core semantics and precedence", () => {
       });
     } finally {
       await page.mouse.up();
+    }
+  });
+
+  test("busy and loading defer feedback while disabled states suppress it", async ({
+    page,
+  }) => {
+    for (const selector of ["#feedback-busy", "#feedback-loading"]) {
+      const target = page.locator(selector);
+      await expect(target).toHaveCSS("animation-name", "none");
+      const layerName = await target.evaluate(
+        (element) => window.getComputedStyle(element, "::before").animationName,
+      );
+      expect(layerName, selector).toBe("none");
+    }
+
+    const busy = page.locator("#feedback-busy");
+    await busy.evaluate((element) =>
+      element.setAttribute("aria-busy", "false"),
+    );
+    await expect(busy).toHaveCSS(
+      "animation-name",
+      "interactive-surface-feedback-error",
+    );
+
+    for (const selector of disabledSelectors) {
+      await expect(page.locator(selector)).toHaveCSS("animation-name", "none");
     }
   });
 
@@ -427,6 +482,7 @@ test.describe("state core semantics and precedence", () => {
     const cases = [
       { selector: "#focus-target", expectedOpacity: 0 },
       { selector: "#pressed-true", expectedOpacity: 0.32 },
+      { selector: "#feedback-focus", expectedOpacity: 0.18 },
       { selector: "#busy", expectedOpacity: 0.32 },
       { selector: "#loading", expectedOpacity: 0.32 },
     ];
@@ -491,6 +547,25 @@ test.describe("state core user preferences", () => {
       transitionDuration: "0s",
     });
 
+    const feedback = await page
+      .locator("#feedback-focus")
+      .evaluate((element) => {
+        const host = window.getComputedStyle(element);
+        const layer = window.getComputedStyle(element, "::before");
+        return {
+          animationName: host.animationName,
+          layerAnimationName: layer.animationName,
+          layerOpacity: Number.parseFloat(layer.opacity),
+          translate: host.getPropertyValue("translate"),
+        };
+      });
+    expect(feedback).toEqual({
+      animationName: "none",
+      layerAnimationName: "none",
+      layerOpacity: 0.18,
+      translate: "none",
+    });
+
     const focusTarget = page.locator("#focus-target");
     await focusTarget.focus();
     const focusOutline = await focusTarget.evaluate(
@@ -507,6 +582,7 @@ test.describe("state core user preferences", () => {
 
     const buttonText = await systemColor(page, "ButtonText");
     const grayText = await systemColor(page, "GrayText");
+    const highlight = await systemColor(page, "Highlight");
 
     const selected = await page.locator("#selected").evaluate((element) => {
       const host = window.getComputedStyle(element);
@@ -523,6 +599,36 @@ test.describe("state core user preferences", () => {
     expect(selected.outlineStyle).toBe("solid");
     expect(selected.outlineWidth).toBeGreaterThanOrEqual(2);
     expect(selected.outlineColor).toBe(buttonText);
+
+    const feedback = await page
+      .locator("#feedback-focus")
+      .evaluate((element) => {
+        const styles = window.getComputedStyle(element);
+        const layer = window.getComputedStyle(element, "::before");
+        return {
+          layerDisplay: layer.display,
+          outlineColor: styles.outlineColor,
+          outlineStyle: styles.outlineStyle,
+          outlineWidth: Number.parseFloat(styles.outlineWidth),
+        };
+      });
+    expect(feedback).toEqual({
+      layerDisplay: "none",
+      outlineColor: buttonText,
+      outlineStyle: "solid",
+      outlineWidth: 2,
+    });
+
+    const feedbackFocus = page.locator("#feedback-focus");
+    await feedbackFocus.focus();
+    const feedbackFocusOutline = await feedbackFocus.evaluate((element) => {
+      const styles = window.getComputedStyle(element);
+      return { color: styles.outlineColor, style: styles.outlineStyle };
+    });
+    expect(feedbackFocusOutline).toEqual({
+      color: highlight,
+      style: "solid",
+    });
 
     const focusTarget = page.locator("#focus-target");
     await focusTarget.focus();
@@ -587,10 +693,29 @@ test.describe("state core user preferences", () => {
           width: Number.parseFloat(styles.outlineWidth),
         };
       });
+    const feedbackOutline = await page
+      .locator("#feedback-focus")
+      .evaluate((element) => {
+        const styles = window.getComputedStyle(element);
+        return {
+          style: styles.outlineStyle,
+          width: Number.parseFloat(styles.outlineWidth),
+        };
+      });
+
+    await page.locator("#feedback-focus").focus();
+    const focusedFeedbackWidth = await page
+      .locator("#feedback-focus")
+      .evaluate((element) =>
+        Number.parseFloat(window.getComputedStyle(element).outlineWidth),
+      );
 
     expect(focusWidth).toBeGreaterThanOrEqual(3);
     expect(persistentOutline.style).toBe("solid");
     expect(persistentOutline.width).toBeGreaterThanOrEqual(2);
+    expect(feedbackOutline.style).toBe("solid");
+    expect(feedbackOutline.width).toBeGreaterThanOrEqual(2);
+    expect(focusedFeedbackWidth).toBeGreaterThanOrEqual(3);
   });
 
   test("greater contrast prioritizes focus over a persistent state outline", async ({
@@ -640,6 +765,16 @@ test.describe("state core motion composition", () => {
             .locator("#composed")
             .evaluate((element) =>
               element.setAttribute("aria-selected", "true"),
+            ),
+      },
+      {
+        name: "feedback",
+        expectedTranslateY: 0,
+        activate: async () =>
+          page
+            .locator("#composed")
+            .evaluate((element) =>
+              element.setAttribute("data-surface-feedback", "success"),
             ),
       },
       {

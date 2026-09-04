@@ -5,7 +5,7 @@
     "breakingChange": "increment-schemaVersion-before-removing-or-renaming-fields"
   },
   "name": "interactive-surface-css",
-  "version": "1.6.0",
+  "version": "1.7.0",
   "entrypoints": {
     "stateCore": "./state-core.css",
     "standalonePreset": "./standalone-preset.css",
@@ -49,6 +49,14 @@
         ]
       },
       {
+        "name": "data-surface-feedback",
+        "selectors": [
+          "[data-surface-feedback='error']",
+          "[data-surface-feedback='success']",
+          "[data-surface-feedback='attention']"
+        ]
+      },
+      {
         "name": "data-icon-role",
         "selectors": [
           "[data-icon-role='light']",
@@ -74,6 +82,7 @@
     "precedence": [
       "disabled",
       "busy-loading",
+      "feedback",
       "active",
       "persistent",
       "hover",
@@ -102,6 +111,13 @@
       "--interactive-surface-disabled-opacity",
       "--interactive-surface-ease-press",
       "--interactive-surface-ease-standard",
+      "--interactive-surface-feedback-attention-color",
+      "--interactive-surface-feedback-distance",
+      "--interactive-surface-feedback-duration",
+      "--interactive-surface-feedback-easing",
+      "--interactive-surface-feedback-error-color",
+      "--interactive-surface-feedback-layer-opacity",
+      "--interactive-surface-feedback-success-color",
       "--interactive-surface-fg",
       "--interactive-surface-focus-ring-color",
       "--interactive-surface-focus-ring-offset",

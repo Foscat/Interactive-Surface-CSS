@@ -1,6 +1,6 @@
 # API Reference
 
-Interactive Surface CSS 1.6.0 is a CSS state primitive. It exports stylesheets and compatibility JavaScript entries, but it does not ship state-management or component-runtime behavior.
+Interactive Surface CSS 1.7.0 is a CSS state primitive. It exports stylesheets and compatibility JavaScript entries, but it does not ship state-management or component-runtime behavior.
 
 ## Entry points
 
@@ -11,7 +11,7 @@ Interactive Surface CSS 1.6.0 is a CSS state primitive. It exports stylesheets a
 | `interactive-surface-css/interactive-surface.css` | Preserved complete 1.x compatibility bundle                                                                             |
 | `interactive-surface-css`                         | Preserved JavaScript entry that imports the compatibility bundle                                                        |
 
-The preset and compatibility stylesheet are generated from the same authored modules and are behaviorally equivalent in 1.6.0.
+The preset and compatibility stylesheet are generated from the same authored modules and are behaviorally equivalent in 1.7.0.
 
 Package metadata keeps established resolution intact: `main` points to the CommonJS entry, `module` points to the ESM entry, and both load `interactive-surface.css`. The `style`, `unpkg`, and `jsdelivr` fields point directly to that complete compatibility bundle.
 
@@ -61,7 +61,7 @@ The standalone preset additionally provides neutral paint, borders, radii, varia
 
 ### Interaction precedence
 
-Disabled > busy/loading > transient `:active` > pressed/selected/current > `:hover` > base. The `:focus-visible` ring is orthogonal to this ordering: it remains visible on every focusable non-disabled state without replacing the active state-layer, lift, or shadow feedback.
+Disabled > busy/loading > feedback > transient `:active` > pressed/selected/current > `:hover` > base. The `:focus-visible` ring is orthogonal to this ordering: it remains visible on every focusable non-disabled state without replacing the active state-layer, lift, or shadow feedback.
 
 The host transition tuple is controlled by `--interactive-surface-transition-property`, `--interactive-surface-transition-duration`, `--interactive-surface-transition-easing`, and `--interactive-surface-transition-delay`. Existing public motion/easing tokens and their generic fallbacks remain supported.
 
@@ -100,6 +100,22 @@ Disabled state overrides every transient state.
 Applications must update these values. The package only styles the resulting state.
 
 Busy and loading feedback outranks transient `:active`; the other persistent hooks outrank hover but remain below transient `:active`.
+
+## Outcome feedback
+
+Outcome feedback renders an application-reported result:
+
+| Hook                                | Default motion              |
+| ----------------------------------- | --------------------------- |
+| `data-surface-feedback="error"`     | Restrained horizontal shake |
+| `data-surface-feedback="success"`   | One upward settle           |
+| `data-surface-feedback="attention"` | Two gentle upward nudges    |
+
+The application must add, remove, and replay the attribute; CSS does not determine the outcome or create an accessibility announcement.
+
+The feedback motion contract is controlled by `--interactive-surface-feedback-duration`, `--interactive-surface-feedback-easing`, `--interactive-surface-feedback-distance`, `--interactive-surface-feedback-layer-opacity`, `--interactive-surface-feedback-error-color`, `--interactive-surface-feedback-success-color`, and `--interactive-surface-feedback-attention-color`.
+
+Unknown and empty values are unstyled. Feedback is suppressed while disabled or busy/loading and outranks transient active, persistent, and hover feedback once eligible.
 
 ## Disabled states
 

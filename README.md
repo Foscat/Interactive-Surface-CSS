@@ -3,9 +3,9 @@
 [![npm version](https://img.shields.io/npm/v/interactive-surface-css.svg)](https://www.npmjs.com/package/interactive-surface-css)
 [![license](https://img.shields.io/npm/l/interactive-surface-css.svg)](https://github.com/Foscat/Interactive-Surface-CSS/blob/main/LICENSE)
 
-Framework-agnostic CSS for reliable hover, focus, press, selected, current, loading, disabled, and motion affordances on interactive controls. Use it alone or as the interaction layer beside your existing layout and theme system.
+Framework-agnostic CSS for reliable hover, focus, press, selected, current, loading, disabled, outcome feedback, and motion affordances on interactive controls. Use it alone or as the interaction layer beside your existing layout and theme system.
 
-Version 1.6.0 is a release candidate in this repository until its npm release is published. Existing 1.x imports, selectors, data hooks, ARIA hooks, and tokens remain supported.
+Version 1.7.0 is a release candidate in this repository until its npm release is published. Existing 1.x imports, selectors, data hooks, ARIA hooks, and tokens remain supported.
 
 The package targets Node.js 20+ for npm installs and local validation. CI proves the minimum Node 20 lane and the preferred Node 22 lane before release.
 
@@ -56,11 +56,11 @@ For a no-build page, pin the release:
 ```html
 <link
   rel="stylesheet"
-  href="https://cdn.jsdelivr.net/npm/interactive-surface-css@1.6.0/standalone-preset.css"
+  href="https://cdn.jsdelivr.net/npm/interactive-surface-css@1.7.0/standalone-preset.css"
 />
 ```
 
-The equivalent unpkg URL is `https://unpkg.com/interactive-surface-css@1.6.0/standalone-preset.css`. To follow future releases deliberately, use `https://cdn.jsdelivr.net/npm/interactive-surface-css@latest/standalone-preset.css` — unpinned opt-in.
+The equivalent unpkg URL is `https://unpkg.com/interactive-surface-css@1.7.0/standalone-preset.css`. To follow future releases deliberately, use `https://cdn.jsdelivr.net/npm/interactive-surface-css@latest/standalone-preset.css` — unpinned opt-in.
 
 ## Semantic recipes
 
@@ -88,6 +88,15 @@ Prefer native elements, then reflect persistent application state through ARIA:
 <!-- Loading: update the accessible label or nearby status text as needed -->
 <button class="interactive-surface" type="button" aria-busy="true">
   Saving…
+</button>
+
+<!-- Outcome feedback: the application reports the outcome and removes the attribute after feedback. -->
+<button
+  class="interactive-surface variant-primary"
+  type="button"
+  data-surface-feedback="error"
+>
+  Save changes
 </button>
 
 <!-- Prefer native disabled when the control cannot activate -->
@@ -127,7 +136,7 @@ Native `disabled` is preferred because the browser suppresses focus and activati
 | `import "interactive-surface-css/interactive-surface.css";` | Complete standalone compatibility bundle                                                | Existing direct-CSS 1.x consumers                           |
 | `import "interactive-surface-css";`                         | JavaScript entry that imports the complete compatibility bundle                         | Existing bundlers configured for CSS imports                |
 
-`standalone-preset.css` and `interactive-surface.css` are generated from the same authored modules and are behaviorally equivalent in 1.6.0. The compatibility paths remain stable; no 1.x migration is required.
+`standalone-preset.css` and `interactive-surface.css` are generated from the same authored modules and are behaviorally equivalent in 1.7.0. The compatibility paths remain stable; no 1.x migration is required.
 
 The package `main` and `module` fields preserve the CommonJS and ESM entries; both load `interactive-surface.css`. The `style`, `unpkg`, and `jsdelivr` fields also resolve to that complete compatibility bundle.
 
@@ -140,13 +149,14 @@ The package `main` and `module` fields preserve the CommonJS and ESM entries; bo
 | Transient         | pointer `:hover`, keyboard `:focus-visible`, `:active`                                                                                                           |
 | Persistent        | `.is-active`, `aria-pressed="true"`, `aria-pressed="mixed"`, any non-false `aria-current`, `aria-selected="true"`                                                |
 | Loading           | `aria-busy="true"`, `.is-loading`                                                                                                                                |
+| Outcome feedback  | `data-surface-feedback="error"`, `data-surface-feedback="success"`, `data-surface-feedback="attention"`                                                          |
 | Disabled          | native `:disabled`, `aria-disabled="true"`, `.is-disabled`                                                                                                       |
 | Variant           | `.variant-primary`, `.variant-secondary`, `.variant-accent`, `.variant-subtle`, `.variant-warning`, `.variant-danger`, or matching `data-surface-variant` values |
 | Level             | `data-surface-level="1"`, `"2"`, or `"3"`                                                                                                                        |
 | Icon              | `.icon-only`; child `data-icon-role="light"`, `"dark"`, `"accessibility"`, or the legacy role classes                                                            |
 | Native subcontrol | `input[type="file"].interactive-surface::file-selector-button` inherits surface paint and hover/active feedback                                                  |
 
-Disabled > busy/loading > transient `:active` > pressed/selected/current > `:hover` > base. The `:focus-visible` ring is orthogonal to that precedence, so keyboard focus remains visible without replacing the active interaction state. The state layer preserves static meaning under reduced motion and uses system-color affordances in forced-colors mode. Interaction lift uses the individual `translate` property, so consumer-owned `transform`, `scale`, and `rotate` declarations can coexist.
+Disabled > busy/loading > feedback > transient `:active` > pressed/selected/current > `:hover` > base. The `:focus-visible` ring is orthogonal to that precedence, so keyboard focus remains visible without replacing the active interaction state. The state layer preserves static meaning under reduced motion and uses system-color affordances in forced-colors mode. Interaction lift uses the individual `translate` property, so consumer-owned `transform`, `scale`, and `rotate` declarations can coexist.
 
 For selector details and responsibilities, see the [complete API reference](https://github.com/Foscat/Interactive-Surface-CSS/wiki/API-Reference).
 
@@ -169,6 +179,16 @@ For selector details and responsibilities, see the [complete API reference](http
 
 The transition defaults are `translate, box-shadow, outline-color`, the established default motion duration, the standard easing curve, and zero delay. Existing `--interactive-surface-motion-*`, `--interactive-surface-ease-*`, `--motion-*`, and `--ease-*` fallbacks remain supported. All public custom properties use the `--interactive-surface-*` namespace. See the [token ownership tables and full reference](https://github.com/Foscat/Interactive-Surface-CSS/wiki/Token-Reference).
 
+Outcome feedback can be customized per control or per feedback selector:
+
+- `--interactive-surface-feedback-duration`
+- `--interactive-surface-feedback-easing`
+- `--interactive-surface-feedback-distance`
+- `--interactive-surface-feedback-layer-opacity`
+- `--interactive-surface-feedback-error-color`
+- `--interactive-surface-feedback-success-color`
+- `--interactive-surface-feedback-attention-color`
+
 A third-party design system can theme the standalone entry point with the optional shared semantic tokens `--ui-color-surface`, `--ui-color-text`, `--ui-color-muted`, `--ui-color-primary`, `--ui-color-on-primary`, `--ui-color-border`, `--ui-radius-control`, `--ui-shadow-control`, `--ui-focus-color`, `--ui-motion-duration`, and `--ui-motion-easing`. The fallback order is package-specific `--interactive-surface-*` values, then shared semantic values, then existing legacy values and literals. When the shared tokens are absent, standalone output is unchanged.
 
 ```js
@@ -186,6 +206,7 @@ Applications still own semantics and behavior:
 
 - Use `<button>` for actions and `<a href>` for navigation.
 - Update `aria-pressed`, `aria-current`, `aria-selected`, and `aria-busy` when application state changes.
+- Apply and remove `data-surface-feedback` with visible result text or an `aria-live` status region when an action succeeds, fails, or needs attention.
 - Prefer native `disabled`. If a custom control uses `aria-disabled="true"` or `.is-disabled`, suppress pointer, keyboard, and programmatic activation.
 - Give icon-only controls an accessible name, normally with `aria-label`, and hide decorative SVG content from assistive technology.
 - Implement the keyboard model for composite widgets such as tabs; CSS does not add runtime behavior.

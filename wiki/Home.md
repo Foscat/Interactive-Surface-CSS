@@ -1,8 +1,8 @@
 # Interactive Surface CSS
 
-Interactive Surface CSS is a framework-agnostic interaction-state layer for buttons, links, toggles, tabs, cards, icon controls, and similar interactive hosts. It provides consistent focus, hover, press, current, selected, loading, disabled, reduced-motion, and forced-colors treatment without requiring a component runtime.
+Interactive Surface CSS is a framework-agnostic interaction-state layer for buttons, links, toggles, tabs, cards, icon controls, and similar interactive hosts. It provides consistent focus, hover, press, current, selected, loading, disabled, outcome feedback, reduced-motion, and forced-colors treatment without requiring a component runtime.
 
-Version 1.6.0 is a release candidate until it is published. It preserves every established 1.x import and selector while adding optional shared semantic fallbacks to the focused `state-core.css` and complete `standalone-preset.css` entry points.
+Version 1.7.0 is a release candidate until it is published. It preserves every established 1.x import and selector while adding CSS-only `data-surface-feedback="error|success|attention"` outcomes to the focused `state-core.css` and complete `standalone-preset.css` entry points.
 
 ## Choose the layer you need
 
@@ -14,7 +14,7 @@ Version 1.6.0 is a release candidate until it is published. It preserves every e
 
 Use one library, use two compatible libraries, or use all three. None of the packages is a prerequisite for another.
 
-## 1.6.0 entry points
+## 1.7.0 entry points
 
 - `interactive-surface-css/standalone-preset.css`: complete state behavior plus neutral standalone paint and geometry.
 - `interactive-surface-css/state-core.css`: state behavior and the public interaction token contract without theme paint or consumer-facing layout.

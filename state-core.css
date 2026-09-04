@@ -125,6 +125,28 @@
     --interactive-surface-tap-highlight-color,
     rgb(11 99 246 / 0.18)
   );
+  --_is-feedback-duration: var(--interactive-surface-feedback-duration, 240ms);
+  --_is-feedback-easing: var(
+    --interactive-surface-feedback-easing,
+    cubic-bezier(0.2, 0, 0.2, 1)
+  );
+  --_is-feedback-distance: var(--interactive-surface-feedback-distance, 3px);
+  --_is-feedback-layer-opacity: var(
+    --interactive-surface-feedback-layer-opacity,
+    0.18
+  );
+  --_is-feedback-error-color: var(
+    --interactive-surface-feedback-error-color,
+    var(--_is-preset-feedback-error-color, currentcolor)
+  );
+  --_is-feedback-success-color: var(
+    --interactive-surface-feedback-success-color,
+    var(--_is-preset-feedback-success-color, currentcolor)
+  );
+  --_is-feedback-attention-color: var(
+    --interactive-surface-feedback-attention-color,
+    var(--_is-preset-feedback-attention-color, currentcolor)
+  );
 
   position: relative;
   isolation: isolate;
@@ -295,6 +317,142 @@ input[type="file"].interactive-surface.interactive-surface:where(:active):where(
   transition-timing-function: var(--_is-transition-easing);
 }
 
+@keyframes interactive-surface-feedback-error {
+  0%,
+  100% {
+    translate: 0 var(--_is-lift-base);
+  }
+
+  20%,
+  60% {
+    translate: calc(0px - var(--_is-feedback-distance)) var(--_is-lift-base);
+  }
+
+  40%,
+  80% {
+    translate: var(--_is-feedback-distance) var(--_is-lift-base);
+  }
+}
+
+@keyframes interactive-surface-feedback-success {
+  0%,
+  100% {
+    translate: 0 var(--_is-lift-base);
+  }
+
+  45% {
+    translate: 0 calc(var(--_is-lift-base) - var(--_is-feedback-distance));
+  }
+}
+
+@keyframes interactive-surface-feedback-attention {
+  0%,
+  45%,
+  100% {
+    translate: 0 var(--_is-lift-base);
+  }
+
+  25%,
+  70% {
+    translate: 0 calc(var(--_is-lift-base) - var(--_is-feedback-distance));
+  }
+}
+
+@keyframes interactive-surface-feedback-layer {
+  0% {
+    opacity: 0;
+  }
+
+  35%,
+  100% {
+    opacity: var(--_is-feedback-layer-opacity);
+  }
+}
+
+@keyframes interactive-surface-feedback-layer-attention {
+  0%,
+  45% {
+    opacity: 0;
+  }
+
+  20%,
+  70%,
+  100% {
+    opacity: var(--_is-feedback-layer-opacity);
+  }
+}
+
+.interactive-surface[data-surface-feedback="error"] {
+  --_is-feedback-color: var(--_is-feedback-error-color);
+  --_is-feedback-host-animation: interactive-surface-feedback-error;
+  --_is-feedback-layer-animation: interactive-surface-feedback-layer;
+}
+
+.interactive-surface[data-surface-feedback="success"] {
+  --_is-feedback-color: var(--_is-feedback-success-color);
+  --_is-feedback-host-animation: interactive-surface-feedback-success;
+  --_is-feedback-layer-animation: interactive-surface-feedback-layer;
+}
+
+.interactive-surface[data-surface-feedback="attention"] {
+  --_is-feedback-color: var(--_is-feedback-attention-color);
+  --_is-feedback-host-animation: interactive-surface-feedback-attention;
+  --_is-feedback-layer-animation: interactive-surface-feedback-layer-attention;
+}
+
+/* Semantic outcome feedback is application-triggered and remains below busy/loading precedence. */
+.interactive-surface.interactive-surface:where(
+    [data-surface-feedback="error"],
+    [data-surface-feedback="success"],
+    [data-surface-feedback="attention"]
+  ):not(
+    :is(
+      .is-disabled,
+      :disabled,
+      [aria-disabled="true"],
+      [aria-busy="true"],
+      .is-loading
+    )
+  ) {
+  translate: 0 var(--_is-lift-base);
+  box-shadow: var(--_is-shadow-base);
+  /* stylelint-disable declaration-block-no-redundant-longhand-properties -- Public feedback timing tokens must remain independently assertable. */
+  animation-name: var(--_is-feedback-host-animation);
+  animation-duration: var(--_is-feedback-duration);
+  animation-timing-function: var(--_is-feedback-easing);
+  animation-delay: 0s;
+  animation-iteration-count: 1;
+  animation-direction: normal;
+  animation-fill-mode: none;
+  /* stylelint-enable declaration-block-no-redundant-longhand-properties */
+}
+
+.interactive-surface.interactive-surface:where(
+    [data-surface-feedback="error"],
+    [data-surface-feedback="success"],
+    [data-surface-feedback="attention"]
+  ):not(
+    :is(
+      .is-disabled,
+      :disabled,
+      [aria-disabled="true"],
+      [aria-busy="true"],
+      .is-loading
+    )
+  )::before {
+  background-color: var(--_is-feedback-color);
+  opacity: var(--_is-feedback-layer-opacity);
+  /* stylelint-disable declaration-block-no-redundant-longhand-properties -- Public feedback timing tokens must remain independently assertable. */
+  animation-name: var(--_is-feedback-layer-animation);
+  animation-duration: var(--_is-feedback-duration);
+  animation-timing-function: var(--_is-feedback-easing);
+  animation-delay: 0s;
+  animation-iteration-count: 1;
+  animation-direction: normal;
+  animation-fill-mode: none;
+  /* stylelint-enable declaration-block-no-redundant-longhand-properties */
+}
+
 .interactive-surface.interactive-surface:where(
     [aria-busy="true"],
     .is-loading
@@ -401,6 +559,25 @@ input[type="file"].interactive-surface.interactive-surface:where(
     transition: none;
   }
 
+  .interactive-surface.interactive-surface:where(
+      [data-surface-feedback="error"],
+      [data-surface-feedback="success"],
+      [data-surface-feedback="attention"]
+    ):not(:is(.is-disabled, :disabled, [aria-disabled="true"])) {
+    translate: none;
+    animation: none;
+    transition: none;
+  }
+
+  .interactive-surface.interactive-surface:where(
+      [data-surface-feedback="error"],
+      [data-surface-feedback="success"],
+      [data-surface-feedback="attention"]
+    ):not(:is(.is-disabled, :disabled, [aria-disabled="true"]))::before {
+    animation: none;
+    transition: none;
+  }
+
   :where(input[type="file"].interactive-surface)::file-selector-button {
     animation: none;
     transition: none;
@@ -418,6 +595,9 @@ input[type="file"].interactive-surface.interactive-surface:where(
       [aria-pressed="mixed"],
       [aria-current]:not([aria-current="false"]),
       [aria-selected="true"],
+      [data-surface-feedback="error"],
+      [data-surface-feedback="success"],
+      [data-surface-feedback="attention"],
       [aria-busy="true"],
       .is-loading
     ):not(:is(.is-disabled, :disabled, [aria-disabled="true"])) {
@@ -457,6 +637,9 @@ input[type="file"].interactive-surface.interactive-surface:where(
       [aria-pressed="mixed"],
       [aria-current]:not([aria-current="false"]),
       [aria-selected="true"],
+      [data-surface-feedback="error"],
+      [data-surface-feedback="success"],
+      [data-surface-feedback="attention"],
       [aria-busy="true"],
       .is-loading
     ):not(:is(.is-disabled, :disabled, [aria-disabled="true"])) {

@@ -1,6 +1,6 @@
 # Getting Started
 
-This is the shortest reliable path to the Interactive Surface CSS 1.6.0 release candidate.
+This is the shortest reliable path to the Interactive Surface CSS 1.7.0 release candidate.
 
 ## Install
 
@@ -46,6 +46,21 @@ Use `<button>` for actions and `<a href>` for navigation. Native elements alread
 
 Update the ARIA value whenever application state changes. For an indeterminate toggle, `aria-pressed="mixed"` is also supported.
 
+## Add outcome feedback
+
+```html
+<button
+  class="interactive-surface variant-primary"
+  type="button"
+  data-surface-feedback="error"
+>
+  Save changes
+</button>
+<span role="status">Changes could not be saved.</span>
+```
+
+Application code applies and removes `data-surface-feedback`; pair the motion with visible text or a live status region.
+
 ## Disable controls correctly
 
 ```html
@@ -61,11 +76,11 @@ Pin the release candidate version:
 ```html
 <link
   rel="stylesheet"
-  href="https://cdn.jsdelivr.net/npm/interactive-surface-css@1.6.0/standalone-preset.css"
+  href="https://cdn.jsdelivr.net/npm/interactive-surface-css@1.7.0/standalone-preset.css"
 />
 ```
 
-The unpkg equivalent is `https://unpkg.com/interactive-surface-css@1.6.0/standalone-preset.css`. Use `https://cdn.jsdelivr.net/npm/interactive-surface-css@latest/standalone-preset.css` — unpinned opt-in — only when automatically following future releases is intentional.
+The unpkg equivalent is `https://unpkg.com/interactive-surface-css@1.7.0/standalone-preset.css`. Use `https://cdn.jsdelivr.net/npm/interactive-surface-css@latest/standalone-preset.css` — unpinned opt-in — only when automatically following future releases is intentional.
 
 ## Already have a design system?
 

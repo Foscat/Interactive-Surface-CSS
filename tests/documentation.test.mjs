@@ -39,6 +39,8 @@ const authoredCss = [
 const publicTokens = new Set(
   authoredCss.match(/--interactive-surface-[a-z0-9-]+/g),
 );
+const interactionPrecedence =
+  "Disabled > busy/loading > feedback > transient `:active` > pressed/selected/current > `:hover` > base";
 const compatibilityTokens = new Set(
   authoredCss
     .match(/--[a-z][a-z0-9-]+/g)
@@ -188,12 +190,17 @@ test("README teaches the complete semantic and ecosystem contract", () => {
     "::file-selector-button",
     "data-surface-variant",
     "data-surface-level",
+    'data-surface-feedback="error"',
+    'data-surface-feedback="success"',
+    'data-surface-feedback="attention"',
     "icon-only",
     "data-icon-role",
     "--interactive-surface-transition-property",
     "--interactive-surface-transition-duration",
     "--interactive-surface-transition-easing",
     "--interactive-surface-transition-delay",
+    "--interactive-surface-feedback-duration",
+    "--interactive-surface-feedback-distance",
   ].forEach((value) =>
     assert.ok(
       readme.includes(value),
@@ -208,9 +215,7 @@ test("README teaches the complete semantic and ecosystem contract", () => {
   );
   assert.match(readme, /use one[^\n]*use two[^\n]*use all three/i);
   assert.ok(
-    readme.includes(
-      "Disabled > busy/loading > transient `:active` > pressed/selected/current > `:hover` > base",
-    ),
+    readme.includes(interactionPrecedence),
     "README must state the exact interaction precedence",
   );
   assert.match(readme, /`:focus-visible`[^\n]*orthogonal/i);
@@ -248,6 +253,11 @@ test("wiki API, token, and accessibility references cover the 1.5.0 contract", (
     'input[type="file"].interactive-surface::file-selector-button',
     "data-surface-variant",
     "data-surface-level",
+    'data-surface-feedback="error"',
+    'data-surface-feedback="success"',
+    'data-surface-feedback="attention"',
+    "--interactive-surface-feedback-duration",
+    "--interactive-surface-feedback-distance",
     "data-icon-role",
   ].forEach((value) =>
     assert.ok(wiki.api.includes(value), `API reference is missing: ${value}`),
@@ -298,9 +308,7 @@ test("wiki API, token, and accessibility references cover the 1.5.0 contract", (
 
   for (const document of [wiki.api, wiki.accessibility]) {
     assert.ok(
-      document.includes(
-        "Disabled > busy/loading > transient `:active` > pressed/selected/current > `:hover` > base",
-      ),
+      document.includes(interactionPrecedence),
       "Public state guidance must state the exact interaction precedence",
     );
     assert.match(document, /`:focus-visible`[^\n]*orthogonal/i);
@@ -316,12 +324,20 @@ test("wiki API, token, and accessibility references cover the 1.5.0 contract", (
     "`.is-disabled`",
     "suppress activation",
     "reduced motion",
+    "prefers-reduced-motion",
     "forced colors",
+    "data-surface-feedback",
+    "aria-live",
   ].forEach((value) =>
     assert.ok(
       wiki.accessibility.toLowerCase().includes(value.toLowerCase()),
       `Accessibility guide is missing: ${value}`,
     ),
+  );
+
+  assert.doesNotMatch(
+    allDocumentation,
+    /CSS (?:detects|determines) (?:success|failure|errors?)/i,
   );
 });
 

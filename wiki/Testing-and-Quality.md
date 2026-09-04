@@ -1,6 +1,6 @@
 # Testing and Quality
 
-The 1.6.0 release candidate uses layered gates so contributors can choose fast deterministic checks or the complete cross-browser suite without confusing the two.
+The 1.7.0 release candidate uses layered gates so contributors can choose fast deterministic checks or the complete cross-browser suite without confusing the two.
 
 ## Validation tiers
 
@@ -36,7 +36,7 @@ The Playwright configuration uses a stable two-worker limit. Focused release pro
 | `npm run pack:dry`            | Inspect the npm tarball allowlist without publishing                       |
 | `npm audit`                   | Check the dependency tree against the npm advisory database                |
 
-The exact script graph is finalized as part of the 1.6.0 release candidate before publication. Browser downloads intentionally remain outside `prepublishOnly`.
+The exact script graph is finalized as part of the 1.7.0 release candidate before publication. Browser downloads intentionally remain outside `prepublishOnly`.
 
 ## Contract coverage
 
@@ -44,6 +44,7 @@ Deterministic tests verify:
 
 - preserved 1.x selectors, JavaScript entries, stylesheet paths, data hooks, ARIA hooks, and token families
 - public transition property, duration, easing, and delay tokens
+- feedback hooks, tokens, and namespaced keyframes
 - absence of implicit UI-host lift compensation and cross-package importance
 - resolvable `state-core.css`, `standalone-preset.css`, and compatibility bundles
 - generated-root and distribution parity
@@ -59,8 +60,9 @@ Playwright verifies:
 - fine-pointer hover and transient press
 - exact default, public, active, legacy-fallback, and file-selector transition tuples
 - keyboard focus visibility
-- disabled > busy/loading > transient active > persistent > hover > base precedence
+- disabled > busy/loading > feedback > transient active > persistent > hover > base precedence
 - pressed true and mixed, non-false current, selected, busy, loading, and established active states
+- feedback replay, unknown-value behavior, and transform composition
 - native, ARIA, and class-disabled precedence
 - static state meaning under reduced motion
 - forced-colors and higher-contrast affordances
