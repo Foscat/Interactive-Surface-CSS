@@ -64,7 +64,13 @@ function activateControl(event) {
 }
 ```
 
-Disabled > busy/loading > transient `:active` > pressed/selected/current > `:hover` > base. This order prevents hover from erasing persistent meaning, prevents a transient press from erasing busy feedback, and makes every disabled form authoritative.
+Disabled > busy/loading > feedback > transient `:active` > pressed/selected/current > `:hover` > base. This order prevents hover from erasing persistent meaning, prevents a transient press from erasing busy feedback, and makes every disabled form authoritative.
+
+## Outcome feedback
+
+Outcome motion and color are supplementary. Pair `data-surface-feedback` with visible result text, an associated error message, or an appropriate `aria-live` status region. Do not use the feedback attribute as a replacement for accessible status content, and do not use `aria-invalid` as a generic failed-button state.
+
+Applications must remove feedback through their own timer or state transition. Do not rely only on `animationend`, because `prefers-reduced-motion` users may receive no animation event.
 
 ## Reduced motion
 

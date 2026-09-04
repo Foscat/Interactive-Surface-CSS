@@ -146,3 +146,46 @@ test("UI Style Kit remains an optional development-only compatibility fixture", 
   assert.equal(manifest.peerDependencies?.["ui-style-kit-css"], undefined);
   assert.equal(manifest.devDependencies?.["ui-style-kit-css"], "2.1.0");
 });
+
+test("semantic feedback exposes exact hooks, tokens, and namespaced keyframes", () => {
+  const feedbackValues = ["error", "success", "attention"];
+  const feedbackTokens = [
+    "--interactive-surface-feedback-attention-color",
+    "--interactive-surface-feedback-distance",
+    "--interactive-surface-feedback-duration",
+    "--interactive-surface-feedback-easing",
+    "--interactive-surface-feedback-error-color",
+    "--interactive-surface-feedback-layer-opacity",
+    "--interactive-surface-feedback-success-color",
+  ];
+  const feedbackKeyframes = [
+    "interactive-surface-feedback-error",
+    "interactive-surface-feedback-success",
+    "interactive-surface-feedback-attention",
+    "interactive-surface-feedback-layer",
+    "interactive-surface-feedback-layer-attention",
+  ];
+
+  for (const value of feedbackValues) {
+    assert.ok(
+      stateCoreSource.includes(`data-surface-feedback="${value}"`),
+      `Missing feedback hook: ${value}`,
+    );
+  }
+  for (const token of feedbackTokens) {
+    assert.ok(
+      stateCoreSource.includes(token),
+      `Missing feedback token: ${token}`,
+    );
+  }
+  for (const keyframe of feedbackKeyframes) {
+    assert.ok(
+      stateCoreSource.includes(`@keyframes ${keyframe}`),
+      `Missing feedback keyframe: ${keyframe}`,
+    );
+  }
+  assert.deepEqual(manifest.dependencies ?? {}, {});
+  assert.equal(manifest.peerDependencies?.["ui-style-kit-css"], undefined);
+  assert.doesNotMatch(stateCoreSource, /\.motion-(?:shake|pop|bounce)/);
+  assert.doesNotMatch(stateCoreSource, /aria-invalid/);
+});

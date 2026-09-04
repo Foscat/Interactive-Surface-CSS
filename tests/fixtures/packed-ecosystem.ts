@@ -27,9 +27,72 @@ const repositoryRoot = path.resolve(
   "..",
   "..",
 );
-const uiStyleKitRoot =
-  process.env.UI_STYLE_KIT_CSS_SOURCE ??
-  path.resolve(repositoryRoot, "..", "ui-style-kit-css");
+
+/**
+ * Reads the immutable UI Style Kit fixture revision used for packed ecosystem tests.
+ *
+ * @returns The release fixture descriptor checked into the repository.
+ */
+function readUiStyleKitFixtureDescriptor() {
+  return JSON.parse(
+    readFileSync(
+      path.join(repositoryRoot, "ecosystem-release-fixture.json"),
+      "utf8",
+    ),
+  ) as { repository: string; revision: string };
+}
+
+/**
+ * Runs a git command and reports stdout and stderr when fixture setup fails.
+ *
+ * @param args - Arguments passed directly to the git executable.
+ * @param label - Operation label included in setup failure messages.
+ */
+function runGit(args: string[], label: string) {
+  const result = spawnSync("git", args, {
+    encoding: "utf8",
+    maxBuffer: 10 * 1024 * 1024,
+  });
+
+  if (result.error || result.status !== 0 || result.signal) {
+    throw new Error(
+      `${label} failed.\nstdout:\n${result.stdout}\nstderr:\n${result.stderr}`,
+      { cause: result.error },
+    );
+  }
+}
+
+/**
+ * Materializes the reviewed UI Style Kit fixture without changing local sibling work.
+ *
+ * @param fixtureDirectory - Temporary packed ecosystem root that owns cleanup.
+ * @returns The package root that should be packed into the consumer fixture.
+ */
+function prepareUiStyleKitRoot(fixtureDirectory: string) {
+  if (process.env.UI_STYLE_KIT_CSS_SOURCE) {
+    return path.resolve(process.env.UI_STYLE_KIT_CSS_SOURCE);
+  }
+
+  const descriptor = readUiStyleKitFixtureDescriptor();
+  const sourceRoot = path.resolve(repositoryRoot, "..", "ui-style-kit-css");
+  if (!existsSync(path.join(sourceRoot, "package.json"))) {
+    throw new Error(
+      `UI Style Kit source checkout is required at ${sourceRoot}.`,
+    );
+  }
+
+  const reviewedSourceRoot = path.join(fixtureDirectory, "ui-style-kit-css");
+  runGit(
+    ["clone", "--no-checkout", sourceRoot, reviewedSourceRoot],
+    "git clone UI Style Kit fixture",
+  );
+  runGit(
+    ["-C", reviewedSourceRoot, "checkout", "--force", descriptor.revision],
+    "git checkout UI Style Kit fixture revision",
+  );
+
+  return reviewedSourceRoot;
+}
 
 function runNpm(args: string[], cwd: string, label: string) {
   const executableDirectory = path.dirname(process.execPath);
@@ -149,6 +212,7 @@ export function createPackedEcosystemFixture(
     const artifacts = [interactiveArtifact];
 
     if (options.includeUiStyleKit) {
+      const uiStyleKitRoot = prepareUiStyleKitRoot(fixtureDirectory);
       if (!existsSync(path.join(uiStyleKitRoot, "package.json"))) {
         throw new Error(
           `UI Style Kit source checkout is required at ${uiStyleKitRoot}.`,

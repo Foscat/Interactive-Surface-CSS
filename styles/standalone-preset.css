@@ -47,6 +47,9 @@
     --interactive-surface-radius,
     var(--ui-radius-control, 0.75rem)
   );
+  --_is-preset-feedback-error-color: rgb(185 28 28);
+  --_is-preset-feedback-success-color: rgb(21 128 61);
+  --_is-preset-feedback-attention-color: rgb(180 83 9);
 
   box-sizing: border-box;
   border: var(--_is-border-width) solid var(--_is-border-color);

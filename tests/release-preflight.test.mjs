@@ -54,6 +54,48 @@ test("pull requests execute read-only preflight and npm publish stays downstream
   );
 });
 
+test("candidate version overlay repairs stale current fixture drift only", () => {
+  assert.ok(
+    releaseContract,
+    "scripts/release-fixture-contract.mjs must implement the fixture contract",
+  );
+
+  const fixtureContract = {
+    supportedCombinations: {
+      minimum: {
+        "interactive-surface-css": "1.5.0",
+        "layout-style-css": "3.0.0",
+        "ui-style-kit-css": "2.1.0",
+      },
+      current: {
+        "interactive-surface-css": "1.6.0",
+        "layout-style-css": "3.0.1",
+        "ui-style-kit-css": "2.1.0",
+      },
+    },
+  };
+
+  const overlay = releaseContract.withCandidateCurrentVersion(
+    fixtureContract,
+    "interactive-surface-css",
+    "1.7.0",
+  );
+
+  assert.equal(
+    fixtureContract.supportedCombinations.current["interactive-surface-css"],
+    "1.6.0",
+    "the reviewed fixture contract must not be mutated",
+  );
+  assert.deepEqual(overlay.supportedCombinations, {
+    minimum: fixtureContract.supportedCombinations.minimum,
+    current: {
+      "interactive-surface-css": "1.7.0",
+      "layout-style-css": "3.0.1",
+      "ui-style-kit-css": "2.1.0",
+    },
+  });
+});
+
 test("workflow policy rejects every release or deployment mutation from pull requests", () => {
   assert.ok(
     releaseContract,
@@ -109,7 +151,7 @@ test("publishing guide records the immutable bootstrap and merge sequence", () =
 
   for (const phrase of [
     "U-I bootstrap",
-    "Interactive Surface CSS 1.6.0 candidate",
+    "Interactive Surface CSS 1.7.0 candidate",
     "Push a stable UI bootstrap ref",
     "merge commits",
     "Update and verify the final UI companion pins",

@@ -6,6 +6,32 @@ All notable changes to this package are documented in this file.
 
 ## Unreleased
 
+## 1.7.0 - 2026-09-03
+
+### Added
+
+- Added CSS-only `data-surface-feedback="error|success|attention"` outcomes with restrained one-shot motion, state-layer feedback, standalone color defaults, and seven public customization tokens.
+
+### Changed
+
+- Extended interaction precedence to disabled, busy/loading, feedback, transient active, persistent, hover, and base while keeping `:focus-visible` orthogonal.
+
+### Fixed
+
+- Prevented feedback motion from replacing consumer `transform`, `scale`, or `rotate` and prevented feedback from leaking through busy, loading, or disabled states.
+
+### Accessibility
+
+- Added static reduced-motion feedback, higher-contrast and forced-colors outlines, focus-priority coverage, and explicit application responsibility for textual status announcements.
+
+### Documentation
+
+- Documented outcome triggering, deterministic replay and cleanup, token customization, accessibility responsibilities, and the separate tooltip-motion roadmap.
+
+### Testing
+
+- Added static contracts, generated-bundle checks, demo workflows, combined-state precedence proofs, and Chromium, Firefox, and WebKit feedback coverage.
+
 ## 1.6.0 - 2026-08-09
 
 ### Added

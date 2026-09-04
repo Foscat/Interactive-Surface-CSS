@@ -54,6 +54,20 @@ The core's lift fallbacks are neutral. The standalone preset opts into the estab
 
 Supplying a public duration or easing value overrides both the default and transient-press fallback. The core owns this mechanics tuple; companion theme packages do not need a transition override.
 
+### Semantic outcome feedback
+
+| Token                                            | Core fallback                  | Standalone default |
+| ------------------------------------------------ | ------------------------------ | ------------------ |
+| `--interactive-surface-feedback-duration`        | `240ms`                        | Core value         |
+| `--interactive-surface-feedback-easing`          | `cubic-bezier(0.2, 0, 0.2, 1)` | Core value         |
+| `--interactive-surface-feedback-distance`        | `3px`                          | Core value         |
+| `--interactive-surface-feedback-layer-opacity`   | `0.18`                         | Core value         |
+| `--interactive-surface-feedback-error-color`     | `currentcolor`                 | `rgb(185 28 28)`   |
+| `--interactive-surface-feedback-success-color`   | `currentcolor`                 | `rgb(21 128 61)`   |
+| `--interactive-surface-feedback-attention-color` | `currentcolor`                 | `rgb(180 83 9)`    |
+
+The application owns outcome detection and attribute cleanup. Scope these tokens on a control or an exact feedback selector to customize a profile without adding generic motion utilities.
+
 ### Persistent-state emphasis
 
 - `--interactive-surface-darken-hover`

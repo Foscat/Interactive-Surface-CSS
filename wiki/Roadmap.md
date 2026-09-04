@@ -1,14 +1,14 @@
 # Roadmap
 
-Interactive Surface CSS 1.6.0 is a release candidate. The work in this branch adds optional shared semantic fallbacks without expanding into layout or theme ownership.
+Interactive Surface CSS 1.7.0 is a release candidate. The work in this branch adds CSS-only semantic feedback outcomes without expanding into layout, theme, tooltip, or runtime ownership.
 
-## 1.6.0 release candidate
+## 1.7.0 release candidate
 
 - Preserve every existing 1.x import, selector, hook, token fallback, and complete or companion stylesheet entry point.
-- Expose public transition property, duration, easing, and delay tokens from `state-core.css`.
-- Remove implicit UI-host lift compensation and cross-package transition importance from the standalone preset.
-- Enforce disabled, busy/loading, transient active, persistent, hover, and base precedence while keeping focus-visible orthogonal.
-- Preserve state meaning under reduced motion, higher contrast, and forced colors.
+- Add `data-surface-feedback="error"`, `"success"`, and `"attention"` as application-controlled outcome hooks.
+- Expose duration, easing, distance, layer-opacity, and outcome-color feedback tokens from `state-core.css`.
+- Enforce disabled, busy/loading, feedback, transient active, persistent, hover, and base precedence while keeping focus-visible orthogonal.
+- Preserve feedback meaning under reduced motion, higher contrast, and forced colors.
 - Compose interaction `translate` with consumer `transform`, `scale`, and `rotate`.
 - Keep UI Style Kit optional and preserve standalone package behavior.
 - Align generated artifacts, package metadata, README, wiki, changelog, and release assertions.
@@ -16,10 +16,17 @@ Interactive Surface CSS 1.6.0 is a release candidate. The work in this branch ad
 
 Publication, tagging, and a GitHub Release remain separate approval-gated steps.
 
-## After 1.6.0
+## Completed history
+
+- 1.6.0 added optional shared semantic fallbacks for standalone paint, control geometry, focus, and default motion.
+
+## After 1.7.0
 
 Potential follow-up work must be driven by demonstrated consumer need:
 
+- decide whether tooltip feedback should be attribute-triggered, ARIA-owned, or companion-owned
+- decide whether tooltip motion needs a dedicated reduced-motion static state
+- decide which package owns tooltip geometry before adding any selector
 - add targeted visual-regression baselines if state combinations become difficult to review
 - expand framework examples without shipping framework wrappers
 - add migration notes only when token evolution requires them

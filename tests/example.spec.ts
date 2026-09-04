@@ -206,6 +206,13 @@ test.describe("state-first example page", () => {
     const variant = stateLab.locator('[data-example="variant"]');
     const level = stateLab.locator('[data-example="level"]');
     const icon = stateLab.locator('[data-example="icon"]');
+    const feedbackError = stateLab.locator('[data-feedback-trigger="error"]');
+    const feedbackSuccess = stateLab.locator(
+      '[data-feedback-trigger="success"]',
+    );
+    const feedbackAttention = stateLab.locator(
+      '[data-feedback-trigger="attention"]',
+    );
 
     await expect(action).toHaveJSProperty("tagName", "BUTTON");
     await expect(toggle).toHaveAttribute("aria-pressed", "false");
@@ -221,6 +228,9 @@ test.describe("state-first example page", () => {
       "Show interaction details",
     );
     await expect(icon.locator("svg")).toHaveAttribute("aria-hidden", "true");
+    await expect(feedbackError).toHaveJSProperty("tagName", "BUTTON");
+    await expect(feedbackSuccess).toHaveJSProperty("tagName", "BUTTON");
+    await expect(feedbackAttention).toHaveJSProperty("tagName", "BUTTON");
   });
 
   test("updates pressed, selected, busy, and action state through real controls", async ({
@@ -263,6 +273,36 @@ test.describe("state-first example page", () => {
     await expect(page.getByRole("status")).toHaveText(
       "Action example completed.",
     );
+  });
+
+  test("triggers, announces, clears, and replays semantic feedback", async ({
+    page,
+  }) => {
+    const expectations = [
+      ["error", "The demo action failed. Review the control and try again."],
+      ["success", "The demo action completed successfully."],
+      ["attention", "The demo control needs your attention."],
+    ] as const;
+
+    for (const [outcome, message] of expectations) {
+      const control = page.locator(`[data-feedback-trigger="${outcome}"]`);
+      await control.click();
+      await expect(control).toHaveAttribute("data-surface-feedback", outcome);
+      await expect(page.getByRole("status")).toHaveText(message);
+      await expect(control).not.toHaveAttribute(
+        "data-surface-feedback",
+        outcome,
+        {
+          timeout: 1_200,
+        },
+      );
+    }
+
+    const error = page.locator('[data-feedback-trigger="error"]');
+    await error.click();
+    await expect(error).toHaveAttribute("data-surface-feedback", "error");
+    await error.click();
+    await expect(error).toHaveAttribute("data-surface-feedback", "error");
   });
 
   test("supports wrapping keyboard navigation for the roving state tabs", async ({
