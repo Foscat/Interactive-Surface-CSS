@@ -169,7 +169,13 @@ async function runCli(args) {
     return;
   }
 
-  const { fixtureRoot, forwardedArgs } = parseFixtureRoot(args);
+  const {
+    fixtureRoot,
+    layoutRepo,
+    layoutDocsRepo,
+    interactiveDocsRepo,
+    forwardedArgs,
+  } = parseFixtureCliArgs(args);
   const resolvedFixtureRoot = path.resolve(
     fixtureRoot ??
       process.env.CSS_ECOSYSTEM_FIXTURE_ROOT ??
@@ -203,7 +209,9 @@ async function runCli(args) {
     );
     const layout = prepareReviewedCompanion({
       packageName: "layout-style-css",
-      sourceRoot: path.resolve(rootDir, "..", "Layout-Style-CSS"),
+      sourceRoot: path.resolve(
+        layoutRepo ?? path.join(rootDir, "..", "Layout-Style-CSS"),
+      ),
       source: compatibility.packageSources["layout-style-css"],
       tempRoot,
     });
@@ -218,9 +226,9 @@ async function runCli(args) {
       "--layout-repo",
       layout.root,
       "--layout-docs-repo",
-      layout.root,
+      path.resolve(layoutDocsRepo ?? layout.root),
       "--interactive-docs-repo",
-      rootDir,
+      path.resolve(interactiveDocsRepo ?? rootDir),
       ...forwardedArgs,
     ];
     run(process.execPath, commandArgs, {
@@ -339,18 +347,51 @@ function materializeGitRevision({
   installReviewedDependencies(targetRoot, label);
 }
 
-function parseFixtureRoot(args) {
+function parseFixtureCliArgs(args) {
   const forwardedArgs = [];
   let fixtureRoot;
+  let layoutRepo;
+  let layoutDocsRepo;
+  let interactiveDocsRepo;
+
+  const readFlagValue = (flag, argsRef, indexRef) => {
+    const value = argsRef[(indexRef.value += 1)];
+    assert.ok(value, `${flag} requires a value.`);
+    return value;
+  };
+
   for (let index = 0; index < args.length; index += 1) {
-    if (args[index] === "--fixture-root") {
-      fixtureRoot = args[(index += 1)];
-      assert.ok(fixtureRoot, "--fixture-root requires a value.");
-    } else {
-      forwardedArgs.push(args[index]);
+    const indexRef = { value: index };
+    switch (args[index]) {
+      case "--fixture-root":
+        fixtureRoot = readFlagValue("--fixture-root", args, indexRef);
+        break;
+      case "--layout-repo":
+        layoutRepo = readFlagValue("--layout-repo", args, indexRef);
+        break;
+      case "--layout-docs-repo":
+        layoutDocsRepo = readFlagValue("--layout-docs-repo", args, indexRef);
+        break;
+      case "--interactive-docs-repo":
+        interactiveDocsRepo = readFlagValue(
+          "--interactive-docs-repo",
+          args,
+          indexRef,
+        );
+        break;
+      default:
+        forwardedArgs.push(args[index]);
+        break;
     }
+    index = indexRef.value;
   }
-  return { fixtureRoot, forwardedArgs };
+  return {
+    fixtureRoot,
+    layoutRepo,
+    layoutDocsRepo,
+    interactiveDocsRepo,
+    forwardedArgs,
+  };
 }
 
 function hasGitRevision(fixtureRoot, revision) {
