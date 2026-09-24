@@ -1059,7 +1059,15 @@ input[type="file"].interactive-surface.interactive-surface:where(
       [data-surface-feedback="error"],
       [data-surface-feedback="success"],
       [data-surface-feedback="attention"]
-    ):not(:is(.is-disabled, :disabled, [aria-disabled="true"])) {
+    ):not(
+      :is(
+        .is-disabled,
+        :disabled,
+        [aria-disabled="true"],
+        [aria-busy="true"],
+        .is-loading
+      )
+    ) {
     translate: none;
     animation: none;
     transition: none;
@@ -1069,7 +1077,15 @@ input[type="file"].interactive-surface.interactive-surface:where(
       [data-surface-feedback="error"],
       [data-surface-feedback="success"],
       [data-surface-feedback="attention"]
-    ):not(:is(.is-disabled, :disabled, [aria-disabled="true"]))::before {
+    ):not(
+      :is(
+        .is-disabled,
+        :disabled,
+        [aria-disabled="true"],
+        [aria-busy="true"],
+        .is-loading
+      )
+    )::before {
     animation: none;
     transition: none;
   }

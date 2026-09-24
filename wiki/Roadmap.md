@@ -1,8 +1,8 @@
 # Roadmap
 
-Interactive Surface CSS 1.7.0 is a release candidate. The work in this branch adds CSS-only semantic feedback outcomes without expanding into layout, theme, tooltip, or runtime ownership.
+Interactive Surface CSS 1.7.0 is released. The work in this branch adds CSS-only semantic feedback outcomes without expanding into layout, theme, tooltip, or runtime ownership.
 
-## 1.7.0 release candidate
+## 1.7.0 release
 
 - Preserve every existing 1.x import, selector, hook, token fallback, and complete or companion stylesheet entry point.
 - Add `data-surface-feedback="error"`, `"success"`, and `"attention"` as application-controlled outcome hooks.
