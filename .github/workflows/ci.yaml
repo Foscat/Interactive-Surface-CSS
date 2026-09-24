@@ -44,3 +44,63 @@ jobs:
 
       - name: Validate package
         run: npm run ${{ matrix.validation-script }}
+
+  release-preflight:
+    name: PR-safe ecosystem release preflight
+    if: github.event_name == 'pull_request'
+    needs: quality
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout Interactive Surface candidate
+        uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
+
+      - name: Use Node.js 22
+        uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install candidate dependencies
+        run: npm ci
+
+      - name: Resolve immutable UI release fixture
+        id: ui_fixture
+        run: node scripts/release-fixture-contract.mjs --write-github-outputs
+
+      - name: Checkout reviewed UI release fixture
+        uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
+        with:
+          repository: ${{ steps.ui_fixture.outputs.ui_repository }}
+          ref: ${{ steps.ui_fixture.outputs.ui_revision }}
+          path: _ecosystem/ui-style-kit-css
+
+      - name: Install UI fixture dependencies
+        working-directory: _ecosystem/ui-style-kit-css
+        run: npm ci
+
+      - name: Resolve immutable Layout companion
+        id: ecosystem_sources
+        working-directory: _ecosystem/ui-style-kit-css
+        run: node scripts/write-ecosystem-workflow-outputs.mjs
+
+      - name: Checkout reviewed Layout companion
+        uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
+        with:
+          repository: ${{ steps.ecosystem_sources.outputs.layout_repository }}
+          ref: ${{ steps.ecosystem_sources.outputs.layout_revision }}
+          path: _ecosystem/Layout-Style-CSS
+
+      - name: Install Layout companion dependencies
+        working-directory: _ecosystem/Layout-Style-CSS
+        run: npm ci
+
+      - name: Install clean-consumer Chromium
+        working-directory: _ecosystem/ui-style-kit-css
+        run: npx playwright install --with-deps chromium
+
+      # Candidate override is an npm-pack tarball; the other two sources stay at reviewed immutable commits.
+      - name: Run read-only release preflight
+        run: npm run release:preflight -- --fixture-root $GITHUB_WORKSPACE/_ecosystem/ui-style-kit-css --layout-repo $GITHUB_WORKSPACE/_ecosystem/Layout-Style-CSS --layout-docs-repo $GITHUB_WORKSPACE/_ecosystem/Layout-Style-CSS --interactive-docs-repo $GITHUB_WORKSPACE

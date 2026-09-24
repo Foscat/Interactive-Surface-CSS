@@ -60,6 +60,45 @@ jobs:
       - name: Validate publish package
         run: npm run validate:publish
 
+      - name: Resolve immutable UI release fixture
+        id: ui_fixture
+        run: node scripts/release-fixture-contract.mjs --write-github-outputs
+
+      - name: Checkout reviewed UI release fixture
+        uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
+        with:
+          repository: ${{ steps.ui_fixture.outputs.ui_repository }}
+          ref: ${{ steps.ui_fixture.outputs.ui_revision }}
+          path: _ecosystem/ui-style-kit-css
+
+      - name: Install UI fixture dependencies
+        working-directory: _ecosystem/ui-style-kit-css
+        run: npm ci
+
+      - name: Resolve immutable Layout companion
+        id: ecosystem_sources
+        working-directory: _ecosystem/ui-style-kit-css
+        run: node scripts/write-ecosystem-workflow-outputs.mjs
+
+      - name: Checkout reviewed Layout companion
+        uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
+        with:
+          repository: ${{ steps.ecosystem_sources.outputs.layout_repository }}
+          ref: ${{ steps.ecosystem_sources.outputs.layout_revision }}
+          path: _ecosystem/Layout-Style-CSS
+
+      - name: Install Layout companion dependencies
+        working-directory: _ecosystem/Layout-Style-CSS
+        run: npm ci
+
+      - name: Install clean-consumer Chromium
+        working-directory: _ecosystem/ui-style-kit-css
+        run: npx playwright install --with-deps chromium
+
+      # This gate performs only registry reads, candidate packing, and clean-consumer validation.
+      - name: Run ecosystem release preflight
+        run: npm run release:preflight -- --fixture-root $GITHUB_WORKSPACE/_ecosystem/ui-style-kit-css --layout-repo $GITHUB_WORKSPACE/_ecosystem/Layout-Style-CSS --layout-docs-repo $GITHUB_WORKSPACE/_ecosystem/Layout-Style-CSS --interactive-docs-repo $GITHUB_WORKSPACE
+
       - name: Publish to npm
         run: npm publish --provenance --access public --ignore-scripts
         env:

@@ -13,6 +13,10 @@
   const toggleState = document.getElementById("toggle-state");
   const loadingExample = document.querySelector('[data-example="loading"]');
   const iconExample = document.querySelector('[data-example="icon"]');
+  const feedbackExamples = Array.from(
+    document.querySelectorAll("[data-feedback-trigger]"),
+  );
+  const feedbackGenerations = new WeakMap();
   const tabs = Array.from(
     document.querySelectorAll('#state-tabs [role="tab"]'),
   );
@@ -64,6 +68,36 @@
     statusRegion.classList.remove("is-error", "is-success");
   }
 
+  /**
+   * Replays one semantic surface-feedback outcome and removes it after the visible window.
+   *
+   * @param {HTMLElement} control - Control that receives `data-surface-feedback`.
+   * @param {"error" | "success" | "attention"} outcome - Application-reported outcome to render.
+   * @param {number} [visibleFor=600] - Time in milliseconds before the feedback attribute is cleared.
+   * @returns {void}
+   */
+  function showSurfaceFeedback(control, outcome, visibleFor = 600) {
+    const generation = (feedbackGenerations.get(control) ?? 0) + 1;
+    feedbackGenerations.set(control, generation);
+    control.removeAttribute("data-surface-feedback");
+
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        if (feedbackGenerations.get(control) !== generation) return;
+
+        control.setAttribute("data-surface-feedback", outcome);
+        window.setTimeout(() => {
+          if (
+            feedbackGenerations.get(control) === generation &&
+            control.getAttribute("data-surface-feedback") === outcome
+          ) {
+            control.removeAttribute("data-surface-feedback");
+          }
+        }, visibleFor);
+      });
+    });
+  }
+
   function setDialogStatus(message, options = {}) {
     const { persistOnClose = false, ...statusOptions } = options;
     persistDialogFeedbackOnClose = persistOnClose;
@@ -73,6 +107,29 @@
   // State examples mutate the same semantic attributes consumed by the stylesheet.
   actionExample?.addEventListener("click", () => {
     setStatus("Action example completed.", { tone: "success" });
+  });
+
+  const feedbackMessages = {
+    error: "The demo action failed. Review the control and try again.",
+    success: "The demo action completed successfully.",
+    attention: "The demo control needs your attention.",
+  };
+
+  feedbackExamples.forEach((control) => {
+    control.addEventListener("click", () => {
+      const outcome = control.dataset.feedbackTrigger;
+      if (!Object.hasOwn(feedbackMessages, outcome)) return;
+
+      showSurfaceFeedback(control, outcome);
+      setStatus(feedbackMessages[outcome], {
+        tone:
+          outcome === "error"
+            ? "error"
+            : outcome === "success"
+              ? "success"
+              : "",
+      });
+    });
   });
 
   toggleExample?.addEventListener("click", () => {

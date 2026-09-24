@@ -54,6 +54,20 @@ The core's lift fallbacks are neutral. The standalone preset opts into the estab
 
 Supplying a public duration or easing value overrides both the default and transient-press fallback. The core owns this mechanics tuple; companion theme packages do not need a transition override.
 
+### Semantic outcome feedback
+
+| Token                                            | Core fallback                  | Standalone default |
+| ------------------------------------------------ | ------------------------------ | ------------------ |
+| `--interactive-surface-feedback-duration`        | `240ms`                        | Core value         |
+| `--interactive-surface-feedback-easing`          | `cubic-bezier(0.2, 0, 0.2, 1)` | Core value         |
+| `--interactive-surface-feedback-distance`        | `3px`                          | Core value         |
+| `--interactive-surface-feedback-layer-opacity`   | `0.18`                         | Core value         |
+| `--interactive-surface-feedback-error-color`     | `currentcolor`                 | `rgb(185 28 28)`   |
+| `--interactive-surface-feedback-success-color`   | `currentcolor`                 | `rgb(21 128 61)`   |
+| `--interactive-surface-feedback-attention-color` | `currentcolor`                 | `rgb(180 83 9)`    |
+
+The application owns outcome detection and attribute cleanup. Scope these tokens on a control or an exact feedback selector to customize a profile without adding generic motion utilities.
+
 ### Persistent-state emphasis
 
 - `--interactive-surface-darken-hover`
@@ -116,6 +130,26 @@ Generic bridge-facing level tokens:
 
 These values apply to the matching `data-icon-role` hooks and preserved icon-role classes inside `.icon-only`.
 
+## Shared semantic fallbacks
+
+A third-party theme or design system may provide these optional, package-neutral values. Interactive Surface resolves package-specific values first, shared semantic values second, and existing legacy values or literals last.
+
+| Shared token            | Interactive Surface use                     |
+| ----------------------- | ------------------------------------------- |
+| `--ui-color-surface`    | Standalone base surface background          |
+| `--ui-color-text`       | Standalone base foreground                  |
+| `--ui-color-muted`      | Subtle-variant foreground                   |
+| `--ui-color-primary`    | Primary-variant background and border       |
+| `--ui-color-on-primary` | Primary-variant foreground                  |
+| `--ui-color-border`     | Standalone base border                      |
+| `--ui-radius-control`   | Standalone control radius                   |
+| `--ui-shadow-control`   | Standalone base shadow                      |
+| `--ui-focus-color`      | Focus-ring color                            |
+| `--ui-motion-duration`  | Default interaction and transition duration |
+| `--ui-motion-easing`    | Standard interaction and transition easing  |
+
+These fallbacks are additive. Existing output is unchanged when they are absent, and a package-specific `--interactive-surface-*` override always wins. `state-core.css` consumes only the focus and default-motion semantic values; paint and component geometry remain consumer-owned in the state-only entry point.
+
 ## Existing fallback tokens
 
 ### Legacy interaction fallbacks
@@ -170,13 +204,16 @@ These non-namespaced families are compatibility-only. Prefer the namespaced prop
 
 Use functional color notation such as `rgb(0 95 115)` or `hsl(190deg 100% 23%)`. Avoid reducing focus-ring visibility or disabled distinction below practical usability.
 
-## UI Style Kit bridge
+## UI Style Kit theme bridge
 
-`ui-style-kit-css/with-bridge.css` maps its active theme and mode values into this public contract. Pair it with the state-only entry:
+`ui-style-kit-css/interactive-surface-theme.css` maps active theme and mode values into this public contract. Pair UI paint, the token-and-paint bridge, and the state-only entry:
 
 ```js
-import "ui-style-kit-css/with-bridge.css";
+import "ui-style-kit-css/visual.css";
+import "ui-style-kit-css/interactive-surface-theme.css";
 import "interactive-surface-css/state-core.css";
 ```
 
-UI Style Kit owns the mapped paint values. Interactive Surface owns state behavior and remains usable without the bridge.
+UI Style Kit owns the mapped paint values. Interactive Surface owns state behavior and remains usable without the bridge. The stateful `ui-style-kit-css/with-bridge.css` path remains a deprecated migration-only compatibility export; new integrations should use the token-and-paint bridge above.
+
+Third-party design systems that publish only the shared semantic contract can load their token stylesheet before `interactive-surface-css/standalone-preset.css`. UI Style Kit integrations should keep the canonical bridge imports when they need specialized variant, level, icon, and state-opacity mappings.

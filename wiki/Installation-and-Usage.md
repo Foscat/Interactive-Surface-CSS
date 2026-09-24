@@ -1,6 +1,6 @@
 # Installation and Usage
 
-These instructions target the published Interactive Surface CSS 1.5.0 release. Existing 1.x imports remain supported.
+These instructions target the Interactive Surface CSS 1.7.0 release candidate. Existing 1.x imports remain supported.
 
 The npm package targets Node.js 20+ for installation and local validation. CI also proves the preferred Node.js 22 release lane.
 
@@ -51,11 +51,11 @@ Pin the release in reproducible pages:
 ```html
 <link
   rel="stylesheet"
-  href="https://cdn.jsdelivr.net/npm/interactive-surface-css@1.5.0/standalone-preset.css"
+  href="https://cdn.jsdelivr.net/npm/interactive-surface-css@1.7.0/standalone-preset.css"
 />
 <link
   rel="stylesheet"
-  href="https://unpkg.com/interactive-surface-css@1.5.0/standalone-preset.css"
+  href="https://unpkg.com/interactive-surface-css@1.7.0/standalone-preset.css"
 />
 ```
 
@@ -118,18 +118,28 @@ import "interactive-surface-css/standalone-preset.css";
 ### With UI Style Kit CSS
 
 ```js
-import "ui-style-kit-css/with-bridge.css";
+import "ui-style-kit-css/visual.css";
+import "ui-style-kit-css/interactive-surface-theme.css";
 import "interactive-surface-css/state-core.css";
 ```
 
 UI Style Kit owns paint and theme modes; Interactive Surface owns interaction states.
 
+### With a third-party semantic theme
+
+```js
+import "third-party-theme/tokens.css";
+import "interactive-surface-css/standalone-preset.css";
+```
+
+The third-party design system may provide the optional `--ui-*` semantic control tokens documented in the token reference. Resolution remains package-specific first, shared semantic second, and legacy fallback or literal last. Use `state-core.css` instead when that theme already paints and sizes the component itself.
+
 ### With all three libraries
 
 ```js
-import "ui-style-kit-css/with-bridge.css";
+import "ui-style-kit-css/visual.css";
+import "ui-style-kit-css/interactive-surface-theme.css";
 import "interactive-surface-css/state-core.css";
-import "layout-style-css/bridge.css";
 import "layout-style-css";
 ```
 
@@ -138,6 +148,82 @@ Layout Style CSS owns structure and geometry. The [Interface Systems Lab](https:
 ## State and activation responsibilities
 
 CSS provides visible state but no runtime state machine. Applications must update `aria-pressed`, `aria-current`, `aria-selected`, and `aria-busy`. Prefer native `disabled`; consumers must suppress activation for `aria-disabled="true"` and `.is-disabled` controls.
+
+For outcome feedback, apply `data-surface-feedback="error"`, `"success"`, or `"attention"` only after the application knows the result. Pair it with visible text or a live status region.
+
+```js
+const feedbackGenerations = new WeakMap();
+
+function showSurfaceFeedback(control, outcome, visibleFor = 600) {
+  const generation = (feedbackGenerations.get(control) ?? 0) + 1;
+  feedbackGenerations.set(control, generation);
+  control.removeAttribute("data-surface-feedback");
+
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      if (feedbackGenerations.get(control) !== generation) return;
+
+      control.setAttribute("data-surface-feedback", outcome);
+      window.setTimeout(() => {
+        if (
+          feedbackGenerations.get(control) === generation &&
+          control.getAttribute("data-surface-feedback") === outcome
+        ) {
+          control.removeAttribute("data-surface-feedback");
+        }
+      }, visibleFor);
+    });
+  });
+}
+```
+
+```jsx
+function SaveButton({ saveChanges }) {
+  const [feedback, setFeedback] = React.useState();
+  const [status, setStatus] = React.useState("");
+  const clearTimer = React.useRef();
+
+  React.useEffect(() => () => window.clearTimeout(clearTimer.current), []);
+
+  async function save() {
+    window.clearTimeout(clearTimer.current);
+    setFeedback(undefined);
+    await new Promise((resolve) => requestAnimationFrame(resolve));
+
+    let outcome;
+
+    try {
+      await saveChanges();
+      outcome = "success";
+      setStatus("Changes saved.");
+    } catch {
+      outcome = "error";
+      setStatus("Changes could not be saved.");
+    }
+
+    setFeedback(outcome);
+    clearTimer.current = window.setTimeout(
+      () =>
+        setFeedback((current) => (current === outcome ? undefined : current)),
+      600,
+    );
+  }
+
+  return (
+    <>
+      <button
+        className="interactive-surface variant-primary"
+        data-surface-feedback={feedback}
+        onClick={save}
+        type="button"
+      >
+        Save changes
+      </button>
+      <span role="status">{status}</span>
+    </>
+  );
+}
+```
 
 Interaction lift uses the individual `translate` property and composes with consumer-owned `transform`, `scale`, and `rotate`.
 

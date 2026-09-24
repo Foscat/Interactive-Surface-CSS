@@ -38,13 +38,17 @@ The state layer supports `.is-active`, `aria-pressed="true"`, `aria-pressed="mix
 
 Yes. Interactive Surface uses the individual `translate` longhand for lift and preserves consumer-owned `transform`, `scale`, and `rotate`.
 
+## Does CSS know when my action failed?
+
+No. Application code decides the outcome, applies `data-surface-feedback="error"`, `"success"`, or `"attention"`, announces the result, and removes the attribute after the feedback window.
+
 ## What does `.icon-only` do?
 
 In the standalone preset and compatibility bundle it supplies centered icon presentation and a 44 × 44px minimum target. A core-only consumer owns that geometry. Every icon-only control still needs an accessible name.
 
-## Is 1.5.0 published?
+## Is 1.7.0 published?
 
-Yes. `interactive-surface-css@1.5.0` is published on npm. Pinned CDN URLs remain distribution checks, not the authority for package publication.
+The repository describes 1.7.0 as a release candidate until npm publication is explicitly approved and completed. Pinned CDN URLs are distribution checks, not proof of publication.
 
 ## What browsers are tested?
 
