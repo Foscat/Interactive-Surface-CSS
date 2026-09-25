@@ -1,6 +1,6 @@
 {
   "name": "interactive-surface-css",
-  "version": "1.7.0",
+  "version": "1.7.1",
   "description": "A framework-agnostic, accessible CSS interaction primitive for buttons, cards, and icon controls with token-driven theming.",
   "keywords": [
     "css",
@@ -122,8 +122,9 @@
     "ui-style-kit-css": "2.1.0"
   },
   "overrides": {
+    "colord": "2.10.0",
     "fast-uri": "3.1.6",
-    "js-yaml": "4.3.1",
+    "js-yaml": "4.3.2",
     "nanoid": "3.3.18",
     "postcss": "8.5.23"
   },

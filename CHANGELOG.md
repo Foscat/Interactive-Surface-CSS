@@ -6,6 +6,20 @@ All notable changes to this package are documented in this file.
 
 ## Unreleased
 
+## 1.7.1 - 2026-09-24
+
+### Fixed
+
+- Changed the state-layer containing-block declaration to a zero-specificity fallback so consumer-owned absolute, fixed, and sticky positioning remains authoritative regardless of stylesheet order.
+
+### Testing
+
+- Added narrow-viewport browser contracts for positioned icon controls, nested surfaces, keyboard focus layers, bounded internal scrolling, and document-overflow containment.
+
+### Security
+
+- Refreshed audited transitive lint-tool overrides for `colord` and `js-yaml` without changing the package runtime.
+
 ## 1.7.0 - 2026-09-03
 
 ### Added

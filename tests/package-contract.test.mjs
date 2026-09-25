@@ -8,7 +8,7 @@ import { spawnSync } from "node:child_process";
 import test from "node:test";
 
 const EXPECTED_NAME = "interactive-surface-css";
-const EXPECTED_VERSION = "1.7.0";
+const EXPECTED_VERSION = "1.7.1";
 const CHECKOUT_V4_SHA = "34e114876b0b11c390a56381ad16ebd13914f8d5";
 const CHECKOUT_V5_SHA = "93cb6efe18208431cddfb8368fd83d5badbf9bfd";
 const SETUP_NODE_V5_SHA = "a0853c24544627f65ddf259abe73b1d18a591444";
@@ -24,8 +24,9 @@ const packageLock = JSON.parse(
 
 // Exact overrides keep the release audit deterministic without promoting transitive tooling to direct dependencies.
 const expectedSecurityOverrides = {
+  colord: "2.10.0",
   "fast-uri": "3.1.6",
-  "js-yaml": "4.3.1",
+  "js-yaml": "4.3.2",
   nanoid: "3.3.18",
   postcss: "8.5.23",
 };
@@ -259,7 +260,7 @@ function collectReferencedAssetPaths(assetFile, assetSource) {
     .sort();
 }
 
-test("the release manifest and validation graph are pinned to 1.7.0", () => {
+test("the release manifest and validation graph are pinned to 1.7.1", () => {
   assert.equal(manifest.name, EXPECTED_NAME);
   assert.equal(manifest.version, EXPECTED_VERSION);
   assert.equal(
@@ -306,12 +307,12 @@ test("release security overrides resolve audited transitive tooling", () => {
   }
 });
 
-test("the changelog keeps the complete 1.7.0 release after the Unreleased section", async () => {
+test("the changelog keeps the complete 1.7.1 release after the Unreleased section", async () => {
   const changelog = await readFile(
     path.join(repositoryRoot, "CHANGELOG.md"),
     "utf8",
   );
-  const releaseHeading = `## ${EXPECTED_VERSION} - 2026-09-03`;
+  const releaseHeading = `## ${EXPECTED_VERSION} - 2026-09-24`;
   const releaseMatches =
     changelog.match(
       new RegExp(`^${releaseHeading.replaceAll(".", "\\.")}$`, "gm"),
@@ -348,14 +349,7 @@ test("the changelog keeps the complete 1.7.0 release after the Unreleased sectio
     nextRelease === -1 ? undefined : nextRelease,
   );
 
-  for (const category of [
-    "Added",
-    "Changed",
-    "Fixed",
-    "Accessibility",
-    "Documentation",
-    "Testing",
-  ]) {
+  for (const category of ["Fixed", "Testing"]) {
     assert.match(
       releaseNotes,
       new RegExp(`^### ${category}\\r?\\n\\r?\\n- `, "m"),
