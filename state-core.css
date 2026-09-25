@@ -148,7 +148,6 @@
     var(--_is-preset-feedback-attention-color, currentcolor)
   );
 
-  position: relative;
   isolation: isolate;
   cursor: pointer;
   touch-action: manipulation;
@@ -162,6 +161,14 @@
   transition-delay: var(--_is-transition-delay);
   /* stylelint-enable declaration-block-no-redundant-longhand-properties */
   will-change: auto;
+}
+
+/*
+ * The state layer needs a containing block, but consumer topology must win even
+ * when application CSS loads before this package.
+ */
+:where(.interactive-surface) {
+  position: relative;
 }
 
 /* The isolated state layer changes interaction emphasis without filtering content. */

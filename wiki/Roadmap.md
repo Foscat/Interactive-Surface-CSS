@@ -1,15 +1,13 @@
 # Roadmap
 
-Interactive Surface CSS 1.7.0 is a release candidate. The work in this branch adds CSS-only semantic feedback outcomes without expanding into layout, theme, tooltip, or runtime ownership.
+Interactive Surface CSS 1.7.1 is a release candidate. This patch preserves consumer-owned positioned-control topology without expanding into layout, theme, tooltip, or runtime ownership.
 
-## 1.7.0 release candidate
+## 1.7.1 release candidate
 
 - Preserve every existing 1.x import, selector, hook, token fallback, and complete or companion stylesheet entry point.
-- Add `data-surface-feedback="error"`, `"success"`, and `"attention"` as application-controlled outcome hooks.
-- Expose duration, easing, distance, layer-opacity, and outcome-color feedback tokens from `state-core.css`.
-- Enforce disabled, busy/loading, feedback, transient active, persistent, hover, and base precedence while keeping focus-visible orthogonal.
-- Preserve feedback meaning under reduced motion, higher contrast, and forced colors.
-- Compose interaction `translate` with consumer `transform`, `scale`, and `rotate`.
+- Preserve the 1.7.0 semantic feedback hooks, tokens, precedence, and preference behavior.
+- Keep the internal state layer anchored while allowing consumer absolute, fixed, and sticky positioning to win regardless of stylesheet order.
+- Cover positioned icon controls, nested surfaces, bounded internal scrolling, and narrow document-overflow containment in real browsers.
 - Keep UI Style Kit optional and preserve standalone package behavior.
 - Align generated artifacts, package metadata, README, wiki, changelog, and release assertions.
 - Lock the package, audit, Chromium, and full-browser release gates.
@@ -19,8 +17,9 @@ Publication, tagging, and a GitHub Release remain separate approval-gated steps.
 ## Completed history
 
 - 1.6.0 added optional shared semantic fallbacks for standalone paint, control geometry, focus, and default motion.
+- 1.7.0 added CSS-only semantic outcome feedback, complete precedence coverage, and composable interaction motion.
 
-## After 1.7.0
+## After 1.7.1
 
 Potential follow-up work must be driven by demonstrated consumer need:
 
