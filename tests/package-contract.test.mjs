@@ -363,6 +363,9 @@ test("the npm publishing workflow only accepts a matching published release", as
     "utf8",
   );
   const releaseGuard = workflow.indexOf("- name: Validate release metadata");
+  const trustedPublishingCli = workflow.indexOf(
+    "- name: Install trusted-publishing npm CLI",
+  );
   const dependencyInstall = workflow.indexOf("- name: Install dependencies");
   const packageValidation = workflow.indexOf(
     "- name: Validate publish package",
@@ -415,14 +418,23 @@ test("the npm publishing workflow only accepts a matching published release", as
     workflow,
     /permissions:\r?\n\s+contents: read\r?\n\s+id-token: write/,
   );
+  assert.match(workflow, /run: npm install --global npm@11\.5\.1/);
+  assert.doesNotMatch(
+    workflow,
+    /NODE_AUTH_TOKEN:\s*\$\{\{ secrets\.NPM_TOKEN \}\}/,
+  );
   assert.match(workflow, /run: npm run validate:publish/);
   assert.match(
     workflow,
     /run: npm publish --provenance --access public --ignore-scripts/,
   );
   assert.ok(
-    releaseGuard !== -1 && releaseGuard < dependencyInstall,
-    "Release metadata must be checked before npm ci",
+    releaseGuard !== -1 && releaseGuard < trustedPublishingCli,
+    "Release metadata must be checked before the trusted-publishing CLI is installed",
+  );
+  assert.ok(
+    trustedPublishingCli < dependencyInstall,
+    "The OIDC-capable npm CLI must be installed before npm ci and publish",
   );
   assert.ok(
     dependencyInstall < packageValidation && packageValidation < packagePublish,
