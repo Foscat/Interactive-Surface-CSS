@@ -8,7 +8,7 @@ import { spawnSync } from "node:child_process";
 import test from "node:test";
 
 const EXPECTED_NAME = "interactive-surface-css";
-const EXPECTED_VERSION = "1.7.2";
+const EXPECTED_VERSION = "1.7.3";
 const CHECKOUT_V4_SHA = "34e114876b0b11c390a56381ad16ebd13914f8d5";
 const CHECKOUT_V5_SHA = "93cb6efe18208431cddfb8368fd83d5badbf9bfd";
 const SETUP_NODE_V5_SHA = "a0853c24544627f65ddf259abe73b1d18a591444";
@@ -260,7 +260,7 @@ function collectReferencedAssetPaths(assetFile, assetSource) {
     .sort();
 }
 
-test("the release manifest and validation graph are pinned to 1.7.2", () => {
+test("the release manifest and validation graph are pinned to 1.7.3", () => {
   assert.equal(manifest.name, EXPECTED_NAME);
   assert.equal(manifest.version, EXPECTED_VERSION);
   assert.equal(
@@ -307,7 +307,7 @@ test("release security overrides resolve audited transitive tooling", () => {
   }
 });
 
-test("the changelog keeps the complete 1.7.2 release after the Unreleased section", async () => {
+test("the changelog keeps the complete 1.7.3 release after the Unreleased section", async () => {
   const changelog = await readFile(
     path.join(repositoryRoot, "CHANGELOG.md"),
     "utf8",
@@ -370,6 +370,9 @@ test("the npm publishing workflow only accepts a matching published release", as
   const packageValidation = workflow.indexOf(
     "- name: Validate publish package",
   );
+  const ecosystemPreflight = workflow.indexOf(
+    "- name: Run ecosystem release preflight",
+  );
   const packagePublish = workflow.indexOf("- name: Publish to npm");
   const guardProgramStart = workflow.indexOf("node <<'NODE'");
   const guardProgramEnd = workflow.indexOf(
@@ -429,12 +432,13 @@ test("the npm publishing workflow only accepts a matching published release", as
     /run: npm publish --provenance --access public --ignore-scripts/,
   );
   assert.ok(
-    releaseGuard !== -1 && releaseGuard < trustedPublishingCli,
-    "Release metadata must be checked before the trusted-publishing CLI is installed",
+    releaseGuard !== -1 && releaseGuard < dependencyInstall,
+    "Release metadata must be checked before npm ci",
   );
   assert.ok(
-    trustedPublishingCli < dependencyInstall,
-    "The OIDC-capable npm CLI must be installed before npm ci and publish",
+    ecosystemPreflight < trustedPublishingCli &&
+      trustedPublishingCli < packagePublish,
+    "The OIDC-capable npm CLI must be installed after preflight and immediately before publish",
   );
   assert.ok(
     dependencyInstall < packageValidation && packageValidation < packagePublish,
