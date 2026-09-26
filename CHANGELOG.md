@@ -6,6 +6,17 @@ All notable changes to this package are documented in this file.
 
 ## Unreleased
 
+## 1.7.2 - 2026-09-26
+
+### Fixed
+
+- Replaced the expired long-lived npm token path with the package's existing OIDC trusted publisher and an explicitly pinned OIDC-capable npm CLI.
+- Carried the complete 1.7.1 CSS and compatibility payload forward unchanged because GitHub release workflows execute from the immutable tag revision.
+
+### Testing
+
+- Added a workflow contract that requires `id-token: write`, npm 11.5.1, and token-free publication before a release can proceed.
+
 ## 1.7.1 - 2026-09-24
 
 ### Fixed

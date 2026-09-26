@@ -1,22 +1,22 @@
 # Publishing and Releases
 
-Interactive Surface CSS 1.7.1 is a release candidate until the package is published. Preparing this branch does not authorize an npm publish, Git tag, or GitHub Release.
+Interactive Surface CSS 1.7.2 is the current release. It carries the complete 1.7.1 CSS payload forward and repairs publication through the package's OIDC trusted publisher.
 
 ## Release ownership
 
 The repository's intended path is:
 
-1. Merge an approved, fully verified release candidate.
+1. Merge an approved, fully verified release commit.
 2. Create the matching GitHub Release and version tag.
 3. Let the npm publish workflow validate the release identity and publish with provenance.
 4. Verify npm and pinned CDN distribution.
 
 See the [npm publish workflow](https://github.com/Foscat/Interactive-Surface-CSS/blob/main/.github/workflows/npm-publish.yml) for the executable release rules.
 
-## 1.7.1 release-candidate checklist
+## 1.7.2 release checklist
 
-1. Confirm `package.json` and `package-lock.json` identify `1.7.1`.
-2. Confirm the 1.7.1 changelog entry describes the zero-specificity positioned-control fallback and its browser coverage.
+1. Confirm `package.json` and `package-lock.json` identify `1.7.2`.
+2. Confirm the 1.7.2 changelog entry records the OIDC publication repair and retained 1.7.1 CSS payload.
 3. Confirm absolute, fixed, and sticky consumer positions win even when application CSS loads before Interactive Surface.
 4. Confirm semantic feedback, reduced motion, higher contrast, forced colors, state precedence, and focus priority remain covered.
 5. Confirm manifest, README, embedded README, wiki, changelog, and generated bundles agree on the candidate contract.
@@ -55,7 +55,7 @@ The deterministic publish guard avoids downloading browser binaries. The separat
 
 ## Coordinated U-I bootstrap sequence
 
-The U-I bootstrap gives the Interactive Surface CSS 1.7.1 candidate an immutable UI compatibility fixture. The cross-repository pins require this exact remote sequence:
+The U-I bootstrap gives the Interactive Surface CSS 1.7.2 release an immutable UI compatibility fixture. The cross-repository pins require this exact remote sequence:
 
 1. Push a stable UI bootstrap ref containing `3869ca49c11d8cc085affa25115e8e80546f7a3c`.
 2. Use merge commits: push and merge Interactive Surface CSS so its reviewed candidate commit SHA remains reachable.
@@ -63,23 +63,23 @@ The U-I bootstrap gives the Interactive Surface CSS 1.7.1 candidate an immutable
 4. Push the final UI branch, rerun its ecosystem preflight, and merge UI with a merge commit.
 5. Do not squash, rebase, or delete the only remote refs until every pinned commit is reachable through merged ancestry.
 
-The U-I bootstrap SHA is deliberately stable: the Interactive Surface candidate workflow uses it to load the reviewed preflight implementation before the final UI commit can reference the merged Interactive Surface head.
+The U-I bootstrap SHA is deliberately stable: the Interactive Surface release workflow uses it to load the reviewed preflight implementation before the final UI commit can reference the merged Interactive Surface head.
 
 ## Release identity
 
-The tag, GitHub Release, package version, lockfile version, and changelog heading must agree. For this candidate, the expected tag is `v1.7.1`.
+The tag, GitHub Release, package version, lockfile version, and changelog heading must agree. The expected tag is `v1.7.2`.
 
 ## Distribution verification
 
 After an approved publish, verify:
 
 - `https://registry.npmjs.org/interactive-surface-css`
-- `https://cdn.jsdelivr.net/npm/interactive-surface-css@1.7.1/interactive-surface.css`
-- `https://cdn.jsdelivr.net/npm/interactive-surface-css@1.7.1/state-core.css`
-- `https://cdn.jsdelivr.net/npm/interactive-surface-css@1.7.1/standalone-preset.css`
-- `https://unpkg.com/interactive-surface-css@1.7.1/interactive-surface.css`
-- `https://unpkg.com/interactive-surface-css@1.7.1/state-core.css`
-- `https://unpkg.com/interactive-surface-css@1.7.1/standalone-preset.css`
+- `https://cdn.jsdelivr.net/npm/interactive-surface-css@1.7.2/interactive-surface.css`
+- `https://cdn.jsdelivr.net/npm/interactive-surface-css@1.7.2/state-core.css`
+- `https://cdn.jsdelivr.net/npm/interactive-surface-css@1.7.2/standalone-preset.css`
+- `https://unpkg.com/interactive-surface-css@1.7.2/interactive-surface.css`
+- `https://unpkg.com/interactive-surface-css@1.7.2/state-core.css`
+- `https://unpkg.com/interactive-surface-css@1.7.2/standalone-preset.css`
 
 Do not treat a local pack or a successful workflow validation as proof that these live URLs are available.
 
@@ -98,4 +98,4 @@ npm publish --access public
 - Minor: backward-compatible capabilities or entry points.
 - Major: intentional breaking changes.
 
-The 1.7.1 patch preserves consumer-owned positioned-control topology while retaining the 1.7.0 semantic feedback API, focused entry points, complete 1.x contract, and compatibility ranges. The reviewed U-I bootstrap revision remains immutable fixture history for coordinated ecosystem release validation.
+The 1.7.2 patch preserves consumer-owned positioned-control topology while retaining the 1.7.0 semantic feedback API, focused entry points, complete 1.x contract, and compatibility ranges. It also replaces legacy token publication with the existing OIDC trusted publisher. The reviewed U-I bootstrap revision remains immutable fixture history for coordinated ecosystem release validation.

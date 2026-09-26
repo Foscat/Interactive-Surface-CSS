@@ -78,7 +78,7 @@ test("candidate version overlay repairs stale current fixture drift only", () =>
   const overlay = releaseContract.withCandidateCurrentVersion(
     fixtureContract,
     "interactive-surface-css",
-    "1.7.1",
+    "1.7.2",
   );
 
   assert.equal(
@@ -89,7 +89,7 @@ test("candidate version overlay repairs stale current fixture drift only", () =>
   assert.deepEqual(overlay.supportedCombinations, {
     minimum: fixtureContract.supportedCombinations.minimum,
     current: {
-      "interactive-surface-css": "1.7.1",
+      "interactive-surface-css": "1.7.2",
       "layout-style-css": "3.0.1",
       "ui-style-kit-css": "2.1.0",
     },
@@ -151,7 +151,7 @@ test("publishing guide records the immutable bootstrap and merge sequence", () =
 
   for (const phrase of [
     "U-I bootstrap",
-    "Interactive Surface CSS 1.7.1 candidate",
+    "Interactive Surface CSS 1.7.2 release",
     "Push a stable UI bootstrap ref",
     "merge commits",
     "Update and verify the final UI companion pins",
