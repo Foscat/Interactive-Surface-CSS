@@ -6,6 +6,16 @@ All notable changes to this package are documented in this file.
 
 ## Unreleased
 
+## 1.7.3 - 2026-09-26
+
+### Fixed
+
+- Moved the OIDC-capable npm CLI installation after the immutable ecosystem preflight so legacy fixture pack output remains machine-readable and trusted publishing still runs with npm 11.5.1.
+
+### Testing
+
+- Strengthened the workflow contract to require all validation and ecosystem preflight work before the trusted-publishing CLI is installed immediately ahead of `npm publish`.
+
 ## 1.7.2 - 2026-09-26
 
 ### Fixed

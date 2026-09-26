@@ -1,6 +1,6 @@
 # Publishing and Releases
 
-Interactive Surface CSS 1.7.2 is the current release. It carries the complete 1.7.1 CSS payload forward and repairs publication through the package's OIDC trusted publisher.
+Interactive Surface CSS 1.7.3 is the current release. It carries the complete 1.7.1 CSS payload forward and repairs publication through the package's OIDC trusted publisher without changing runtime CSS.
 
 ## Release ownership
 
@@ -13,10 +13,10 @@ The repository's intended path is:
 
 See the [npm publish workflow](https://github.com/Foscat/Interactive-Surface-CSS/blob/main/.github/workflows/npm-publish.yml) for the executable release rules.
 
-## 1.7.2 release checklist
+## 1.7.3 release checklist
 
-1. Confirm `package.json` and `package-lock.json` identify `1.7.2`.
-2. Confirm the 1.7.2 changelog entry records the OIDC publication repair and retained 1.7.1 CSS payload.
+1. Confirm `package.json` and `package-lock.json` identify `1.7.3`.
+2. Confirm the 1.7.3 changelog entry records the preflight-safe OIDC publication order and retained 1.7.1 CSS payload.
 3. Confirm absolute, fixed, and sticky consumer positions win even when application CSS loads before Interactive Surface.
 4. Confirm semantic feedback, reduced motion, higher contrast, forced colors, state precedence, and focus priority remain covered.
 5. Confirm manifest, README, embedded README, wiki, changelog, and generated bundles agree on the candidate contract.
@@ -55,7 +55,7 @@ The deterministic publish guard avoids downloading browser binaries. The separat
 
 ## Coordinated U-I bootstrap sequence
 
-The U-I bootstrap gives the Interactive Surface CSS 1.7.2 release an immutable UI compatibility fixture. The cross-repository pins require this exact remote sequence:
+The U-I bootstrap gives the Interactive Surface CSS 1.7.3 release an immutable UI compatibility fixture. The cross-repository pins require this exact remote sequence:
 
 1. Push a stable UI bootstrap ref containing `3869ca49c11d8cc085affa25115e8e80546f7a3c`.
 2. Use merge commits: push and merge Interactive Surface CSS so its reviewed candidate commit SHA remains reachable.
@@ -67,19 +67,19 @@ The U-I bootstrap SHA is deliberately stable: the Interactive Surface release wo
 
 ## Release identity
 
-The tag, GitHub Release, package version, lockfile version, and changelog heading must agree. The expected tag is `v1.7.2`.
+The tag, GitHub Release, package version, lockfile version, and changelog heading must agree. The expected tag is `v1.7.3`.
 
 ## Distribution verification
 
 After an approved publish, verify:
 
 - `https://registry.npmjs.org/interactive-surface-css`
-- `https://cdn.jsdelivr.net/npm/interactive-surface-css@1.7.2/interactive-surface.css`
-- `https://cdn.jsdelivr.net/npm/interactive-surface-css@1.7.2/state-core.css`
-- `https://cdn.jsdelivr.net/npm/interactive-surface-css@1.7.2/standalone-preset.css`
-- `https://unpkg.com/interactive-surface-css@1.7.2/interactive-surface.css`
-- `https://unpkg.com/interactive-surface-css@1.7.2/state-core.css`
-- `https://unpkg.com/interactive-surface-css@1.7.2/standalone-preset.css`
+- `https://cdn.jsdelivr.net/npm/interactive-surface-css@1.7.3/interactive-surface.css`
+- `https://cdn.jsdelivr.net/npm/interactive-surface-css@1.7.3/state-core.css`
+- `https://cdn.jsdelivr.net/npm/interactive-surface-css@1.7.3/standalone-preset.css`
+- `https://unpkg.com/interactive-surface-css@1.7.3/interactive-surface.css`
+- `https://unpkg.com/interactive-surface-css@1.7.3/state-core.css`
+- `https://unpkg.com/interactive-surface-css@1.7.3/standalone-preset.css`
 
 Do not treat a local pack or a successful workflow validation as proof that these live URLs are available.
 
@@ -98,4 +98,4 @@ npm publish --access public
 - Minor: backward-compatible capabilities or entry points.
 - Major: intentional breaking changes.
 
-The 1.7.2 patch preserves consumer-owned positioned-control topology while retaining the 1.7.0 semantic feedback API, focused entry points, complete 1.x contract, and compatibility ranges. It also replaces legacy token publication with the existing OIDC trusted publisher. The reviewed U-I bootstrap revision remains immutable fixture history for coordinated ecosystem release validation.
+The 1.7.3 patch preserves consumer-owned positioned-control topology while retaining the 1.7.0 semantic feedback API, focused entry points, complete 1.x contract, and compatibility ranges. It also runs the legacy immutable ecosystem preflight before installing the OIDC-capable npm CLI for trusted publication. The reviewed U-I bootstrap revision remains immutable fixture history for coordinated ecosystem release validation.

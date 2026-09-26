@@ -1,8 +1,8 @@
 # Roadmap
 
-Interactive Surface CSS 1.7.2 is the current release. This patch preserves consumer-owned positioned-control topology without expanding into layout, theme, tooltip, or runtime ownership.
+Interactive Surface CSS 1.7.3 is the current release. This patch preserves consumer-owned positioned-control topology without expanding into layout, theme, tooltip, or runtime ownership.
 
-## 1.7.2 release
+## 1.7.3 release
 
 - Preserve every existing 1.x import, selector, hook, token fallback, and complete or companion stylesheet entry point.
 - Preserve the 1.7.0 semantic feedback hooks, tokens, precedence, and preference behavior.
@@ -19,7 +19,7 @@ Publication, tagging, and a GitHub Release remain separate approval-gated steps.
 - 1.6.0 added optional shared semantic fallbacks for standalone paint, control geometry, focus, and default motion.
 - 1.7.0 added CSS-only semantic outcome feedback, complete precedence coverage, and composable interaction motion.
 
-## After 1.7.2
+## After 1.7.3
 
 Potential follow-up work must be driven by demonstrated consumer need:
 
