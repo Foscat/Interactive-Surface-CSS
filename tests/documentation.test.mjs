@@ -341,7 +341,7 @@ test("wiki API, token, and accessibility references cover the 1.5.0 contract", (
   );
 });
 
-test("wiki installation and quality guidance matches the release-candidate package", () => {
+test("wiki installation and quality guidance matches the current release", () => {
   [
     wiki.home,
     wiki.gettingStarted,
@@ -353,7 +353,7 @@ test("wiki installation and quality guidance matches the release-candidate packa
       document.includes(manifest.version),
       `Release-facing wiki page must identify ${manifest.version}`,
     );
-    assert.match(document, /release candidate/i);
+    assert.doesNotMatch(document, /release candidate/i);
   });
 
   const normalizeUrlForComparison = (value) => {

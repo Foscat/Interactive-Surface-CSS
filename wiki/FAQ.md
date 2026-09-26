@@ -46,9 +46,9 @@ No. Application code decides the outcome, applies `data-surface-feedback="error"
 
 In the standalone preset and compatibility bundle it supplies centered icon presentation and a 44 × 44px minimum target. A core-only consumer owns that geometry. Every icon-only control still needs an accessible name.
 
-## Is 1.7.1 published?
+## Is 1.7.2 published?
 
-The repository describes 1.7.1 as a release candidate until npm publication is explicitly approved and completed. Pinned CDN URLs are distribution checks, not proof of publication.
+Yes. Verify the registry and pinned 1.7.2 CDN URLs independently; a local pack or successful validation workflow is not publication proof.
 
 ## What browsers are tested?
 
